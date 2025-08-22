@@ -26,6 +26,15 @@ const ClaimListPage = () => {
         }
     })
     branches = getSelectOptionsListFromData(get(branches, `data.data`, []), '_id', 'branchName')
+
+    let {data: statusList} = useGetAllQuery({
+        key: KEYS.claimStatus, url: `${URLS.claimStatus}`, params: {
+            params: {
+                limit: 100
+            }
+        }
+    })
+    console.log('statusList', statusList)
     return (
         <>
             <PageHeader
@@ -62,6 +71,12 @@ const ClaimListPage = () => {
                         dataIndex: 'claimDate',
                         width: 150,
                         valueType: 'dateRange',
+                        search: {
+                            transform: (value) => ({
+                                startDate: value[0],
+                                endDate: value[1],
+                            }),
+                        },
                         hideInTable: true,
                     },
                     {
@@ -72,9 +87,17 @@ const ClaimListPage = () => {
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
-                            options: keys(CLAIM_STATUS_LIST)?.map(item => ({value: item, label: item})) || [],
+                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'default')}>{text}</Tag>
+                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'blue')}>{text}</Tag>
+                    },
+                    {
+                        title: t('Юр/физ'),
+                        dataIndex: 'applicant',
+                        width: 100,
+                        align: 'center',
+                        hideInSearch: true,
+                        render: (text) => get(text, 'organization.name') ? t('Юр') : t('физ')
                     },
                     {
                         title: t('Юр/физ'),
@@ -87,19 +110,25 @@ const ClaimListPage = () => {
                             placeholder: t('Поиск...'),
                             options: values(PERSON_TYPE)?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => get(text, 'organization.name') ? t('Юр') : t('физ')
+                        hideInTable: true,
                     },
                     {
                         title: t('Филиал'),
                         width: 175,
-                        dataIndex: 'branch',
+                        dataIndex: 'agreement',
+                        render: (_, record) => get(record, 'agreement.branch.branchName'),
+                        hideInSearch: true,
+                    },
+                    {
+                        title: t('Филиал'),
                         valueType: 'select',
-                        render: (_, record) => get(record, 'branch.branchName'),
+                        dataIndex: 'branch',
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
                             options: branches
                         },
+                        hideInTable: true,
                     },
                     {
                         title: t('Страховой продукт'),
@@ -109,17 +138,17 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Классы страхования'),
-                        dataIndex: 'product',
-                        render: (text) => '-',
+                        dataIndex: 'agreement',
+                        render: (text) => get(text,'product.risk',[])?.map(item=>get(item,'insuranceClass.name'))?.join(', '),
                         hideInSearch: true,
                         align: 'center',
                         width: 175,
                     },
                     {
                         title: t('Серия и номер полиса'),
-                        dataIndex: 'polisSeria',
+                        dataIndex: 'policy',
                         align: 'center',
-                        render: (text, record) => <span>{text}{get(record, 'polisNumber')}</span>,
+                        render: (text, record) => <span>{get(record, 'polisSeria')}{get(record, 'polisNumber')}</span>,
                         width: 175,
                     },
                     {
@@ -140,9 +169,21 @@ const ClaimListPage = () => {
                         title: t('Дата события'),
                         dataIndex: 'eventCircumstances',
                         render: (text) => dayjs(get(text, 'eventDateTime')).format('YYYY-MM-DD HH:mm'),
-                        valueType: 'dateRange',
                         width: 150,
                         align: 'center',
+                        hideInSearch: true,
+                    },
+                    {
+                        title: t('Дата события'),
+                        dataIndex: 'eventCircumstances',
+                        valueType: 'dateRange',
+                        hideInTable: true,
+                        search: {
+                            transform: (value) => ({
+                                eventStart: value[0],
+                                eventEnd: value[1],
+                            }),
+                        },
                     },
                     {
                         title: t('Страховой риск'),
@@ -177,19 +218,43 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Дата урегулирования'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
-                        valueType: 'dateRange',
+                        dataIndex: 'settlementDate',
                         width: 100,
                         align: 'center',
+                        hideInSearch: true,
+                    },
+                    {
+                        title: t('Дата урегулирования'),
+                        dataIndex: 'settlementDate',
+                        valueType: 'dateRange',
+                        search: {
+                            transform: (value) => ({
+                                settlementStart: value[0],
+                                settlementEnd: value[1],
+                            }),
+                        },
+                        hideInTable: true,
                     },
                     {
                         title: t('Дата выплаты'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
-                        valueType: 'dateRange',
+                        dataIndex: 'paymentDate',
                         width: 100,
                         align: 'center',
+                        hideInSearch: true,
+                    },
+                    {
+                        title: t('Дата выплаты'),
+                        dataIndex: 'paymentDate',
+                        width: 100,
+                        valueType: 'dateRange',
+                        search: {
+                            transform: (value) => ({
+                                paymentStart: value[0],
+                                paymentEnd: value[1],
+                            }),
+                        },
+                        align: 'center',
+                        hideInTable: true,
                     },
                     {
                         title: t('Регресс'),
@@ -217,14 +282,17 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Действия'),
-                        dataIndex: 'claimNumber',
+                        dataIndex: 'id',
                         fixed: 'right',
                         align: 'center',
                         width: 275,
-                        render: (_id) => <Space>
-                            <Button onClick={() => navigate(`/claims/view/${_id}`)} className={'cursor-pointer'}
+                        hideInSearch: true,
+                        render: (_id, record) => <Space>
+                            <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
+                                    className={'cursor-pointer'}
                                     icon={<EyeOutlined/>}>{t('Детали')}</Button>
-                            <Button onClick={() => navigate(`/claims/edit/${_id}`)} className={'cursor-pointer'}
+                            <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
+                                    className={'cursor-pointer'}
                                     icon={<EditOutlined/>}>{t('Редактировать')}</Button>
                         </Space>
                     }

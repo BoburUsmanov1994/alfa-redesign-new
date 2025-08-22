@@ -170,29 +170,28 @@ const ClaimEditPage = () => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-            mutate({
-                url: URLS.claimEdit,
-                attributes: {
-                    ...rest,
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
+        mutate({
+            url: URLS.claimEdit,
+            attributes: {
+                ...rest,
+                lifeDamage,
+                healthDamage,
+                vehicleDamage,
+                otherPropertyDamage,
+                photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
+            }
+        }, {
+            onSuccess: () => {
+                form.resetFields();
+                navigate('/claims')
+            }
+        })
     };
 
     if (isLoading || isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
     }
 
-    console.log('data',data)
     return (
         <>
             <PageHeader
@@ -204,11 +203,11 @@ const ClaimEditPage = () => {
                         form={form}
                         layout="vertical"
                         initialValues={{
-                            ...get(data,'data',{}),
+                            ...get(data, 'data', {}),
                             applicant: {
-                                ...get(data, 'data.applicant'),
+                                ...get(data, 'data.applicant', {}),
                                 person: {
-                                    ...get(data, 'data.applicant.person'),
+                                    ...get(data, 'data.applicant.person', {}),
                                     birthDate: dayjs(get(data, 'data.applicant.person.birthDate')),
                                 },
                             },
@@ -219,7 +218,7 @@ const ClaimEditPage = () => {
                                     birthDate: dayjs(get(data, 'data.responsibleForDamage.person.birthDate')),
                                 },
                             },
-                            responsibleVehicleInfo:{
+                            responsibleVehicleInfo: {
                                 ...get(data, 'data.responsibleVehicleInfo'),
                                 ownerPerson: {
                                     ...get(data, 'data.responsibleVehicleInfo.ownerPerson'),
@@ -228,8 +227,12 @@ const ClaimEditPage = () => {
                             },
 
                             eventCircumstances: {
-                                ...get(data, 'data.eventCircumstances'),
-                                eventDateTime: dayjs(get(data, 'data.eventCircumstances.eventDateTime'))
+                                ...get(data, 'data.eventCircumstances', {}),
+                                eventDateTime: dayjs(get(data, 'data.eventCircumstances.eventDateTime')),
+                                courtDecision: {
+                                    ...get(data, 'data.eventCircumstances.courtDecision', {}),
+                                    courtDecisionDate: dayjs(get(data, 'data.eventCircumstances.courtDecision.courtDecisionDate'))
+                                }
                             }
                         }}
                         onFinish={onFinish}
@@ -240,10 +243,12 @@ const ClaimEditPage = () => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo}
+                                         getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm  applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes} getVehicleInfo={getVehicleInfo}
+                        <VehicleForm applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
+                                     getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                      owner={owner} countryList={countryList} regions={regions}
                                      residentTypes={residentTypes} ownershipForms={ownershipForms}/>

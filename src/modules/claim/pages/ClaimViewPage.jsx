@@ -60,7 +60,7 @@ const ClaimViewPage = () => {
                                     title: t('Типы операций'),
                                     dataIndex: 'operation',
                                 }
-                            ]} url={`${URLS.claimHistory}?id=${claimNumber}`}/>
+                            ]} url={`${URLS.claimHistory}?claimNumber=${claimNumber}`}/>
                         },
                         {
                             key: 'cek',
