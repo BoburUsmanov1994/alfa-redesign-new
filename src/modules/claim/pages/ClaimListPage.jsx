@@ -46,14 +46,23 @@ const ClaimListPage = () => {
                     {
                         title: t('Номер заявления'),
                         dataIndex: 'claimNumber',
-                        width: 150,
+                        width: 100,
+                        align: 'center',
                     },
                     {
                         title: t('Дата заявления'),
                         dataIndex: 'claimDate',
-                        render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm'),
+                        render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                        width: 100,
+                        hideInSearch: true,
+                        align: 'center',
+                    },
+                    {
+                        title: t('Дата заявления'),
+                        dataIndex: 'claimDate',
                         width: 150,
                         valueType: 'dateRange',
+                        hideInTable: true,
                     },
                     {
                         title: t('Статус'),
@@ -65,13 +74,14 @@ const ClaimListPage = () => {
                             placeholder: t('Поиск...'),
                             options: keys(CLAIM_STATUS_LIST)?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => <Tag color={CLAIM_STATUS_LIST[text] || 'default'}>{text}</Tag>
+                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'default')}>{text}</Tag>
                     },
                     {
                         title: t('Юр/физ'),
                         dataIndex: 'applicant',
                         valueType: 'select',
                         width: 100,
+                        align: 'center',
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
@@ -95,19 +105,21 @@ const ClaimListPage = () => {
                         title: t('Страховой продукт'),
                         dataIndex: 'product',
                         render: (text) => get(text, 'name'),
-                        width: 175,
+                        width: 200,
                     },
                     {
                         title: t('Классы страхования'),
                         dataIndex: 'product',
-                        render: (text) => get(text, 'name'),
+                        render: (text) => '-',
                         hideInSearch: true,
+                        align: 'center',
                         width: 175,
                     },
                     {
                         title: t('Серия и номер полиса'),
                         dataIndex: 'polisSeria',
-                        render: (text, record) => <span>{text} {get(record, 'polisNumber')}</span>,
+                        align: 'center',
+                        render: (text, record) => <span>{text}{get(record, 'polisNumber')}</span>,
                         width: 175,
                     },
                     {
@@ -129,7 +141,7 @@ const ClaimListPage = () => {
                         dataIndex: 'eventCircumstances',
                         render: (text) => dayjs(get(text, 'eventDateTime')).format('YYYY-MM-DD HH:mm'),
                         valueType: 'dateRange',
-                        width: 100,
+                        width: 150,
                         align: 'center',
                     },
                     {
@@ -137,27 +149,31 @@ const ClaimListPage = () => {
                         dataIndex: 'insuranceRisk',
                         hideInSearch: true,
                         width: 150,
+                        align: 'center',
                     },
                     {
                         title: t('Объект страхования'),
                         dataIndex: 'claimType',
                         render: (text) => get(text, 'type'),
                         hideInSearch: true,
-                        width: 150
+                        width: 150,
+                        align: 'center',
                     },
                     {
                         title: t('Сумма заявленного убытка'),
                         dataIndex: 'claimType',
                         render: (text) => '-',
                         hideInSearch: true,
-                        width: 150
+                        width: 150,
+                        align: 'center',
                     },
                     {
                         title: t('Сумма выплаты'),
                         dataIndex: 'claimType',
                         render: (text) => '-',
                         hideInSearch: true,
-                        width: 150
+                        width: 150,
+                        align: 'center',
                     },
                     {
                         title: t('Дата урегулирования'),
@@ -181,6 +197,7 @@ const ClaimListPage = () => {
                         render: (text) => '-',
                         width: 100,
                         hideInSearch: true,
+                        align: 'center',
                     },
                     {
                         title: t('Дата регресса'),
@@ -200,10 +217,10 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Действия'),
-                        dataIndex: 'id',
+                        dataIndex: 'claimNumber',
                         fixed: 'right',
                         align: 'center',
-                        width: 250,
+                        width: 275,
                         render: (_id) => <Space>
                             <Button onClick={() => navigate(`/claims/view/${_id}`)} className={'cursor-pointer'}
                                     icon={<EyeOutlined/>}>{t('Детали')}</Button>

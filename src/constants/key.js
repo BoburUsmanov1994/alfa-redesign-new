@@ -214,4 +214,5 @@ export const KEYS = {
     claims:'claims',
     claimPolicyDetails:'claimPolicyDetails',
     claimShow:'claimShow',
+    claimEdit:'claimEdit',
 }

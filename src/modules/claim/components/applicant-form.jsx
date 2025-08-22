@@ -80,7 +80,7 @@ const ApplicantForm = ({
                         </Col>
                         <Col xs={6}>
                             <Form.Item label={' '}>
-                                <Button loading={isPending} icon={<ReloadOutlined/>} onClick={()=>getPersonInfo()}
+                                <Button loading={isPending} icon={<ReloadOutlined/>} onClick={() => getPersonInfo()}
                                         type="primary">
                                     {t('Найти')}
                                 </Button>
@@ -88,7 +88,7 @@ const ApplicantForm = ({
                         </Col>
                     </Row>}
                     {isEqual(client, 'organization') && <Row gutter={16}>
-                        <Col xs={4}>
+                        <Col xs={6}>
                             <Form.Item
                                 label={t("ИНН")}
                                 name={['applicant', 'organization', 'inn']}
@@ -100,7 +100,7 @@ const ApplicantForm = ({
 
                         <Col xs={6}>
                             <Form.Item label={' '}>
-                                <Button loading={isPending} icon={<ReloadOutlined/>} onClick={()=>getOrgInfo()}
+                                <Button loading={isPending} icon={<ReloadOutlined/>} onClick={() => getOrgInfo()}
                                         type="primary">
                                     {t('Найти')}
                                 </Button>
@@ -110,6 +110,18 @@ const ApplicantForm = ({
                 </Col>
             </Row>
             {isEqual(client, 'person') ? <Row gutter={16}>
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person','passportData', 'givenPlace']} label={t(' Кем выдан паспорт')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person','passportData', 'issueDate']} label={t('Дата выдачи паспорта')}
+                    >
+                        <DatePicker className={'w-full'}/>
+                    </Form.Item>
+                </Col>
                 <Col xs={6}>
                     <Form.Item name={['applicant', 'person', 'birthDate']} label={t('Дата рождения')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>

@@ -45,5 +45,6 @@ export const STATUS_LIST = [
     },
 ]
 export const CLAIM_STATUS_LIST={
-    submitted:'blue'
+    submitted:'blue',
+    draft:'default',
 }

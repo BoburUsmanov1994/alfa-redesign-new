@@ -66,7 +66,7 @@ const EventForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item name={'areaTypeId'} label={t('Тип местности')}
+                            <Form.Item name={['eventCircumstances','areaTypeId']} label={t('Тип местности')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
 
                                 <Select options={areaTypes} allowClear/>

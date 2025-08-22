@@ -1,8 +1,9 @@
 import React from 'react';
 import {Button, Card, Col, Form, Input, Row, Space} from "antd";
 import {useTranslation} from "react-i18next";
+import {get} from "lodash"
 
-const ClaimStatus = () => {
+const ClaimStatus = ({data}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
     const onFinish = () => {
@@ -18,8 +19,8 @@ const ClaimStatus = () => {
             >
                 <Row gutter={16} align="middle">
                     <Col span={6}>
-                        <Form.Item label={t('Статус')}>
-                            <Input disabled/>
+                        <Form.Item  label={t('Статус')}>
+                            <Input value={get(data,'status')} disabled/>
                         </Form.Item>
                     </Col>
                     <Col span={6}>

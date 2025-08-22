@@ -45,6 +45,7 @@ import ProductCreatePage_ from "../modules/product/pages/ProductCreatePage_";
 import ClaimListPage from "../modules/claim/pages/ClaimListPage";
 import ClaimCreatePage from "../modules/claim/pages/ClaimCreatePage";
 import ClaimViewPage from "../modules/claim/pages/ClaimViewPage";
+import ClaimEditPage from "../modules/claim/pages/ClaimEditPage";
 
 const Index = () => {
     return (
@@ -450,6 +451,16 @@ const Index = () => {
                             <PrivateRoute>
                                 <MainLayout>
                                     <ClaimViewPage/>
+                                </MainLayout>
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/claims/edit/:claimNumber"
+                        element={
+                            <PrivateRoute>
+                                <MainLayout>
+                                    <ClaimEditPage/>
                                 </MainLayout>
                             </PrivateRoute>
                         }

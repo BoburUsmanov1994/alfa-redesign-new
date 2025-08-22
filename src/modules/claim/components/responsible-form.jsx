@@ -112,6 +112,18 @@ const ResponsibleForm = ({
             </Row>
             {isEqual(client, 'person') ? <Row gutter={16}>
                 <Col xs={6}>
+                    <Form.Item name={['responsibleForDamage', 'person','passportData', 'givenPlace']} label={t(' Кем выдан паспорт')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={6}>
+                    <Form.Item name={['responsibleForDamage', 'person','passportData', 'issueDate']} label={t('Дата выдачи паспорта')}
+                    >
+                        <DatePicker className={'w-full'}/>
+                    </Form.Item>
+                </Col>
+                <Col xs={6}>
                     <Form.Item name={['responsibleForDamage', 'person', 'birthDate']} label={t('Дата рождения')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <DatePicker className={'w-full'}/>

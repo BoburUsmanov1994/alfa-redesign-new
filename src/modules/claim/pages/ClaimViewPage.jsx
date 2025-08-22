@@ -18,7 +18,7 @@ const ClaimViewPage = () => {
     const {t} = useTranslation();
     let {data, isLoading} = useGetAllQuery({
         key: [KEYS.claimShow, claimNumber],
-        url: `${URLS.claimShow}?id=${claimNumber}`,
+        url: `${URLS.claimShow}?claimNumber=${claimNumber}`,
         enabled: !!(claimNumber)
     });
 
@@ -26,6 +26,7 @@ const ClaimViewPage = () => {
     if (isLoading) {
         return <Spin spinning fullscreen/>
     }
+
 
     return (
         <>
@@ -37,7 +38,7 @@ const ClaimViewPage = () => {
                         {
                             key: 'view',
                             label: t('Претензионный портфель'),
-                            children: <View id={claimNumber} data={get(data, 'data.result')}/>
+                            children: <View id={claimNumber} data={get(data, 'data')}/>
                         },
                         {
                             key: 'docs',

@@ -24,7 +24,7 @@ const VehicleForm = ({
                      }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
-        key: [KEYS.districts, get(applicant, 'ownerPerson.regionId'), get(applicant, 'ownerOrganization.regionId'),get(applicant, 'regionId')],
+        key: [KEYS.districts, get(applicant, 'ownerPerson.regionId'), get(applicant, 'ownerOrganization.regionId'), get(applicant, 'regionId')],
         url: `${URLS.districts}/list`,
         params: {
             params: {
@@ -168,7 +168,8 @@ const VehicleForm = ({
                     </Col>
                     <Col xs={6}>
                         <Form.Item valuePropName="checked"
-                                   initialValue={false} name={['responsibleVehicleInfo','insurantIsOwner']} label={t("Владеет Виновное лицо")}
+                                   initialValue={false} name={['responsibleVehicleInfo', 'insurantIsOwner']}
+                                   label={t("Владеет Виновное лицо")}
                         >
                             <Switch/>
                         </Form.Item>
@@ -205,7 +206,7 @@ const VehicleForm = ({
                             <Col xs={4}>
                                 <Form.Item label={' '}>
                                     <Button loading={isPending} icon={<ReloadOutlined/>}
-                                            onClick={() => getPersonInfo(['responsibleVehicleInfo','ownerPerson'])}
+                                            onClick={() => getPersonInfo(['responsibleVehicleInfo', 'ownerPerson'])}
                                             type="primary">
                                         {t('Найти')}
                                     </Button>
@@ -225,7 +226,8 @@ const VehicleForm = ({
 
                             <Col xs={6}>
                                 <Form.Item label={' '}>
-                                    <Button loading={isPending} icon={<ReloadOutlined/>} onClick={()=>getOrgInfo(['responsibleVehicleInfo','ownerOrganization'])}
+                                    <Button loading={isPending} icon={<ReloadOutlined/>}
+                                            onClick={() => getOrgInfo(['responsibleVehicleInfo', 'ownerOrganization'])}
                                             type="primary">
                                         {t('Найти')}
                                     </Button>
@@ -236,7 +238,22 @@ const VehicleForm = ({
                 </Row>
                 {isEqual(owner, 'person') ? <Row gutter={16}>
                     <Col xs={6}>
-                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']} label={t('Дата рождения')}
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'givenPlace']}
+                                   label={t(' Кем выдан паспорт')}
+                        >
+                            <Input/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={6}>
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'issueDate']}
+                                   label={t('Дата выдачи паспорта')}
+                        >
+                            <DatePicker className={'w-full'}/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={6}>
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']}
+                                   label={t('Дата рождения')}
                                    rules={[{required: true, message: t('Обязательное поле')}]}>
                             <DatePicker className={'w-full'}/>
                         </Form.Item>
@@ -249,7 +266,8 @@ const VehicleForm = ({
                         </Form.Item>
                     </Col>
                     <Col xs={6}>
-                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'fullName', 'firstname']} label={t('Имя')}
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'fullName', 'firstname']}
+                                   label={t('Имя')}
                                    rules={[{required: true, message: t('Обязательное поле')}]}>
                             <Input/>
                         </Form.Item>
@@ -262,7 +280,8 @@ const VehicleForm = ({
                         </Form.Item>
                     </Col>
                     <Col xs={6}>
-                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'residentType']} label={t('Резидент')}
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'residentType']}
+                                   label={t('Резидент')}
                                    rules={[{required: true, message: t('Обязательное поле')}]}>
                             <Select options={residentTypes}/>
                         </Form.Item>
@@ -372,20 +391,23 @@ const VehicleForm = ({
                         </Form.Item>
                     </Col>
                     <Col xs={6}>
-                        <Form.Item initialValue={210} name={['responsibleVehicleInfo', 'ownerOrganization', 'countryId']}
+                        <Form.Item initialValue={210}
+                                   name={['responsibleVehicleInfo', 'ownerOrganization', 'countryId']}
                                    label={t('Страна')}
                                    rules={[{required: true, message: t('Обязательное поле')}]}>
                             <Select options={countryList}/>
                         </Form.Item>
                     </Col>
                     <Col xs={6}>
-                        <Form.Item name={['responsibleVehicleInfo', 'ownerOrganization', 'regionId']} label={t('Область')}
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerOrganization', 'regionId']}
+                                   label={t('Область')}
                                    rules={[{required: true, message: t('Обязательное поле')}]}>
                             <Select options={regions}/>
                         </Form.Item>
                     </Col>
                     <Col xs={6}>
-                        <Form.Item name={['responsibleVehicleInfo', 'ownerOrganization', 'districtId']} label={t('Район')}
+                        <Form.Item name={['responsibleVehicleInfo', 'ownerOrganization', 'districtId']}
+                                   label={t('Район')}
                         >
                             <Select options={districts}/>
                         </Form.Item>

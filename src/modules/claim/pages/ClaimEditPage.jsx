@@ -4,32 +4,30 @@ import {useTranslation} from "react-i18next";
 import {
     Button, Col, Divider,
     Flex,
-    Form, Input, Radio, Row,
+    Form, Radio,
     Spin, Switch,
 } from "antd";
-import {useNavigate} from "react-router-dom";
-import {useGetAllQuery, usePostQuery} from "../../../../hooks/api";
-import {URLS} from "../../../../constants/url";
+import {useNavigate, useParams} from "react-router-dom";
+import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
+import {URLS} from "../../../constants/url";
 import {get, toUpper} from "lodash";
 import dayjs from "dayjs";
-import {KEYS} from "../../../../constants/key";
-import {getSelectOptionsListFromData} from "../../../../utils";
-import ApplicantForm from "../applicant-form";
-import EventForm from "../event-form";
-import FileForm from "../file-form";
-import PoliceForm from "../police-form";
-import ResponsibleForm from "../responsible-form";
-import VehicleForm from "../vehicle-form";
-import LifeDamage from "../life-damage";
-import HealthDamage from "../health-damage";
-import VehicleDamage from "../vehicle-damage";
-import PropertyDamage from "../property-damage";
-import ClaimStatus from "../claim-status";
-import BankDetails from "../bank-details";
-import ClaimDamage from "../claim-damage";
+import {KEYS} from "../../../constants/key";
+import {getSelectOptionsListFromData} from "../../../utils";
+import ApplicantForm from "../components/applicant-form";
+import EventForm from "../components/event-form";
+import FileForm from "../components/file-form";
+import PoliceForm from "../components/police-form";
+import ResponsibleForm from "../components/responsible-form";
+import VehicleForm from "../components/vehicle-form";
+import LifeDamage from "../components/life-damage";
+import HealthDamage from "../components/health-damage";
+import VehicleDamage from "../components/vehicle-damage";
+import PropertyDamage from "../components/property-damage";
 
 
-const ClaimView = ({data}) => {
+const ClaimEditPage = () => {
+    const {claimNumber} = useParams();
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -56,6 +54,12 @@ const ClaimView = ({data}) => {
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
     const submitType = useRef(null);
+
+    let {data, isLoading} = useGetAllQuery({
+        key: [KEYS.claimShow, claimNumber],
+        url: `${URLS.claimShow}?claimNumber=${claimNumber}`,
+        enabled: !!(claimNumber)
+    });
 
     let {data: residentTypes, isLoading: isLoadingResident} = useGetAllQuery({
         key: KEYS.residentType,
@@ -166,9 +170,8 @@ const ClaimView = ({data}) => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-        if (submitType.current) {
             mutate({
-                url: URLS.claimCreate,
+                url: URLS.claimEdit,
                 attributes: {
                     ...rest,
                     lifeDamage,
@@ -183,27 +186,9 @@ const ClaimView = ({data}) => {
                     navigate('/claims')
                 }
             })
-        } else {
-            mutate({
-                url: URLS.claimDraft,
-                attributes: {
-                    ...rest,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
-        }
     };
 
-    if (isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
+    if (isLoading || isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
     }
 
@@ -211,16 +196,42 @@ const ClaimView = ({data}) => {
     return (
         <>
             <PageHeader
+                title={t('Редактировать заявление')}
             >
-                <ClaimStatus data={data}/>
-                <BankDetails/>
-                <ClaimDamage/>
                 <Spin spinning={isPending}>
                     <Form
                         name="create"
                         form={form}
                         layout="vertical"
-                        initialValues={{}}
+                        initialValues={{
+                            ...get(data,'data',{}),
+                            applicant: {
+                                ...get(data, 'data.applicant'),
+                                person: {
+                                    ...get(data, 'data.applicant.person'),
+                                    birthDate: dayjs(get(data, 'data.applicant.person.birthDate')),
+                                },
+                            },
+                            responsibleForDamage: {
+                                ...get(data, 'data.responsibleForDamage'),
+                                person: {
+                                    ...get(data, 'data.responsibleForDamage.person'),
+                                    birthDate: dayjs(get(data, 'data.responsibleForDamage.person.birthDate')),
+                                },
+                            },
+                            responsibleVehicleInfo:{
+                                ...get(data, 'data.responsibleVehicleInfo'),
+                                ownerPerson: {
+                                    ...get(data, 'data.responsibleVehicleInfo.ownerPerson'),
+                                    birthDate: dayjs(get(data, 'data.responsibleVehicleInfo.ownerPerson.birthDate')),
+                                },
+                            },
+
+                            eventCircumstances: {
+                                ...get(data, 'data.eventCircumstances'),
+                                eventDateTime: dayjs(get(data, 'data.eventCircumstances.eventDateTime'))
+                            }
+                        }}
                         onFinish={onFinish}
                     >
                         <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
@@ -229,12 +240,10 @@ const ClaimView = ({data}) => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo}
-                                         getOrgInfo={getOrgInfo}
+                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
-                                     getVehicleInfo={getVehicleInfo}
+                        <VehicleForm  applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes} getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                      owner={owner} countryList={countryList} regions={regions}
                                      residentTypes={residentTypes} ownershipForms={ownershipForms}/>
@@ -366,39 +375,14 @@ const ClaimView = ({data}) => {
                         </Col>
 
                         <FileForm files={files} setFiles={setFiles}/>
-                        <Row gutter={16}>
-                            <Col span={24}>
-                                <Divider orientation={'left'}>{t('Информация для Заключения ДУСП')}</Divider>
-                            </Col>
-                            <Col span={6}>
-                                <Form.Item label={t('Номер заключения')}>
-                                    <Input disabled/>
-                                </Form.Item>
-                            </Col>
 
-                            <Col span={6}>
-                                <Form.Item label={t('Дата заключения')}>
-                                    <Input disabled/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={24}>
-                                <Form.Item label={t('Вывод специалиста')}>
-                                    <Input.TextArea/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={24}>
-                                <Form.Item label={t('Регресс')}>
-                                    <Input/>
-                                </Form.Item>
-                            </Col>
-                        </Row>
                         <Flex className={'mt-6'}>
                             <Button onClick={() => (submitType.current = true)} className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
-                                {t('Сохранить дело')}
+                                {t('Сохранять')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
-                                {t('Отменаs')}
+                                {t('Отменить')}
                             </Button>
                         </Flex>
                     </Form>
@@ -410,4 +394,4 @@ const ClaimView = ({data}) => {
     );
 };
 
-export default ClaimView;
+export default ClaimEditPage;
