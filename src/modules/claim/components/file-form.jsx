@@ -52,7 +52,6 @@ const FileForm = ({
             }
         })
     }
-    console.log('files', files)
     return (
         <>
             <Row gutter={16} align="middle">

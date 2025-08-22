@@ -44,6 +44,7 @@ import AgreementCreatePage from "../modules/agreement/pages/AgreementCreatePage"
 import ProductCreatePage_ from "../modules/product/pages/ProductCreatePage_";
 import ClaimListPage from "../modules/claim/pages/ClaimListPage";
 import ClaimCreatePage from "../modules/claim/pages/ClaimCreatePage";
+import ClaimViewPage from "../modules/claim/pages/ClaimViewPage";
 
 const Index = () => {
     return (
@@ -444,11 +445,11 @@ const Index = () => {
                         }
                     />
                     <Route
-                        path="/claims/view/:id"
+                        path="/claims/view/:claimNumber"
                         element={
                             <PrivateRoute>
                                 <MainLayout>
-                                    <ClaimCreatePage/>
+                                    <ClaimViewPage/>
                                 </MainLayout>
                             </PrivateRoute>
                         }

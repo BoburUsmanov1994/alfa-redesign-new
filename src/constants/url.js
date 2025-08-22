@@ -229,4 +229,6 @@ export const URLS = {
     claimDraft: 'api/claim/draft',
     claimCreate: 'api/claim/create',
     claimPolicyDetails: 'api/claim/policy-details',
+    claimShow: 'api/claim/show',
+    claimHistory: 'api/claim/history',
 }

@@ -213,4 +213,5 @@ export const KEYS = {
     nbuPortfelReport:'nbuPortfelReport',
     claims:'claims',
     claimPolicyDetails:'claimPolicyDetails',
+    claimShow:'claimShow',
 }
