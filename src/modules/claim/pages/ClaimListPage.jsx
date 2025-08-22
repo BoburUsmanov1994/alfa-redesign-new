@@ -202,7 +202,8 @@ const ClaimListPage = () => {
                         title: t('Действия'),
                         dataIndex: 'id',
                         fixed: 'right',
-                        width: 275,
+                        align: 'center',
+                        width: 250,
                         render: (_id) => <Space>
                             <Button onClick={() => navigate(`/claims/view/${_id}`)} className={'cursor-pointer'}
                                     icon={<EyeOutlined/>}>{t('Детали')}</Button>
