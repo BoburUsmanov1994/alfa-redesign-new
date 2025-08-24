@@ -1,98 +1,511 @@
-import React, {useState} from 'react';
-import {Button, Card, Col, DatePicker, Form, Input, Row, Space, Switch, Table, Typography} from "antd";
+import React, {useEffect, useState} from 'react';
+import {
+    Button,
+    Col,
+    DatePicker,
+    Drawer,
+    Flex,
+    Form,
+    Input,
+    Radio,
+    Row,
+    Space,
+    Spin,
+    Switch,
+    Table,
+    Typography
+} from "antd";
 import {useTranslation} from "react-i18next";
 import {get} from "lodash"
-import {useGetAllQuery, usePutQuery} from "../../../hooks/api";
-import {KEYS} from "../../../constants/key";
+import {useDeleteQuery, usePutQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
 import dayjs from "dayjs";
 import {useStore} from "../../../store";
+import CustomUpload from "../../../components/custom-upload";
+import {EyeOutlined, DeleteOutlined} from "@ant-design/icons";
+import {isNil} from "lodash/lang";
 
-const ClaimDocs = ({data, claimNumber}) => {
+const ClaimDocs = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
+    const [requestForm] = Form.useForm();
+    const [approveForm] = Form.useForm();
     const {user} = useStore()
     const [open, setOpen] = useState(false);
+    const [paymentDocs, setPaymentDocs] = useState(null);
+    const [conclusionFatf, setConclusionFatf] = useState(null);
+    const [record, setRecord] = useState(null);
     const {mutate, isPending} = usePutQuery({})
+    const {mutate: deleteRequest, isPending: isPendingDelete} = useDeleteQuery({})
 
-    let {data: members, refetch} = useGetAllQuery({key: KEYS.claimSekMembers, url: URLS.claimSekMembers})
     const onFinish = () => {
     }
-    console.log('members', members)
-    console.log('user', user)
+    useEffect(() => {
+        if (get(data, 'documents.paymentDocs.url')) {
+            setPaymentDocs(get(data, 'documents.paymentDocs'));
+        }
+        if (get(data, 'documents.conclusionFatf.url')) {
+            setConclusionFatf(get(data, 'documents.conclusionFatf'));
+        }
+    }, [data]);
+    console.log('record', record)
     return (
-        <Form
-            name="docs"
-            form={form}
-            layout="vertical"
-            initialValues={{}}
-            onFinish={onFinish}
-            className={'mt-4'}
-        >
-            <Row gutter={16} align="middle">
-                <Col span={12}>
-                    <Form.Item layout={'horizontal'} initialValue={get(user, 'name')}
-                               name={'whoSent'}
-                               label={t('Заявление о страховом событии')}>
-                        <Input disabled/>
-                    </Form.Item>
-                </Col>
-                <Col span={6}>
-                    <Form.Item>
-                        <Button className={'mr-3'} type="dashed"
-                                name={'save'}>
-                            {t("Сформировать")}
-                        </Button>
-                    </Form.Item>
-                </Col>
-
-                <Col span={24}>
-                    <Form.Item>
-                        <Table
-                            title={() => <Space className={'flex justify-between'} block
-                                                align={'center'}><Typography.Title
-                                level={5}>{t('Материалы по претензионному делу')}</Typography.Title> <Button
-                                onClick={() => {
+        <>
+            <Spin spinning={isPending}>
+                <Form
+                    name="docs"
+                    form={form}
+                    layout="vertical"
+                    initialValues={{}}
+                    onFinish={onFinish}
+                    className={'mt-4'}
+                >
+                    <Row gutter={16} align="middle">
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Заявление о страховом событии')}>
+                                <Input value={get(data, 'documents.claimStatement.url')} disabled suffix={
+                                    get(data, 'documents.claimStatement.url') ?
+                                        <Button href={get(data, 'documents.claimStatement.url')}
+                                                icon={<EyeOutlined/>} type="link"/> : null
+                                }/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item>
+                                <Button onClick={() => {
                                     mutate({
-                                        url: URLS.claimSekAction,
-                                        attributes: {
-                                            claimNumber: parseInt(claimNumber),
-                                            action: 'accept'
-                                        },
-                                        method: 'put',
+                                        url: `${URLS.claimGenStatement}?claimNumber=${claimNumber}`,
+                                        attributes: {},
+                                        method: 'put'
                                     }, {
                                         onSuccess: () => {
-                                            refetch()
+                                            refresh()
                                         }
                                     })
-                                }}
-                                type="dashed">
-                                {t('Зафиксировать голосование')}
-                            </Button></Space>}
-                            columns={
-                                [
-                                    {
-                                        title: t('Дата запроса')
-                                    },
-                                    {
-                                        title: t('Описание документа')
-                                    },
-                                    {
-                                        title: t('Шаблон')
-                                    },
-                                    {
-                                        title: t('Кем запрошено')
-                                    },
-                                    {
-                                        title: t('Дата предоставления')
+                                }} type="dashed"
+                                >
+                                    {t("Сформировать")}
+                                </Button>
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={24}>
+                            <Form.Item>
+                                <Table
+                                    scroll={{x: 1200}}
+                                    dataSource={get(data, 'documents.materials', [])}
+                                    title={() => <Space className={'flex justify-between'} block
+                                                        align={'center'}><Typography.Title
+                                        level={5}>{t('Материалы по претензионному делу')}</Typography.Title> <Button
+                                        onClick={() => {
+                                            setOpen(true);
+                                        }}
+                                        type="dashed">
+                                        {t('Запросить документ')}
+                                    </Button></Space>}
+                                    columns={
+                                        [
+                                            {
+                                                title: t('Дата запроса'),
+                                                dataIndex: 'requestDate',
+                                                render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                                            },
+                                            {
+                                                title: t('Описание документа'),
+                                                dataIndex: 'description',
+                                            },
+                                            {
+                                                title: t('Шаблон'),
+                                                dataIndex: 'template',
+                                                align: 'center',
+                                                render: (text, record) => <Button icon={<EyeOutlined/>} type={'link'}
+                                                                                  href={get(text, 'url')}/>
+                                            },
+                                            {
+                                                title: t('Кем запрошено'),
+                                                dataIndex: 'whoRequested',
+                                            },
+                                            {
+                                                title: t('Дата предоставления'),
+                                                dataIndex: 'requestDate',
+                                                render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                                            },
+                                            {
+                                                title: t('Файл'),
+                                                dataIndex: 'template',
+                                                align: 'center',
+                                                render: (text, record) => <Button icon={<EyeOutlined/>} type={'link'}
+                                                                                  href={get(text, 'url')}/>
+                                            },
+                                            {
+                                                title: t('Дата проверки'),
+                                                dataIndex: 'checkDate',
+                                                render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                                            },
+                                            {
+                                                title: t('Кем проверено'),
+                                                dataIndex: 'whoChecked',
+                                            },
+                                            {
+                                                title: t('Результат проверки'),
+                                                dataIndex: 'checkResult',
+                                                render: (text) => text ? 'принят' : 'не принят'
+                                            },
+                                            {
+                                                title: t('Комментарий'),
+                                                dataIndex: 'comment',
+                                            },
+                                            {
+                                                title: t('Действия'),
+                                                render: (text, _record) => <Space>
+                                                    <Button onClick={() => {
+                                                        setRecord(_record)
+                                                    }} type={'dashed'}>
+                                                        {t('Проверить')}
+                                                    </Button>
+                                                </Space>
+                                            }
+                                        ]
                                     }
-                                ]
-                            }
-                        />
-                    </Form.Item>
-                </Col>
-            </Row>
-        </Form>
+                                />
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Заключение ДУСП')}>
+                                <Input value={get(data, 'documents.conclusionDusp.url')} disabled suffix={
+                                    get(data, 'documents.conclusionDusp.url') ?
+                                        <Button href={get(data, 'documents.conclusionDusp.url')}
+                                                icon={<EyeOutlined/>} type="link"/> : null
+                                }/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item>
+                                <Button onClick={() => {
+                                    mutate({
+                                        url: `${URLS.claimGenConclusionDusp}?claimNumber=${claimNumber}`,
+                                        attributes: {},
+                                        method: 'put'
+                                    }, {
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
+                                    })
+                                }} type="dashed"
+                                >
+                                    {t("Сформировать")}
+                                </Button>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Решение СЭК')}>
+                                <Input value={get(data, 'documents.decisionSek.url')} disabled suffix={
+                                    get(data, 'documents.decisionSek.url') ?
+                                        <Button href={get(data, 'documents.decisionSek.url')}
+                                                icon={<EyeOutlined/>} type="link"/> : null
+                                }/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item>
+                                <Button onClick={() => {
+                                    mutate({
+                                        url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
+                                        attributes: {},
+                                        method: 'put'
+                                    }, {
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
+                                    })
+                                }} type="dashed"
+                                >
+                                    {t("Сформировать")}
+                                </Button>
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Акт о страховом случае (для ОСГОР)')}>
+                                <Input value={get(data, 'documents.claimAct.url')} disabled
+                                       suffix={
+                                           get(data, 'documents.claimAct.url') ?
+                                               <Button href={get(data, 'documents.claimAct.url')}
+                                                       icon={<EyeOutlined/>} type="link"/> : null
+                                       }
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item>
+                                <Button onClick={() => {
+                                    mutate({
+                                        url: `${URLS.claimGenAct}?claimNumber=${claimNumber}`,
+                                        attributes: {},
+                                        method: 'put'
+                                    }, {
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
+                                    })
+                                }} type="dashed"
+                                >
+                                    {t("Сформировать")}
+                                </Button>
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Платежные документы')}>
+                                {
+                                    get(paymentDocs, 'url') ? <Flex align={'center'}><Input disabled
+                                                                                            value={get(paymentDocs, 'url')}
+                                                                                            suffix={
+                                                                                                <Button
+                                                                                                    href={get(paymentDocs, 'url')}
+                                                                                                    icon={
+                                                                                                        <EyeOutlined/>}
+                                                                                                    type="link"/>
+                                                                                            }
+                                        /><Button loading={isPendingDelete} onClick={() => {
+                                            deleteRequest({
+                                                url: `${URLS.file}/${get(paymentDocs, 'file')}`
+                                            }, {
+                                                onSuccess: () => {
+                                                    setPaymentDocs({})
+                                                }
+                                            })
+                                        }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
+                                        <CustomUpload setFile={(_file) => {
+                                            setPaymentDocs({
+                                                file: get(_file, 'id'),
+                                                url: get(_file, 'url')
+                                            })
+                                        }}/>
+                                }
+
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item layout={'horizontal'}
+                                       label={t('Обоснование ФАТФ')}>
+                                {
+                                    get(conclusionFatf, 'url') ? <Flex align={'center'}><Input disabled
+                                                                                               value={get(conclusionFatf, 'url')}
+                                                                                               suffix={
+                                                                                                   <Button
+                                                                                                       href={get(conclusionFatf, 'url')}
+                                                                                                       icon={
+                                                                                                           <EyeOutlined/>}
+                                                                                                       type="link"/>
+                                                                                               }
+                                        /><Button loading={isPendingDelete} onClick={() => {
+                                            deleteRequest({
+                                                url: `${URLS.file}/${get(conclusionFatf, 'file')}`
+                                            }, {
+                                                onSuccess: () => {
+                                                    setConclusionFatf({})
+                                                }
+                                            })
+                                        }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
+                                        <CustomUpload setFile={(_file) => {
+                                            setConclusionFatf({
+                                                file: get(_file, 'id'),
+                                                url: get(_file, 'url')
+                                            })
+                                        }}/>
+                                }
+                            </Form.Item>
+                        </Col>
+
+                    </Row>
+                </Form>
+            </Spin>
+            <Drawer width={800} title={t('Запрос о предоставлении документа по претензионному делу')} open={open}
+                    onClose={() => setOpen(false)}>
+                <Form form={requestForm} layout="vertical" initialValues={{}}
+                      onFinish={(_attrs) => {
+                          mutate({
+                              url: URLS.claimDocReq,
+                              attributes: {
+                                  materials: [_attrs],
+                                  claimNumber: parseInt(claimNumber),
+                                  conclusionFatf,
+                                  paymentDocs
+                              }
+                          }, {
+                              onSuccess: () => {
+                                  setOpen(false)
+                                  requestForm.resetFields()
+                                  refresh()
+                              }
+                          })
+                      }}>
+                    <Row gutter={16} align="middle">
+                        <Col span={12}>
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'requestDate'}
+                                       initialValue={dayjs()} label={t('Дата запроса')}>
+                                <DatePicker className={'w-full'} disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'whoRequested'}
+                                       initialValue={get(user, 'name')} label={t('Дата запроса')}>
+                                <Input disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'description'}
+                                       label={t('Описание документа')}>
+                                <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item name={'template'} label={t('Шаблон')}>
+                                <CustomUpload setFile={(_file) => {
+                                    requestForm.setFieldValue(['template', 'file'], get(_file, 'id'))
+                                    requestForm.setFieldValue(['template', 'url'], get(_file, 'url'))
+                                }}/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Space className={'mt-4'}>
+                                <Button loading={isPending} htmlType={'submit'} className={'mr-3'} type="primary"
+                                        name={'save'}>
+                                    {t('Передать в СЭК')}
+                                </Button>
+                                <Button onClick={() => setOpen(false)} danger type="primary"
+                                >
+                                    {t('Отмена')}
+                                </Button>
+                            </Space>
+                        </Col>
+                    </Row>
+                </Form>
+            </Drawer>
+
+            <Drawer width={800} title={t('Проверка предоставленного документа по претензионному делу')}
+                    open={!isNil(record)}
+                    onClose={() => setRecord(null)}>
+                <Form form={approveForm} layout="vertical" initialValues={{}}
+                      onFinish={(_attrs) => {
+                          mutate({
+                              url: URLS.claimDocAccept,
+                              attributes: {
+                                  materials: [_attrs],
+                                  claimNumber: parseInt(claimNumber),
+                              }
+                          }, {
+                              onSuccess: () => {
+                                  setRecord(null)
+                                  approveForm.resetFields()
+                                  refresh()
+                              }
+                          })
+                      }}>
+                    <Row gutter={16} align="middle">
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('Дата запроса')}>
+                                <DatePicker value={dayjs(get(record, 'requestDate', new Date()))} className={'w-full'}
+                                            disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('Кем запрошен')}>
+                                <Input value={get(record, 'whoRequested', get(user, 'employee.fullname'))} disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('Дата предоставления')}>
+                                <DatePicker value={dayjs(get(record, 'requestDate', new Date()))} className={'w-full'}
+                                            disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('Шаблон')}>
+                                <Input value={get(record, 'template.url')} disabled
+                                       suffix={<Button href={get(record, 'template.url')} type={'link'}
+                                                       icon={<EyeOutlined/>}/>}/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'id'}
+                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                initialValue={get(record, 'id')}
+                                label={t('Документ')}>
+                                <Input value={get(record, 'id')} disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                initialValue={dayjs()}
+                                name={'checkDate'}
+                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                label={t('Дата проверки')}>
+                                <DatePicker value={dayjs(new Date())} className={'w-full'} disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                initialValue={get(user, 'employee.fullname')}
+                                name={'whoChecked'}
+                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                label={t('Кем проверен')}>
+                                <Input value={get(user, 'employee.fullname')} disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'checkResult'}
+                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                label={t('Результат')}>
+                                <Radio.Group
+                                    options={[
+                                        {
+                                            value: 0,
+                                            label: t('не принят')
+                                        },
+                                        {
+                                            value: 1,
+                                            label: t('принят')
+                                        }
+                                    ]}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'comment'}
+                                       label={t('Комментарий')}>
+                                <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Space className={'mt-4'}>
+                                <Button loading={isPending} htmlType={'submit'} className={'mr-3'} type="primary"
+                                        name={'save'}>
+                                    {t('Подтвердить')}
+                                </Button>
+                                <Button onClick={() => setRecord(null)} danger type="primary"
+                                >
+                                    {t('Отмена')}
+                                </Button>
+                            </Space>
+                        </Col>
+                    </Row>
+                </Form>
+            </Drawer>
+        </>
     );
 };
 

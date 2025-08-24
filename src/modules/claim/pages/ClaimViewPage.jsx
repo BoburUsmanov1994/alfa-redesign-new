@@ -14,13 +14,15 @@ import Datagrid from "../../../containers/datagrid";
 import View from "../components/view";
 import ClaimVoice from "../components/claim-voice";
 import ClaimDocs from "../components/claim-docs";
+import dayjs from "dayjs";
+import ClaimDecision from "../components/claim-decision";
 
 
 const ClaimViewPage = () => {
     const {claimNumber} = useParams();
     const [searchParams, setSearchParams] = useSearchParams()
     const {t} = useTranslation();
-    let {data, isLoading,refetch:refresh} = useGetAllQuery({
+    let {data, isLoading, refetch: refresh} = useGetAllQuery({
         key: [KEYS.claimShow, claimNumber],
         url: `${URLS.claimShow}?claimNumber=${claimNumber}`,
         enabled: !!(claimNumber)
@@ -51,20 +53,21 @@ const ClaimViewPage = () => {
                         {
                             key: 'docs',
                             label: t('Документы по заявлению'),
-                            children: <ClaimDocs data={get(data, 'data')} claimNumber={claimNumber} />,
+                            children: <ClaimDocs refresh={refresh} data={get(data, 'data')} claimNumber={claimNumber}/>,
                         },
                         {
                             key: 'history',
                             label: t('История операций'),
                             children: <Card bordered title={(t('История операций по заявлению'))}>
-                                <Datagrid responseListKeyName={'docs'} showSearch={false} columns={[
+                                <Datagrid responseListKeyName={'history'} showSearch={false} columns={[
                                     {
                                         title: t('Дата операции'),
                                         dataIndex: 'date',
+                                        render: (text) => dayjs(text).format('YYYY-MM-DD'),
                                     },
                                     {
                                         title: t('Кем произведена'),
-                                        dataIndex: 'comment',
+                                        dataIndex: 'whoMade',
                                     },
                                     {
                                         title: t('Типы операций'),
@@ -80,11 +83,13 @@ const ClaimViewPage = () => {
                         {
                             key: 'voice',
                             label: t('СЭК'),
-                            children: <ClaimVoice claimNumber={claimNumber} data={get(data, 'data')}/>
+                            children: <ClaimVoice refresh={refresh} claimNumber={claimNumber} data={get(data, 'data')}/>
                         },
                         {
                             key: 'payment',
-                            label: t('Решение и выплата')
+                            label: t('Решение и выплата'),
+                            children: <ClaimDecision claimNumber={claimNumber} data={get(data, 'data')}
+                                                     refresh={refresh}/>
                         },
                     ]}
                 />

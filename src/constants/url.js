@@ -236,4 +236,12 @@ export const URLS = {
     claimSekMembers: 'api/claim/sek-members',
     claimSekAction: 'api/claim/sek-action',
     claimAction: 'api/claim/action',
+    claimSekSend: 'api/claim/send-to-sek',
+    claimGenStatement: 'api/claim/gen-statement',
+    claimGenConclusionDusp: 'api/claim/gen-conclusion-dusp',
+    claimGenDecisionDusp: 'api/claim/gen-decision-sek',
+    claimGenAct: 'api/claim/gen-act',
+    claimDocReq: 'api/claim/docs-req',
+    claimDocAccept: 'api/claim/docs-accept',
+    decisions: 'api/references/decisions',
 }
