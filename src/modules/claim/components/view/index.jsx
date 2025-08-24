@@ -29,7 +29,7 @@ import BankDetails from "../bank-details";
 import ClaimDamage from "../claim-damage";
 
 
-const ClaimView = ({data}) => {
+const ClaimView = ({data,claimNumber,refresh}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -212,7 +212,7 @@ const ClaimView = ({data}) => {
         <>
             <PageHeader
             >
-                <ClaimStatus data={data}/>
+                <ClaimStatus data={data} claimNumber={claimNumber} refresh={refresh} />
                 <BankDetails/>
                 <ClaimDamage/>
                 <Spin spinning={isPending}>

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -8,9 +8,9 @@ import {
     Spin, Switch,
 } from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
+import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
-import {get, toUpper} from "lodash";
+import {get, isEmpty, toUpper} from "lodash";
 import dayjs from "dayjs";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
@@ -36,6 +36,7 @@ const ClaimEditPage = () => {
     const [vehicleDamage, setVehicleDamage] = useState([]);
     const [otherPropertyDamage, setOtherPropertyDamage] = useState([]);
     const {mutate, isPending} = usePostQuery({})
+    const {mutate: editRequest, isPending: isPendingEdit} = usePutQuery({})
     const {
         eventCircumstances,
         client,
@@ -53,7 +54,7 @@ const ClaimEditPage = () => {
         responsibleForDamage
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
-    const submitType = useRef(null);
+
 
     let {data, isLoading} = useGetAllQuery({
         key: [KEYS.claimShow, claimNumber],
@@ -170,10 +171,11 @@ const ClaimEditPage = () => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-        mutate({
+        editRequest({
             url: URLS.claimEdit,
             attributes: {
                 ...rest,
+                claimNumber: parseInt(claimNumber),
                 lifeDamage,
                 healthDamage,
                 vehicleDamage,
@@ -188,6 +190,22 @@ const ClaimEditPage = () => {
         })
     };
 
+    useEffect(() => {
+        if (!isEmpty(get(data, 'data.photoVideoMaterials', []))) {
+            setFiles(get(data, 'data.photoVideoMaterials', []))
+        }
+        if (!isEmpty(get(data, 'data.healthDamage', []))) {
+            setHealthDamage(get(data, 'data.healthDamage', []))
+        }
+        if (!isEmpty(get(data, 'data.lifeDamage', []))) {
+            setLifeDamage(get(data, 'data.lifeDamage', []))
+        }
+        if (!isEmpty(get(data, 'data.otherPropertyDamage', []))) {
+            setOtherPropertyDamage(get(data, 'data.otherPropertyDamage', []))
+        }
+    }, [data])
+   
+
     if (isLoading || isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
     }
@@ -197,7 +215,7 @@ const ClaimEditPage = () => {
             <PageHeader
                 title={t('Редактировать заявление')}
             >
-                <Spin spinning={isPending}>
+                <Spin spinning={isPendingEdit || isPending}>
                     <Form
                         name="create"
                         form={form}
@@ -382,7 +400,7 @@ const ClaimEditPage = () => {
                         <FileForm files={files} setFiles={setFiles}/>
 
                         <Flex className={'mt-6'}>
-                            <Button onClick={() => (submitType.current = true)} className={'mr-3'} type="primary"
+                            <Button className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
                                 {t('Сохранять')}
                             </Button>

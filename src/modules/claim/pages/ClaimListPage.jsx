@@ -284,16 +284,16 @@ const ClaimListPage = () => {
                         title: t('Действия'),
                         dataIndex: 'id',
                         fixed: 'right',
-                        align: 'center',
-                        width: 275,
+                        align: 'right',
+                        width: 100,
                         hideInSearch: true,
                         render: (_id, record) => <Space>
                             <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
                                     className={'cursor-pointer'}
-                                    icon={<EyeOutlined/>}>{t('Детали')}</Button>
+                                    icon={<EyeOutlined/>} />
                             <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
                                     className={'cursor-pointer'}
-                                    icon={<EditOutlined/>}>{t('Редактировать')}</Button>
+                                    icon={<EditOutlined/>} />
                         </Space>
                     }
 

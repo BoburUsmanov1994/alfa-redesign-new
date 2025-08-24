@@ -2,10 +2,13 @@ import React from 'react';
 import {Button, Card, Col, Form, Input, Row, Space} from "antd";
 import {useTranslation} from "react-i18next";
 import {get} from "lodash"
+import {URLS} from "../../../constants/url";
+import {usePutQuery} from "../../../hooks/api";
 
-const ClaimStatus = ({data}) => {
+const ClaimStatus = ({data,claimNumber,refresh}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
+    const {mutate,isPending} = usePutQuery({})
     const onFinish = () => {
     }
     return (
@@ -30,7 +33,20 @@ const ClaimStatus = ({data}) => {
                     </Col>
                     <Col span={6}>
                         <Space>
-                            <Button className={'mx-3'} type="dashed"
+                            <Button loading={isPending} onClick={()=>{
+                                mutate({
+                                    url: URLS.claimAction,
+                                    attributes: {
+                                        claimNumber: parseInt(claimNumber),
+                                        action: 'accept'
+                                    },
+                                    method: 'put',
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }} className={'mx-3'} type="dashed"
                                     name={'save'}>
                                 {t('Зарегистрировать')}
                             </Button>

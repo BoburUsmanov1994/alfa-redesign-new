@@ -216,4 +216,7 @@ export const KEYS = {
     claimShow:'claimShow',
     claimEdit:'claimEdit',
     claimStatus:'claimStatus',
+    claimSekMembers:'claimSekMembers',
+    claimSekAction:'claimSekAction',
+    claimAction:'claimAction',
 }

@@ -1,9 +1,9 @@
 import {request} from "../../services/api";
-import {forEach, isArray} from "lodash";
+import {forEach, isArray, isEqual} from "lodash";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {notification} from "antd";
 
-const putRequest = (url, attributes) => request.patch(url, attributes);
+const putRequest = (url, attributes, method) => isEqual(method, 'put') ? request.put(url, attributes) : request.patch(url, attributes);
 
 const usePutQuery = ({hideSuccessToast = false, listKeyId = null}) => {
 
@@ -12,8 +12,8 @@ const usePutQuery = ({hideSuccessToast = false, listKeyId = null}) => {
 
         const {mutate, isLoading, isError, error, isFetching, isPending} = useMutation({
                 mutationFn: ({
-                                 url, attributes
-                             }) => putRequest(url, attributes),
+                                 url, attributes, method = 'patch'
+                             }) => putRequest(url, attributes,method),
 
                 onSuccess: (data) => {
                     if (!hideSuccessToast) {
