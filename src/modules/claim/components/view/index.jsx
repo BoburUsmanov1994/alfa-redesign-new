@@ -29,7 +29,7 @@ import BankDetails from "../bank-details";
 import ClaimDamage from "../claim-damage";
 
 
-const ClaimView = ({data,claimNumber,refresh}) => {
+const ClaimView = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -207,22 +207,53 @@ const ClaimView = ({data,claimNumber,refresh}) => {
         return <Spin spinning fullscreen/>
     }
 
-    console.log('data',data)
     return (
         <>
             <PageHeader
             >
-                <ClaimStatus data={data} claimNumber={claimNumber} refresh={refresh} />
-                <BankDetails/>
-                <ClaimDamage/>
                 <Spin spinning={isPending}>
                     <Form
-                        name="create"
+                        name="view"
                         form={form}
                         layout="vertical"
-                        initialValues={{}}
                         onFinish={onFinish}
+                        initialValues={{
+                            ...data,
+                            applicant: {
+                                ...get(data, 'applicant', {}),
+                                person: {
+                                    ...get(data, 'applicant.person', {}),
+                                    birthDate: dayjs(get(data, 'applicant.person.birthDate')),
+                                },
+                            },
+                            responsibleForDamage: {
+                                ...get(data, 'responsibleForDamage'),
+                                person: {
+                                    ...get(data, 'responsibleForDamage.person'),
+                                    birthDate: dayjs(get(data, 'responsibleForDamage.person.birthDate')),
+                                },
+                            },
+                            responsibleVehicleInfo: {
+                                ...get(data, 'responsibleVehicleInfo'),
+                                ownerPerson: {
+                                    ...get(data, 'responsibleVehicleInfo.ownerPerson'),
+                                    birthDate: dayjs(get(data, 'responsibleVehicleInfo.ownerPerson.birthDate')),
+                                },
+                            },
+
+                            eventCircumstances: {
+                                ...get(data, 'eventCircumstances', {}),
+                                eventDateTime: dayjs(get(data, 'eventCircumstances.eventDateTime')),
+                                courtDecision: {
+                                    ...get(data, 'eventCircumstances.courtDecision', {}),
+                                    courtDecisionDate: dayjs(get(data, 'eventCircumstances.courtDecision.courtDecisionDate'))
+                                }
+                            }
+                        }}
                     >
+                        <ClaimStatus data={data} claimNumber={claimNumber} refresh={refresh}/>
+                        <BankDetails/>
+                        <ClaimDamage/>
                         <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>

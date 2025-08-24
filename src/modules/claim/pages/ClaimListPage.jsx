@@ -3,13 +3,13 @@ import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button, Space, Tag} from "antd";
-import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined} from "@ant-design/icons";
+import {Button, Popconfirm, Space, Tag, Tooltip} from "antd";
+import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {CLAIM_STATUS_LIST, PERSON_TYPE} from "../../../constants";
-import {get, keys, values} from "lodash";
-import {useGetAllQuery} from "../../../hooks/api";
+import {get, values} from "lodash";
+import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 
@@ -18,6 +18,7 @@ const ClaimListPage = () => {
     const {t} = useTranslation();
     const actionRef = useRef();
     const navigate = useNavigate();
+    const {mutate, isPending} = useDeleteQuery({})
     let {data: branches} = useGetAllQuery({
         key: KEYS.branches, url: `${URLS.branches}/list`, params: {
             params: {
@@ -34,7 +35,17 @@ const ClaimListPage = () => {
             }
         }
     })
-    console.log('statusList', statusList)
+
+    const remove = (_id) => {
+        mutate({
+            url: `${URLS.claimDelete}?claimNumber=${_id}`,
+        }, {
+            onSuccess: () => {
+                actionRef.current?.reload()
+            }
+        })
+    }
+
     return (
         <>
             <PageHeader
@@ -82,14 +93,25 @@ const ClaimListPage = () => {
                     {
                         title: t('Статус'),
                         dataIndex: 'status',
-                        valueType: 'select',
                         width: 100,
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
                             options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'blue')}>{text}</Tag>
+                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'draft')}>{text}</Tag>,
+                        hideInSearch: true,
+                    },
+                    {
+                        title: t('Статус'),
+                        dataIndex: 'status',
+                        valueType: 'select',
+                        fieldProps: {
+                            showSearch: true,
+                            placeholder: t('Поиск...'),
+                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
+                        },
+                        hideInTable: true,
                     },
                     {
                         title: t('Юр/физ'),
@@ -139,7 +161,7 @@ const ClaimListPage = () => {
                     {
                         title: t('Классы страхования'),
                         dataIndex: 'agreement',
-                        render: (text) => get(text,'product.risk',[])?.map(item=>get(item,'insuranceClass.name'))?.join(', '),
+                        render: (text) => get(text, 'product.risk', [])?.map(item => get(item, 'insuranceClass.name'))?.join(', '),
                         hideInSearch: true,
                         align: 'center',
                         width: 175,
@@ -285,15 +307,27 @@ const ClaimListPage = () => {
                         dataIndex: 'id',
                         fixed: 'right',
                         align: 'right',
-                        width: 100,
+                        width: 125,
                         hideInSearch: true,
                         render: (_id, record) => <Space>
                             <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
                                     className={'cursor-pointer'}
-                                    icon={<EyeOutlined/>} />
+                                    icon={<EyeOutlined/>}/>
                             <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
                                     className={'cursor-pointer'}
-                                    icon={<EditOutlined/>} />
+                                    icon={<EditOutlined/>}/>
+                            <Popconfirm
+                                title={t('Вы хотите удалить?')}
+                                onConfirm={() => remove(get(record, 'claimNumber'))}
+                                okButtonProps={{loading: isPending}}
+                            >
+                                <Tooltip title={t('Удалить')}>
+                                    <Button danger
+                                            className={'cursor-pointer'}
+                                            icon={<DeleteOutlined/>}/>
+                                </Tooltip>
+                            </Popconfirm>
+
                         </Space>
                     }
 

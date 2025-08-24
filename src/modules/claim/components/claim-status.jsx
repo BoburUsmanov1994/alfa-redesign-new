@@ -50,7 +50,20 @@ const ClaimStatus = ({data,claimNumber,refresh}) => {
                                     name={'save'}>
                                 {t('Зарегистрировать')}
                             </Button>
-                            <Button danger type={'dashed'}>
+                            <Button loading={isPending} onClick={()=>{
+                                mutate({
+                                    url: URLS.claimAction,
+                                    attributes: {
+                                        claimNumber: parseInt(claimNumber),
+                                        action: 'deny'
+                                    },
+                                    method: 'put',
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }} danger type={'dashed'}>
                                 {t('Отклонить')}
                             </Button>
                         </Space>
@@ -71,17 +84,17 @@ const ClaimStatus = ({data,claimNumber,refresh}) => {
                         </Form.Item>
                     </Col>
                     <Col span={6}>
-                        <Form.Item label={t('Должность сотрудника')}>
+                        <Form.Item name={'employeeRole'} label={t('Должность сотрудника')}>
                             <Input/>
                         </Form.Item>
                     </Col>
                     <Col span={6}>
-                        <Form.Item label={t('Ф.И.О. сотрудника')}>
+                        <Form.Item name={'employeeFIO'} label={t('Ф.И.О. сотрудника')}>
                             <Input/>
                         </Form.Item>
                     </Col>
                     <Col span={6}>
-                        <Form.Item label={t('Контактный номер')}>
+                        <Form.Item name={'employeeContactNumber'} label={t('Контактный номер')}>
                             <Input/>
                         </Form.Item>
                     </Col>
