@@ -220,4 +220,5 @@ export const KEYS = {
     claimSekAction:'claimSekAction',
     claimAction:'claimAction',
     decisions:'decisions',
+    claimPayment:'claimPayment',
 }

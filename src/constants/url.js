@@ -249,4 +249,7 @@ export const URLS = {
     claimSendDecision1c: 'api/claim/send-decision-1c',
     claimDecision: 'api/claim/decision',
     claimSendPayment: 'api/claim/send-payment',
+    claimSend: 'api/claim/send',
+    claimDocsDeny: 'api/claim/docs-deny',
+    claimPayment: 'api/claim/payment',
 }

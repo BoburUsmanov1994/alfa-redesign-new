@@ -14,6 +14,10 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
     const {decision} = Form.useWatch([], form) || {}
     const {mutate, isPending} = usePostQuery({})
     let {data: decisions} = useGetAllQuery({key: KEYS.decisions, url: `${URLS.decisions}`})
+    let {data: payments} = useGetAllQuery({
+        key: KEYS.claimPayment,
+        url: `${URLS.claimPayment}?claimNumber=${claimNumber}`
+    })
     const onFinish = (_attrs) => {
         mutate({
             url: URLS.claimDecision,

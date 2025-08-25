@@ -128,12 +128,12 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                             },
                                             {
                                                 title: t('Дата предоставления'),
-                                                dataIndex: 'requestDate',
+                                                dataIndex: 'provideDate',
                                                 render: (text) => dayjs(text).format('YYYY-MM-DD'),
                                             },
                                             {
                                                 title: t('Файл'),
-                                                dataIndex: 'template',
+                                                dataIndex: 'file',
                                                 align: 'center',
                                                 render: (text, record) => <Button icon={<EyeOutlined/>} type={'link'}
                                                                                   href={get(text, 'url')}/>
@@ -159,6 +159,23 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                             {
                                                 title: t('Действия'),
                                                 render: (text, _record) => <Space>
+                                                    <Button
+                                                        onClick={() => {
+                                                            mutate({
+                                                                url: URLS.claimDocsDeny,
+                                                                attributes: {
+                                                                    claimNumber: parseInt(claimNumber),
+                                                                    docId: get(_record, 'id')
+                                                                },
+                                                            }, {
+                                                                onSuccess: () => {
+                                                                    refresh()
+                                                                }
+                                                            })
+                                                        }}
+                                                        danger type={'dashed'}>
+                                                        {t('Отозвать')}
+                                                    </Button>
                                                     <Button onClick={() => {
                                                         setRecord(_record)
                                                     }} type={'dashed'}>

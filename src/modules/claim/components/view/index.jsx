@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -10,7 +10,7 @@ import {
 import {useNavigate} from "react-router-dom";
 import {useGetAllQuery, usePostQuery} from "../../../../hooks/api";
 import {URLS} from "../../../../constants/url";
-import {get, toUpper} from "lodash";
+import {get, includes, isEmpty, toUpper} from "lodash";
 import dayjs from "dayjs";
 import {KEYS} from "../../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../../utils";
@@ -52,7 +52,8 @@ const ClaimView = ({data, claimNumber, refresh}) => {
         hasVehicleDamage,
         hasPropertyDamage,
         responsibleVehicleInfo,
-        responsibleForDamage
+        responsibleForDamage,
+        bankDetails
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
     const submitType = useRef(null);
@@ -203,6 +204,28 @@ const ClaimView = ({data, claimNumber, refresh}) => {
         }
     };
 
+    useEffect(() => {
+        if (!isEmpty(get(data, 'photoVideoMaterials', []))) {
+            setFiles(get(data, 'photoVideoMaterials', []))
+        }
+        if (!isEmpty(get(data, 'lifeDamage', []))) {
+            setLifeDamage(get(data, 'lifeDamage', []))
+            form.setFieldValue('hasLifeDamage', true)
+        }
+        if (!isEmpty(get(data, 'healthDamage', []))) {
+            setHealthDamage(get(data, 'healthDamage', []))
+            form.setFieldValue('hasHealthDamage', true)
+        }
+        if (!isEmpty(get(data, 'vehicleDamage', []))) {
+            setVehicleDamage(get(data, 'vehicleDamage', []))
+            form.setFieldValue('hasVehicleDamage', true)
+        }
+        if (!isEmpty(get(data, 'otherPropertyDamage', []))) {
+            setOtherPropertyDamage(get(data, 'otherPropertyDamage', []))
+            form.setFieldValue('hasPropertyDamage', true)
+        }
+    }, [data])
+
     if (isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
     }
@@ -252,7 +275,9 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                         }}
                     >
                         <ClaimStatus data={data} claimNumber={claimNumber} refresh={refresh}/>
-                        <BankDetails/>
+                        {includes(['waiting_details', 'waiting_payment', 'paid'], get(data, 'status')) &&
+                            <BankDetails bankDetails={bankDetails} data={data} claimNumber={claimNumber}
+                                         refresh={refresh}/>}
                         <ClaimDamage/>
                         <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
