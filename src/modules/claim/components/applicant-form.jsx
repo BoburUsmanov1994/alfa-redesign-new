@@ -40,7 +40,7 @@ const ApplicantForm = ({
                         <Typography.Title level={5}>{t('Данные о Заявителе:')}</Typography.Title>
                     </Divider>
                 </Col>
-                <Col xs={4}>
+                <Col xs={6}>
                     <Form.Item initialValue={'person'} name={'client'} label={t('Физ / юр. лицо:')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Radio.Group options={[{value: 'person', label: t('физ.лицо')}, {
@@ -49,9 +49,9 @@ const ApplicantForm = ({
                         }]}/>
                     </Form.Item>
                 </Col>
-                <Col xs={20}>
+                <Col xs={18}>
                     {isEqual(client, 'person') && <Row gutter={16}>
-                        <Col xs={4}>
+                        <Col xs={6}>
                             <Form.Item
                                 label={t("Серия паспорта")}
                                 name={['applicant', 'person', 'passportData', 'seria']}
@@ -60,7 +60,7 @@ const ApplicantForm = ({
                                 <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
                             </Form.Item>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={6}>
                             <Form.Item
                                 label={t("Номер паспорта")}
                                 name={['applicant', 'person', 'passportData', 'number']}

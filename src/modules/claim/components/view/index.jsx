@@ -10,7 +10,7 @@ import {
 import {useNavigate} from "react-router-dom";
 import {useGetAllQuery, usePostQuery} from "../../../../hooks/api";
 import {URLS} from "../../../../constants/url";
-import {get, includes, isEmpty, toUpper} from "lodash";
+import {get, includes, isEmpty, isEqual, toUpper} from "lodash";
 import dayjs from "dayjs";
 import {KEYS} from "../../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../../utils";
@@ -27,6 +27,7 @@ import PropertyDamage from "../property-damage";
 import ClaimStatus from "../claim-status";
 import BankDetails from "../bank-details";
 import ClaimDamage from "../claim-damage";
+import {find} from "lodash/collection";
 
 
 const ClaimView = ({data, claimNumber, refresh}) => {
@@ -53,7 +54,9 @@ const ClaimView = ({data, claimNumber, refresh}) => {
         hasPropertyDamage,
         responsibleVehicleInfo,
         responsibleForDamage,
-        bankDetails
+        bankDetails,
+        hasResponsibleDamage,
+        hasResponsibleVehicle
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
     const submitType = useRef(null);
@@ -112,6 +115,8 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                 _form.setFieldValue([...type, 'regionId'], get(result, 'regionId'))
                 _form.setFieldValue([...type, 'districtId'], get(result, 'districtId'))
                 _form.setFieldValue([...type, 'address'], get(result, 'address'))
+                _form.setFieldValue([...type, 'passportData', 'givenPlace'], get(find(get(result, 'documents',[]),_item=>isEqual(get(_item,'document'),`${toUpper(_form.getFieldValue([...type, 'passportData', 'seria']))}${_form.getFieldValue([...type, 'passportData', 'number'])}`)),'docgiveplace'))
+                _form.setFieldValue([...type, 'passportData', 'issueDate'], dayjs(get(find(get(result, 'documents',[]),_item=>isEqual(get(_item,'document'),`${toUpper(_form.getFieldValue([...type, 'passportData', 'seria']))}${_form.getFieldValue([...type, 'passportData', 'number'])}`)),'datebegin')))
             }
         })
     }
@@ -285,11 +290,11 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo}
+                        <ResponsibleForm hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage} getPersonInfo={getPersonInfo}
                                          getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
+                        <VehicleForm hasResponsibleVehicle={hasResponsibleVehicle} applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
                                      getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                      owner={owner} countryList={countryList} regions={regions}

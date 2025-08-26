@@ -87,7 +87,7 @@ const PoliceForm = ({
                                     label={t('Страховой продукт')}>{get(data, 'data.product.name')}</Descriptions.Item>
                                 <Descriptions.Item
                                     label={t('Филиал')}>{get(data, 'data.branch.branchName')}</Descriptions.Item>
-                                <Descriptions.Item label={t('Классы страхования')}>-</Descriptions.Item>
+                                <Descriptions.Item label={t('Классы страхования')}>{get(data,'data.product.risk[0].insuranceClass.name')}</Descriptions.Item>
                                 <Descriptions.Item
                                     label={t('Дата выдачи полиса')}>{dayjs(get(data, 'data.policy.issueDate')).format("DD-MM-YYYY")}</Descriptions.Item>
                                 <Descriptions.Item
@@ -150,9 +150,9 @@ const PoliceForm = ({
 
                             </Descriptions>}
                             {get(data,'data') && <Descriptions className={'mb-4'} title={''} bordered>
-                                <Descriptions.Item label={t('Страховая премия по полису')}>-</Descriptions.Item>
-                                <Descriptions.Item label={t('Оплаченная страховая премия')}>-</Descriptions.Item>
-                                <Descriptions.Item label={t('Дата оплаты премии')}>-</Descriptions.Item>
+                                <Descriptions.Item label={t('Страховая премия по полису')}>{numeral(get(data,'data.policy.insurancePremium')).format('0,0.00')}</Descriptions.Item>
+                                <Descriptions.Item label={t('Оплаченная страховая премия')}>{numeral(get(data,'data.policy.insurancePremiumPaid')).format('0,0.00')}</Descriptions.Item>
+                                <Descriptions.Item label={t('Дата оплаты премии')}>{dayjs(get(data,'data.policy.issueDate')).format("YYYY-MM-DD")}</Descriptions.Item>
                             </Descriptions>}
 
                             {!isEmpty(get(data, 'data.franchise')) && <Descriptions title={''} bordered>
@@ -162,11 +162,12 @@ const PoliceForm = ({
                                             {
                                                 title: 'Класс',
                                                 dataIndex: 'risk',
+                                                render: (text) => get(text,'insuranceClass.name'),
                                             },
                                             {
                                                 title: 'Тип',
-                                                dataIndex: 'franchiseType',
-                                                render: (text) => get(text,'name'),
+                                                dataIndex: 'risk',
+                                                render: (text) => get(text,'riskType.name'),
                                             },
                                             {
                                                 title: 'Размер',
