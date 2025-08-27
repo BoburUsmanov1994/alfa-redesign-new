@@ -204,7 +204,7 @@ const ClaimEditPage = () => {
             setOtherPropertyDamage(get(data, 'data.otherPropertyDamage', []))
         }
     }, [data])
-   
+
 
     if (isLoading || isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
@@ -227,6 +227,10 @@ const ClaimEditPage = () => {
                                 person: {
                                     ...get(data, 'data.applicant.person', {}),
                                     birthDate: dayjs(get(data, 'data.applicant.person.birthDate')),
+                                    passportData: {
+                                        ...get(data, 'data.applicant.person.passportData'),
+                                        issueDate: dayjs(get(data, 'data.applicant.person.passportData.issueDate')),
+                                    }
                                 },
                             },
                             responsibleForDamage: {
