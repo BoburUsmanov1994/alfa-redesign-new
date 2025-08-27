@@ -252,4 +252,5 @@ export const URLS = {
     claimSend: 'api/claim/send',
     claimDocsDeny: 'api/claim/docs-deny',
     claimPayment: 'api/claim/payment',
+    claimDecisionPayment: 'api/claim/decision-payment',
 }
