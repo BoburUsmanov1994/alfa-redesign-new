@@ -112,7 +112,7 @@ const Index = ({
                                     name={['person', 'passportData', 'seria']}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
+                                    <Input  className={'uppercase'} />
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -121,7 +121,7 @@ const Index = ({
                                     name={['person', 'passportData', 'number']}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <MaskedInput mask={'9999999'} placeholder={'_______'}/>
+                                    <Input/>
                                 </Form.Item>
                             </Col>
                             <Col xs={8}>
@@ -130,7 +130,7 @@ const Index = ({
                                     name={['person', 'passportData', 'pinfl']}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <MaskedInput mask={'99999999999999'} placeholder={'______________'}/>
+                                    <Input />
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -142,10 +142,10 @@ const Index = ({
                                     </Button>
                                 </Form.Item>
                             </Col>
-                            <Col>
+                            <Col xs={6}>
                                 <Form.Item name={['person', 'birthDate']} label={t('Дата рождения')}
                                            rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <DatePicker/>
+                                    <DatePicker className={'w-full'} format="DD.MM.YYYY" />
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -284,7 +284,7 @@ const Index = ({
                                     name={['medicalConclusion', 'documentDate']}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <DatePicker className={'w-full'}/>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col span={6}>

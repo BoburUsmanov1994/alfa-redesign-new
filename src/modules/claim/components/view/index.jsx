@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -8,7 +8,7 @@ import {
     Spin, Switch,
 } from "antd";
 import {useNavigate} from "react-router-dom";
-import {useGetAllQuery, usePostQuery} from "../../../../hooks/api";
+import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../../hooks/api";
 import {URLS} from "../../../../constants/url";
 import {get, includes, isEmpty, isEqual, toUpper} from "lodash";
 import dayjs from "dayjs";
@@ -39,6 +39,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
     const [vehicleDamage, setVehicleDamage] = useState([]);
     const [otherPropertyDamage, setOtherPropertyDamage] = useState([]);
     const {mutate, isPending} = usePostQuery({})
+    const {mutate: editRequest, isPending: isPendingEdit} = usePutQuery({})
     const {
         eventCircumstances,
         client,
@@ -56,11 +57,10 @@ const ClaimView = ({data, claimNumber, refresh}) => {
         responsibleForDamage,
         bankDetails,
         hasResponsibleDamage,
-        hasResponsibleVehicle
+        hasResponsibleVehicle,
+        isApplicationBehalfToApplicant
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
-    const submitType = useRef(null);
-
     let {data: residentTypes, isLoading: isLoadingResident} = useGetAllQuery({
         key: KEYS.residentType,
         url: URLS.residentType,
@@ -172,46 +172,28 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-        if (submitType.current) {
-            mutate({
-                url: URLS.claimCreate,
-                attributes: {
-                    ...rest,
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
-        } else {
-            mutate({
-                url: URLS.claimDraft,
-                attributes: {
-                    ...rest,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
-        }
+        editRequest({
+            url: URLS.claimEdit,
+            attributes: {
+                ...rest,
+                claimNumber: parseInt(claimNumber),
+                photoVideoMaterials:files,
+                lifeDamage,
+                healthDamage,
+                vehicleDamage,
+                otherPropertyDamage
+            }
+        }, {
+            onSuccess: () => {
+                form.resetFields();
+                navigate('/claims')
+            }
+        })
     };
 
     useEffect(() => {
         if (!isEmpty(get(data, 'photoVideoMaterials', []))) {
-            setFiles(get(data, 'photoVideoMaterials', []))
+            setFiles([get(data, 'photoVideoMaterials', {})])
         }
         if (!isEmpty(get(data, 'lifeDamage', []))) {
             setLifeDamage(get(data, 'lifeDamage', []))
@@ -263,15 +245,28 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                                 person: {
                                     ...get(data, 'responsibleForDamage.person'),
                                     birthDate: dayjs(get(data, 'responsibleForDamage.person.birthDate')),
+                                    passportData: {
+                                        ...get(data, 'responsibleForDamage.person.passportData'),
+                                        issueDate: dayjs(get(data, 'responsibleForDamage.person.passportData.issueDate'))
+                                    }
                                 },
+                                supervisoryAuthorityConclusion: {
+                                    ...get(data, 'responsibleForDamage.supervisoryAuthorityConclusion'),
+                                    date: dayjs(get(data, 'responsibleForDamage.supervisoryAuthorityConclusion.date'))
+                                }
                             },
                             responsibleVehicleInfo: {
                                 ...get(data, 'responsibleVehicleInfo'),
                                 ownerPerson: {
                                     ...get(data, 'responsibleVehicleInfo.ownerPerson'),
                                     birthDate: dayjs(get(data, 'responsibleVehicleInfo.ownerPerson.birthDate')),
+                                    passportData: {
+                                        ...get(data, 'responsibleVehicleInfo.ownerPerson.passportData'),
+                                        issueDate: dayjs(get(data, 'responsibleVehicleInfo.ownerPerson.passportData.issueDate'))
+                                    }
                                 },
                             },
+
 
                             eventCircumstances: {
                                 ...get(data, 'eventCircumstances', {}),
@@ -294,12 +289,15 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage}
+                        <ResponsibleForm data={data} hasResponsibleDamage={hasResponsibleDamage}
+                                         applicant={responsibleForDamage}
                                          getPersonInfo={getPersonInfo}
                                          getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm hasResponsibleVehicle={hasResponsibleVehicle} applicant={responsibleVehicleInfo}
+                        <VehicleForm insurantIsOwnerDisabled form={form} data={data}
+                                     hasResponsibleVehicle={hasResponsibleVehicle}
+                                     applicant={responsibleVehicleInfo}
                                      vehicleTypes={vehicleTypes}
                                      getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
@@ -379,6 +377,8 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             {
                                 hasVehicleDamage &&
                                 <VehicleDamage
+                                    insurantIsOwnerDisabled
+                                    _form={form}
                                     getPersonInfo={getPersonInfo}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -410,6 +410,8 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                         <Col span={24}>
                             {
                                 hasPropertyDamage && <PropertyDamage
+                                    insurantIsOwnerDisabled
+                                    _form={form}
                                     ownershipForms={ownershipForms}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -432,7 +434,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             </Form.Item>
                         </Col>
 
-                        <FileForm files={files} setFiles={setFiles}/>
+                        <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
                         <Row gutter={16}>
                             <Col span={24}>
                                 <Divider orientation={'left'}>{t('Информация для Заключения ДУСП')}</Divider>
@@ -460,12 +462,12 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             </Col>
                         </Row>
                         <Flex className={'mt-6'}>
-                            <Button onClick={() => (submitType.current = true)} className={'mr-3'} type="primary"
+                            <Button className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
                                 {t('Сохранить дело')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
-                                {t('Отменаs')}
+                                {t('Отмена')}
                             </Button>
                         </Flex>
                     </Form>

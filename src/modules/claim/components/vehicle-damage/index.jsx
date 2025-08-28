@@ -16,7 +16,7 @@ import {
     Table
 } from "antd";
 import {DeleteOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
-import {get, isEqual, toUpper} from "lodash";
+import {get, isEqual} from "lodash";
 import {filter} from "lodash/collection";
 import MaskedInput from "../../../../components/masked-input";
 import {useTranslation} from "react-i18next";
@@ -39,7 +39,9 @@ const Index = ({
                    residentTypes = [],
                    ownershipForms = [],
                    setVehicleDamage,
-                   title = 'Добавление информации о вреде автомобилю:'
+                   title = 'Добавление информации о вреде автомобилю:',
+                   _form,
+                   insurantIsOwnerDisabled = false
                }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
@@ -256,7 +258,20 @@ const Index = ({
                                 <Form.Item valuePropName="checked"
                                            initialValue={false} name={'insurantIsOwner'} label={t("Владеет Заявитель")}
                                 >
-                                    <Switch/>
+                                    <Switch
+                                        disabled={insurantIsOwnerDisabled}
+                                        onChange={(val) => {
+                                            if (val) {
+                                                if (isEqual(owner, 'person')) {
+                                                    form.setFieldValue(['vehicle', 'ownerPerson'], _form.getFieldValue(['applicant', 'person']));
+                                                } else {
+                                                    form.setFieldValue(['vehicle', 'ownerOrganization'], _form.getFieldValue(['applicant', 'organization']));
+                                                }
+                                            } else {
+                                                form.setFieldValue(['vehicle', 'ownerPerson'], {});
+                                                form.setFieldValue(['vehicle', 'ownerOrganization'], {});
+                                            }
+                                        }}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={24}>
@@ -267,7 +282,7 @@ const Index = ({
                                             name={['vehicle', 'ownerPerson', 'passportData', 'seria']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
+                                            <Input className={'uppercase'}/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={6}>
@@ -276,7 +291,7 @@ const Index = ({
                                             name={['vehicle', 'ownerPerson', 'passportData', 'number']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'9999999'} placeholder={'_______'}/>
+                                            <Input/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={8}>
@@ -285,7 +300,7 @@ const Index = ({
                                             name={['vehicle', 'ownerPerson', 'passportData', 'pinfl']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'99999999999999'} placeholder={'______________'}/>
+                                            <Input/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={4}>
@@ -325,7 +340,7 @@ const Index = ({
                             <Col xs={6}>
                                 <Form.Item name={['vehicle', 'ownerPerson', 'birthDate']} label={t('Дата рождения')}
                                            rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <DatePicker className={'w-full'}/>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -555,7 +570,7 @@ const Index = ({
                                     label={t("Дата отчета об оценке")}
                                     name={'appraiserReportDate'}
                                 >
-                                    <DatePicker className={'w-full'}/>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>

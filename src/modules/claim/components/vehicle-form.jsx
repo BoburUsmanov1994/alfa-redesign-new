@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, Col, DatePicker, Divider, Form, Input, InputNumber, Radio, Row, Select, Switch, Typography} from "antd";
 import {get, isEqual} from "lodash";
 import MaskedInput from "../../../components/masked-input";
@@ -8,6 +8,7 @@ import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
+import {isNil} from "lodash/lang";
 
 const VehicleForm = ({
                          owner,
@@ -22,6 +23,9 @@ const VehicleForm = ({
                          vehicleTypes = [],
                          getVehicleInfo,
                          hasResponsibleVehicle = false,
+                         form = null,
+                         data,
+                         insurantIsOwnerDisabled=false
                      }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
@@ -35,7 +39,6 @@ const VehicleForm = ({
         enabled: !!(get(applicant, 'ownerPerson.regionId') || get(applicant, 'ownerOrganization.regionId') || get(applicant, 'regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
-
     return (
         <>
             <Row gutter={16}>
@@ -46,7 +49,7 @@ const VehicleForm = ({
                 </Col>
                 <Col span={24}>
                     <Form.Item
-                        initialValue={false}
+                        initialValue={!isNil(get(data, 'responsibleVehicleInfo', null))}
                         layout={'horizontal'}
                         label={t("Виновное лицо")}
                         name={'hasResponsibleVehicle'}
@@ -188,7 +191,21 @@ const VehicleForm = ({
                                        initialValue={false} name={['responsibleVehicleInfo', 'insurantIsOwner']}
                                        label={t("Владеет Виновное лицо")}
                             >
-                                <Switch/>
+                                <Switch
+                                    disabled={insurantIsOwnerDisabled}
+                                    onChange={(val) => {
+                                        if (val) {
+                                            if (isEqual(owner, 'person')) {
+                                                form.setFieldValue(['responsibleVehicleInfo', 'ownerPerson'], form.getFieldValue(['responsibleForDamage', 'person']));
+                                            } else {
+                                                form.setFieldValue(['responsibleVehicleInfo', 'ownerOrganization'], form.getFieldValue(['responsibleForDamage', 'organization']));
+                                            }
+                                        } else {
+                                            form.setFieldValue(['responsibleVehicleInfo', 'ownerPerson'], {});
+                                            form.setFieldValue(['responsibleVehicleInfo', 'ownerOrganization'], {});
+                                        }
+                                    }}
+                                />
                             </Form.Item>
                         </Col>
                         <Col xs={24}>
@@ -199,7 +216,7 @@ const VehicleForm = ({
                                         name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'seria']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
+                                        <Input className={'uppercase'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
@@ -208,7 +225,7 @@ const VehicleForm = ({
                                         name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'number']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'9999999'} placeholder={'_______'}/>
+                                        <Input/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={8}>
@@ -217,7 +234,7 @@ const VehicleForm = ({
                                         name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'pinfl']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'99999999999999'} placeholder={'______________'}/>
+                                        <Input/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={4}>
@@ -265,14 +282,14 @@ const VehicleForm = ({
                             <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'issueDate']}
                                        label={t('Дата выдачи паспорта')}
                             >
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
                             <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']}
                                        label={t('Дата рождения')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>

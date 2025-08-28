@@ -37,7 +37,9 @@ const Index = ({
                    getOrgInfo = () => {
                    },
                    setOtherPropertyDamage,
-                   title = 'Добавление информации о вреде имуществу:'
+                   title = 'Добавление информации о вреде имуществу:',
+                   _form,
+                   insurantIsOwnerDisabled=false
                }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
@@ -59,40 +61,40 @@ const Index = ({
 
     return (
         <>
-           <Card className={'mb-4'} title={t(title)} extra={[<Form.Item label={' '}
-           >
-               <Button icon={<PlusOutlined/>} onClick={() => setOpen(true)}>
-                   {t('Добавить')}
-               </Button>
-           </Form.Item>]}>
-               <Row gutter={16} align="middle">
-                   <Col span={24}>
-                       <Table
-                           dataSource={otherPropertyDamage}
-                           columns={[
-                               {
-                                   title: t('Описание имущества'),
-                                   dataIndex: 'property',
-                               },
-                               {
-                                   title: t(' Заявленный размер вреда'),
-                                   dataIndex: 'claimedDamage',
-                               },
-                               {
-                                   title: t('Действия'),
-                                   dataIndex: '_id',
-                                   render: (text, record, index) => <Space>
-                                       <Button
-                                           onClick={() => setOtherPropertyDamage(prev => filter(prev, (_, _index) => !isEqual(_index, index)))}
-                                           danger
-                                           shape="circle" icon={<DeleteOutlined/>}/>
-                                   </Space>
-                               }
-                           ]}
-                       />
-                   </Col>
-               </Row>
-           </Card>
+            <Card className={'mb-4'} title={t(title)} extra={[<Form.Item label={' '}
+            >
+                <Button icon={<PlusOutlined/>} onClick={() => setOpen(true)}>
+                    {t('Добавить')}
+                </Button>
+            </Form.Item>]}>
+                <Row gutter={16} align="middle">
+                    <Col span={24}>
+                        <Table
+                            dataSource={otherPropertyDamage}
+                            columns={[
+                                {
+                                    title: t('Описание имущества'),
+                                    dataIndex: 'property',
+                                },
+                                {
+                                    title: t(' Заявленный размер вреда'),
+                                    dataIndex: 'claimedDamage',
+                                },
+                                {
+                                    title: t('Действия'),
+                                    dataIndex: '_id',
+                                    render: (text, record, index) => <Space>
+                                        <Button
+                                            onClick={() => setOtherPropertyDamage(prev => filter(prev, (_, _index) => !isEqual(_index, index)))}
+                                            danger
+                                            shape="circle" icon={<DeleteOutlined/>}/>
+                                    </Space>
+                                }
+                            ]}
+                        />
+                    </Col>
+                </Row>
+            </Card>
             <Drawer width={1200} title={t('Добавление информации о вреде имуществу')} open={open}
                     onClose={() => setOpen(false)}>
                 <Spin spinning={isPending}>
@@ -130,7 +132,21 @@ const Index = ({
                                 <Form.Item valuePropName="checked"
                                            initialValue={false} name={'insurantIsOwner'} label={t("Владеет Заявитель")}
                                 >
-                                    <Switch/>
+                                    <Switch
+                                        disabled={insurantIsOwnerDisabled}
+                                        onChange={(val)=>{
+                                            if(val){
+                                                if(isEqual(owner,'person')) {
+                                                    form.setFieldValue(['ownerPerson'],_form.getFieldValue(['applicant', 'person']));
+                                                }else {
+                                                    form.setFieldValue(['ownerOrganization'],_form.getFieldValue(['applicant', 'organization']));
+                                                }
+                                            }else{
+                                                form.setFieldValue(['ownerPerson'],{});
+                                                form.setFieldValue(['ownerOrganization'],{});
+                                            }
+                                        }}
+                                    />
                                 </Form.Item>
                             </Col>
                             <Col xs={24}>
@@ -141,7 +157,7 @@ const Index = ({
                                             name={['ownerPerson', 'passportData', 'seria']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
+                                            <Input className={'uppercase'}/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={6}>
@@ -150,7 +166,7 @@ const Index = ({
                                             name={['ownerPerson', 'passportData', 'number']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'9999999'} placeholder={'_______'}/>
+                                            <Input/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={8}>
@@ -159,7 +175,7 @@ const Index = ({
                                             name={['ownerPerson', 'passportData', 'pinfl']}
                                             rules={[{required: true, message: t('Обязательное поле')}]}
                                         >
-                                            <MaskedInput mask={'99999999999999'} placeholder={'______________'}/>
+                                            <Input/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={4}>
@@ -199,7 +215,7 @@ const Index = ({
                             <Col xs={6}>
                                 <Form.Item name={['ownerPerson', 'birthDate']} label={t('Дата рождения')}
                                            rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <DatePicker className={'w-full'}/>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -429,7 +445,7 @@ const Index = ({
                                     label={t("Дата отчета об оценке")}
                                     name={'appraiserReportDate'}
                                 >
-                                    <DatePicker className={'w-full'}/>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>

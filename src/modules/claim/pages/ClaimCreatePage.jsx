@@ -10,7 +10,7 @@ import {
 import {useNavigate} from "react-router-dom";
 import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
-import {get, toUpper} from "lodash";
+import {get, isEqual, toUpper} from "lodash";
 import dayjs from "dayjs";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
@@ -24,6 +24,7 @@ import LifeDamage from "../components/life-damage";
 import HealthDamage from "../components/health-damage";
 import VehicleDamage from "../components/vehicle-damage";
 import PropertyDamage from "../components/property-damage";
+import {find} from "lodash/collection";
 
 
 const ClaimCreatePage = () => {
@@ -49,10 +50,12 @@ const ClaimCreatePage = () => {
         hasVehicleDamage,
         hasPropertyDamage,
         responsibleVehicleInfo,
-        responsibleForDamage
+        responsibleForDamage,
+        hasResponsibleDamage,
+        hasResponsibleVehicle,
+        isApplicationBehalfToApplicant
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
-    const submitType = useRef(null);
 
     let {data: residentTypes, isLoading: isLoadingResident} = useGetAllQuery({
         key: KEYS.residentType,
@@ -108,6 +111,8 @@ const ClaimCreatePage = () => {
                 _form.setFieldValue([...type, 'regionId'], get(result, 'regionId'))
                 _form.setFieldValue([...type, 'districtId'], get(result, 'districtId'))
                 _form.setFieldValue([...type, 'address'], get(result, 'address'))
+                _form.setFieldValue([...type, 'passportData', 'givenPlace'], get(find(get(result, 'documents', []), _item => isEqual(get(_item, 'document'), `${toUpper(_form.getFieldValue([...type, 'passportData', 'seria']))}${_form.getFieldValue([...type, 'passportData', 'number'])}`)), 'docgiveplace'))
+                _form.setFieldValue([...type, 'passportData', 'issueDate'], dayjs(get(find(get(result, 'documents', []), _item => isEqual(get(_item, 'document'), `${toUpper(_form.getFieldValue([...type, 'passportData', 'seria']))}${_form.getFieldValue([...type, 'passportData', 'number'])}`)), 'datebegin')))
             }
         })
     }
@@ -161,43 +166,26 @@ const ClaimCreatePage = () => {
                           hasHealthDamage,
                           hasVehicleDamage,
                           hasPropertyDamage,
+                          hasResponsibleDamage,
                           ...rest
                       }) => {
-        if (submitType.current) {
-            mutate({
-                url: URLS.claimCreate,
-                attributes: {
-                    ...rest,
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
-        } else {
-            mutate({
-                url: URLS.claimDraft,
-                attributes: {
-                    ...rest,
-                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
-                    lifeDamage,
-                    healthDamage,
-                    vehicleDamage,
-                    otherPropertyDamage
-                }
-            }, {
-                onSuccess: () => {
-                    form.resetFields();
-                    navigate('/claims')
-                }
-            })
-        }
+
+        mutate({
+            url: URLS.claimDraft,
+            attributes: {
+                ...rest,
+                photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
+                lifeDamage,
+                healthDamage,
+                vehicleDamage,
+                otherPropertyDamage
+            }
+        }, {
+            onSuccess: () => {
+                form.resetFields();
+                navigate('/claims')
+            }
+        })
     };
 
     if (isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
@@ -224,10 +212,13 @@ const ClaimCreatePage = () => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ResponsibleForm hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage}
+                                         getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm  applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes} getVehicleInfo={getVehicleInfo}
+                        <VehicleForm form={form} hasResponsibleVehicle={hasResponsibleVehicle} isPending={isPending}
+                                     applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
+                                     getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                      owner={owner} countryList={countryList} regions={regions}
                                      residentTypes={residentTypes} ownershipForms={ownershipForms}/>
@@ -305,6 +296,7 @@ const ClaimCreatePage = () => {
                             {
                                 hasVehicleDamage &&
                                 <VehicleDamage
+                                    _form={form}
                                     getPersonInfo={getPersonInfo}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -336,6 +328,7 @@ const ClaimCreatePage = () => {
                         <Col span={24}>
                             {
                                 hasPropertyDamage && <PropertyDamage
+                                    _form={form}
                                     ownershipForms={ownershipForms}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -358,16 +351,12 @@ const ClaimCreatePage = () => {
                             </Form.Item>
                         </Col>
 
-                        <FileForm files={files} setFiles={setFiles}/>
+                        <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
 
                         <Flex className={'mt-6'}>
-                            <Button onClick={() => (submitType.current = false)} type="default" htmlType={'submit'}
+                            <Button className={'mr-3'} type="default" htmlType={'submit'}
                                     name={'draft'}>
                                 {t('Сохранить как черновик')}
-                            </Button>
-                            <Button onClick={() => (submitType.current = true)} className={'mx-3'} type="primary"
-                                    htmlType={'submit'} name={'save'}>
-                                {t('Подать заявление')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
                                 {t('Отменить')}

@@ -8,7 +8,7 @@ import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutline
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {CLAIM_STATUS_LIST, PERSON_TYPE} from "../../../constants";
-import {get, values} from "lodash";
+import {get, isEqual, values} from "lodash";
 import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
@@ -310,12 +310,14 @@ const ClaimListPage = () => {
                         width: 125,
                         hideInSearch: true,
                         render: (_id, record) => <Space>
-                            <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
-                                    className={'cursor-pointer'}
-                                    icon={<EyeOutlined/>}/>
-                            <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
-                                    className={'cursor-pointer'}
-                                    icon={<EditOutlined/>}/>
+                            {!isEqual(get(record, 'status'), 'draft') &&
+                                <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
+                                        className={'cursor-pointer'}
+                                        icon={<EyeOutlined/>}/>}
+                            {isEqual(get(record, 'status'), 'draft') &&
+                                <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
+                                        className={'cursor-pointer'}
+                                        icon={<EditOutlined/>}/>}
                             <Popconfirm
                                 title={t('Вы хотите удалить?')}
                                 onConfirm={() => remove(get(record, 'claimNumber'))}

@@ -12,6 +12,7 @@ const {Dragger} = Upload;
 const FileForm = ({
                       files = [],
                       setFiles,
+                      enabled = false
                   }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
@@ -52,6 +53,8 @@ const FileForm = ({
             }
         })
     }
+
+    console.log('files',files)
     return (
         <>
             <Row gutter={16} align="middle">
@@ -62,7 +65,7 @@ const FileForm = ({
                 <Col span={4} className={'text-right'}>
                     <Form.Item label={' '}
                     >
-                        <Button icon={<PlusOutlined/>} onClick={() => setOpen(true)}>
+                        <Button disabled={!enabled} icon={<PlusOutlined/>} onClick={() => setOpen(true)}>
                             {t('Добавить файл')}
                         </Button>
                     </Form.Item>
@@ -74,15 +77,19 @@ const FileForm = ({
                         columns={[
                             {
                                 title: t('ID'),
-                                dataIndex: 'id',
+                                dataIndex: 'file',
                             },
                             {
                                 title: t('URL-адрес файла'),
                                 dataIndex: 'url',
+                                render: (text, ) => <Button type={'link'} href={text}>
+                                    {text}
+                                </Button>
                             },
                             {
                                 title: t('Действия'),
                                 dataIndex: '_id',
+                                align: 'right',
                                 render: (text, record) => <Button onClick={() => removeFile(record)} danger
                                                                   shape="circle" icon={<DeleteOutlined/>}/>
                             }

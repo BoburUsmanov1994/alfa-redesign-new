@@ -55,7 +55,7 @@ const EventForm = ({
                             <Form.Item name={['eventCircumstances', 'eventDateTime']}
                                        label={t('Дата и время события')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <DatePicker className={'w-full'} showTime format="YYYY-MM-DD HH:mm:ss"/>
+                                <DatePicker className={'w-full'} showTime format="DD.MM.YYYY HH:mm:ss"/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
@@ -231,14 +231,14 @@ const EventForm = ({
                                                 <Form.Item name={['claimType', 'details', 'startDate']}
                                                            label={t('Дата начала страхования')}
                                                 >
-                                                    <DatePicker className={'w-full'}/>
+                                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                                 </Form.Item>
                                             </Col>
                                             <Col xs={6}>
                                                 <Form.Item name={['claimType', 'details', 'endDate']}
                                                            label={t('Дата окончания страхования')}
                                                 >
-                                                    <DatePicker className={'w-full'}/>
+                                                    <DatePicker  format={"DD.MM.YYYY"} className={'w-full'}/>
                                                 </Form.Item>
                                             </Col>
                                         </>;
@@ -258,7 +258,7 @@ const EventForm = ({
                                        label={t('Дата решения суда')}
 
                             >
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
 

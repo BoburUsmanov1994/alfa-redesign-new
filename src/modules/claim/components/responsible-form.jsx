@@ -8,6 +8,7 @@ import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
+import {isNil} from "lodash/lang";
 
 const ResponsibleForm = ({
                              client,
@@ -19,7 +20,8 @@ const ResponsibleForm = ({
                              countryList = [],
                              regions = [],
                              ownershipForms = [],
-                             hasResponsibleDamage = false
+                             hasResponsibleDamage = false,
+                             data
                          }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
@@ -33,6 +35,7 @@ const ResponsibleForm = ({
         enabled: !!(get(applicant, 'person.regionId') || get(applicant, 'organization.regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
+    console.log('datadata',data)
     return (
         <>
             <Row gutter={16}>
@@ -43,7 +46,7 @@ const ResponsibleForm = ({
                 </Col>
                 <Col span={24}>
                     <Form.Item
-                        initialValue={false}
+                        initialValue={!isNil(get(data, 'responsibleForDamage', null))}
                         layout={'horizontal'}
                         label={t("Виновное лицо")}
                         name={'hasResponsibleDamage'}
@@ -75,7 +78,7 @@ const ResponsibleForm = ({
                                         name={['responsibleForDamage', 'person', 'passportData', 'seria']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'aa'} className={'uppercase'} placeholder={'__'}/>
+                                        <Input className={'uppercase'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
@@ -84,7 +87,7 @@ const ResponsibleForm = ({
                                         name={['responsibleForDamage', 'person', 'passportData', 'number']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'9999999'} placeholder={'_______'}/>
+                                        <Input/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
@@ -93,7 +96,7 @@ const ResponsibleForm = ({
                                         name={['responsibleForDamage', 'person', 'passportData', 'pinfl']}
                                         rules={[{required: true, message: t('Обязательное поле')}]}
                                     >
-                                        <MaskedInput mask={'99999999999999'} placeholder={'______________'}/>
+                                        <Input/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
@@ -141,13 +144,13 @@ const ResponsibleForm = ({
                             <Form.Item name={['responsibleForDamage', 'person', 'passportData', 'issueDate']}
                                        label={t('Дата выдачи паспорта')}
                             >
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
                             <Form.Item name={['responsibleForDamage', 'person', 'birthDate']} label={t('Дата рождения')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
@@ -375,7 +378,7 @@ const ResponsibleForm = ({
                                 label={t("Дата заключения")}
                                 name={['responsibleForDamage', 'supervisoryAuthorityConclusion', 'date']}
                             >
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>

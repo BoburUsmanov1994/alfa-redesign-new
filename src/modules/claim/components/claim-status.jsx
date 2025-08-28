@@ -1,15 +1,18 @@
 import React from 'react';
-import {Button, Card, Col, Form, Input, Row, Space} from "antd";
+import {Button, Card, Col, Form, Input, Row, Select, Space} from "antd";
 import {useTranslation} from "react-i18next";
 import {get} from "lodash"
 import {URLS} from "../../../constants/url";
-import {usePostQuery, usePutQuery} from "../../../hooks/api";
+import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
+import {KEYS} from "../../../constants/key";
+import {getSelectOptionsListFromData} from "../../../utils";
 
 const ClaimStatus = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
     const {mutate, isPending} = usePutQuery({})
     const {mutate: postRequest, isPending: isPendingPost} = usePostQuery({})
-
+    let {data: employees} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
+    employees=getSelectOptionsListFromData(get(employees,'data.data',[]),'_id','name')
     return (
         <Card className={'mb-4'} bordered title={t('Статус заявления')}>
             <Row gutter={16} align="middle">
@@ -76,12 +79,12 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item name={'employeeRole'} label={t('Должность сотрудника')}>
-                        <Input/>
+                    <Form.Item name={'employee'} label={t('Сотрудник')}>
+                        <Select options={employees}/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item name={'employeeFIO'} label={t('Ф.И.О. сотрудника')}>
+                    <Form.Item name={'employeeRole'} label={t('Должность сотрудника')}>
                         <Input/>
                     </Form.Item>
                 </Col>

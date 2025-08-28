@@ -66,7 +66,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                             <Form.Item initialValue={dayjs(get(data, 'sekVoteDetails.sentDate', new Date()))}
                                        rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={'sentDate'} label={t('Дата передачи')}>
-                                <DatePicker className={'w-full'} disabled/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'} disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={24}>

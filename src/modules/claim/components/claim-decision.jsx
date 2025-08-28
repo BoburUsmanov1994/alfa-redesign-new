@@ -69,7 +69,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             <Form.Item initialValue={dayjs()}
                                        rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'decisionDate']} label={t('Дата решения')}>
-                                <DatePicker className={'w-full'} disabled/>
+                                <DatePicker format="DD.MM.YYYY" className={'w-full'} disabled/>
                             </Form.Item>
                         </Col>
                         {
@@ -83,7 +83,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         <Col span={6}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'regressDate']} label={t('Дата передачи в регресс')}>
-                                <DatePicker className={'w-full'}/>
+                                <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
                             </Form.Item>
                         </Col>
 
@@ -109,7 +109,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                 </Col>
                                 <Col span={6}>
                                     <Form.Item label={t('Дата отправки в НАПП')}>
-                                        <DatePicker disabled value={dayjs()} className={'w-full'}/>
+                                        <DatePicker format="DD.MM.YYYY" disabled value={dayjs()} className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -199,7 +199,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                     initialValue={value ? dayjs(value) : dayjs()}
                                     name={['payment', index, 'payoutDate']}>
-                                    <DatePicker/>
+                                    <DatePicker format="DD.MM.YYYY"/>
                                 </Form.Item>,
                                 width: 150
                             },
@@ -223,7 +223,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={6}>
                             <Form.Item label={t('Дата отправки в НАПП')}>
-                                <DatePicker disabled value={dayjs()} className={'w-full'}/>
+                                <DatePicker format="DD.MM.YYYY" disabled value={dayjs()} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -8,9 +8,9 @@ import {
     Spin, Switch,
 } from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
+import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
-import {get, isEmpty, toUpper} from "lodash";
+import {get, isArray, isEmpty, toUpper} from "lodash";
 import dayjs from "dayjs";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
@@ -36,7 +36,6 @@ const ClaimEditPage = () => {
     const [vehicleDamage, setVehicleDamage] = useState([]);
     const [otherPropertyDamage, setOtherPropertyDamage] = useState([]);
     const {mutate, isPending} = usePostQuery({})
-    const {mutate: editRequest, isPending: isPendingEdit} = usePutQuery({})
     const {
         eventCircumstances,
         client,
@@ -51,7 +50,10 @@ const ClaimEditPage = () => {
         hasVehicleDamage,
         hasPropertyDamage,
         responsibleVehicleInfo,
-        responsibleForDamage
+        responsibleForDamage,
+        isApplicationBehalfToApplicant,
+        hasResponsibleDamage,
+        hasResponsibleVehicle
     } = Form.useWatch([], form) || {}
     const [files, setFiles] = useState([]);
 
@@ -171,11 +173,10 @@ const ClaimEditPage = () => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-        editRequest({
-            url: URLS.claimEdit,
+        mutate({
+            url: URLS.claimCreate,
             attributes: {
                 ...rest,
-                claimNumber: parseInt(claimNumber),
                 lifeDamage,
                 healthDamage,
                 vehicleDamage,
@@ -190,18 +191,30 @@ const ClaimEditPage = () => {
         })
     };
 
+
     useEffect(() => {
         if (!isEmpty(get(data, 'data.photoVideoMaterials', []))) {
-            setFiles(get(data, 'data.photoVideoMaterials', []))
-        }
-        if (!isEmpty(get(data, 'data.healthDamage', []))) {
-            setHealthDamage(get(data, 'data.healthDamage', []))
+            if (isArray(get(data, 'data.photoVideoMaterials'))) {
+                setFiles(get(data, 'data.photoVideoMaterials', []))
+            } else {
+                setFiles([get(data, 'data.photoVideoMaterials', {})])
+            }
         }
         if (!isEmpty(get(data, 'data.lifeDamage', []))) {
             setLifeDamage(get(data, 'data.lifeDamage', []))
+            form.setFieldValue('hasLifeDamage', true)
+        }
+        if (!isEmpty(get(data, 'data.healthDamage', []))) {
+            setHealthDamage(get(data, 'data.healthDamage', []))
+            form.setFieldValue('hasHealthDamage', true)
+        }
+        if (!isEmpty(get(data, 'data.vehicleDamage', []))) {
+            setVehicleDamage(get(data, 'data.vehicleDamage', []))
+            form.setFieldValue('hasVehicleDamage', true)
         }
         if (!isEmpty(get(data, 'data.otherPropertyDamage', []))) {
             setOtherPropertyDamage(get(data, 'data.otherPropertyDamage', []))
+            form.setFieldValue('hasPropertyDamage', true)
         }
     }, [data])
 
@@ -215,7 +228,7 @@ const ClaimEditPage = () => {
             <PageHeader
                 title={t('Редактировать заявление')}
             >
-                <Spin spinning={isPendingEdit || isPending}>
+                <Spin spinning={isPending}>
                     <Form
                         name="create"
                         form={form}
@@ -238,16 +251,27 @@ const ClaimEditPage = () => {
                                 person: {
                                     ...get(data, 'data.responsibleForDamage.person'),
                                     birthDate: dayjs(get(data, 'data.responsibleForDamage.person.birthDate')),
+                                    passportData: {
+                                        ...get(data, 'data.responsibleForDamage.person.passportData'),
+                                        issueDate: dayjs(get(data, 'data.responsibleForDamage.person.passportData.issueDate'))
+                                    }
                                 },
+                                supervisoryAuthorityConclusion: {
+                                    ...get(data, 'data.responsibleForDamage.supervisoryAuthorityConclusion'),
+                                    date: dayjs(get(data, 'data.responsibleForDamage.supervisoryAuthorityConclusion.date'))
+                                }
                             },
                             responsibleVehicleInfo: {
                                 ...get(data, 'data.responsibleVehicleInfo'),
                                 ownerPerson: {
                                     ...get(data, 'data.responsibleVehicleInfo.ownerPerson'),
                                     birthDate: dayjs(get(data, 'data.responsibleVehicleInfo.ownerPerson.birthDate')),
+                                    passportData: {
+                                        ...get(data, 'data.responsibleVehicleInfo.ownerPerson.passportData'),
+                                        issueDate: dayjs(get(data, 'data.responsibleVehicleInfo.ownerPerson.passportData.issueDate'))
+                                    }
                                 },
                             },
-
                             eventCircumstances: {
                                 ...get(data, 'data.eventCircumstances', {}),
                                 eventDateTime: dayjs(get(data, 'data.eventCircumstances.eventDateTime')),
@@ -265,11 +289,16 @@ const ClaimEditPage = () => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm applicant={responsibleForDamage} getPersonInfo={getPersonInfo}
+                        <ResponsibleForm data={get(data, 'data')} isPending={isPending}
+                                         hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage}
+                                         getPersonInfo={getPersonInfo}
                                          getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <VehicleForm applicant={responsibleVehicleInfo} vehicleTypes={vehicleTypes}
+                        <VehicleForm insurantIsOwnerDisabled data={get(data, 'data')} isPending={isPending} form={form}
+                                     hasResponsibleVehicle={hasResponsibleVehicle}
+                                     applicant={responsibleVehicleInfo}
+                                     vehicleTypes={vehicleTypes}
                                      getVehicleInfo={getVehicleInfo}
                                      getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                      owner={owner} countryList={countryList} regions={regions}
@@ -348,6 +377,8 @@ const ClaimEditPage = () => {
                             {
                                 hasVehicleDamage &&
                                 <VehicleDamage
+                                    insurantIsOwnerDisabled
+                                    _form={form}
                                     getPersonInfo={getPersonInfo}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -379,6 +410,8 @@ const ClaimEditPage = () => {
                         <Col span={24}>
                             {
                                 hasPropertyDamage && <PropertyDamage
+                                    insurantIsOwnerDisabled
+                                    _form={form}
                                     ownershipForms={ownershipForms}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -401,12 +434,12 @@ const ClaimEditPage = () => {
                             </Form.Item>
                         </Col>
 
-                        <FileForm files={files} setFiles={setFiles}/>
+                        <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
 
                         <Flex className={'mt-6'}>
                             <Button className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
-                                {t('Сохранять')}
+                                {t('Подать заявление')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
                                 {t('Отменить')}

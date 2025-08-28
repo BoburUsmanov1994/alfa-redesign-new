@@ -11,7 +11,6 @@ import {
     Row,
     Space,
     Spin,
-    Switch,
     Table,
     Typography
 } from "antd";
@@ -48,7 +47,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
             setConclusionFatf(get(data, 'documents.conclusionFatf'));
         }
     }, [data]);
-    console.log('record', record)
+
     return (
         <>
             <Spin spinning={isPending}>
@@ -368,7 +367,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         <Col span={12}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'requestDate'}
                                        initialValue={dayjs()} label={t('Дата запроса')}>
-                                <DatePicker className={'w-full'} disabled/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'} disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -430,7 +429,8 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         <Col span={12}>
                             <Form.Item
                                 label={t('Дата запроса')}>
-                                <DatePicker value={dayjs(get(record, 'requestDate', new Date()))} className={'w-full'}
+                                <DatePicker format={"DD.MM.YYYY"} value={dayjs(get(record, 'requestDate', new Date()))}
+                                            className={'w-full'}
                                             disabled/>
                             </Form.Item>
                         </Col>
@@ -443,7 +443,8 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         <Col span={12}>
                             <Form.Item
                                 label={t('Дата предоставления')}>
-                                <DatePicker value={dayjs(get(record, 'requestDate', new Date()))} className={'w-full'}
+                                <DatePicker format={"DD.MM.YYYY"} value={dayjs(get(record, 'requestDate', new Date()))}
+                                            className={'w-full'}
                                             disabled/>
                             </Form.Item>
                         </Col>
@@ -470,7 +471,8 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                 name={'checkDate'}
                                 rules={[{required: true, message: t('Обязательное поле')}]}
                                 label={t('Дата проверки')}>
-                                <DatePicker value={dayjs(new Date())} className={'w-full'} disabled/>
+                                <DatePicker format={"DD.MM.YYYY"} value={dayjs(new Date())} className={'w-full'}
+                                            disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
