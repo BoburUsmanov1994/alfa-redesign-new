@@ -19,6 +19,7 @@ const ApplicantForm = ({
                            countryList = [],
                            regions = [],
                            ownershipForms = [],
+                           data
                        }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
@@ -41,7 +42,7 @@ const ApplicantForm = ({
                     </Divider>
                 </Col>
                 <Col xs={6}>
-                    <Form.Item initialValue={'person'} name={'client'} label={t('Физ / юр. лицо:')}
+                    <Form.Item initialValue={get(data,'applicant.person') ? 'person' : get(data,'applicant.organization') ? 'organization':'person'} name={'client'} label={t('Физ / юр. лицо:')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Radio.Group options={[{value: 'person', label: t('физ.лицо')}, {
                             value: 'organization',

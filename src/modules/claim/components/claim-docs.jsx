@@ -48,6 +48,8 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
         }
     }, [data]);
 
+    console.log('DATAAA',data)
+
     return (
         <>
             <Spin spinning={isPending}>
@@ -108,11 +110,13 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                             {
                                                 title: t('Дата запроса'),
                                                 dataIndex: 'requestDate',
+                                                align: 'center',
                                                 render: (text) => dayjs(text).format('YYYY-MM-DD'),
                                             },
                                             {
                                                 title: t('Описание документа'),
                                                 dataIndex: 'description',
+                                                align: 'center',
                                             },
                                             {
                                                 title: t('Шаблон'),
@@ -128,32 +132,37 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                             {
                                                 title: t('Дата предоставления'),
                                                 dataIndex: 'provideDate',
-                                                render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                                                render: (text) => text ? dayjs(text).format('YYYY-MM-DD') : '',
                                             },
                                             {
                                                 title: t('Файл'),
                                                 dataIndex: 'file',
                                                 align: 'center',
-                                                render: (text, record) => <Button icon={<EyeOutlined/>} type={'link'}
-                                                                                  href={get(text, 'url')}/>
+                                                render: (text, record) => get(text, 'url') ?
+                                                    <Button icon={<EyeOutlined/>} type={'link'}
+                                                            href={get(text, 'url')}/> : ''
                                             },
                                             {
                                                 title: t('Дата проверки'),
                                                 dataIndex: 'checkDate',
-                                                render: (text) => dayjs(text).format('YYYY-MM-DD'),
+                                                align: 'center',
+                                                render: (text) => text ? dayjs(text).format('YYYY-MM-DD') : '',
                                             },
                                             {
                                                 title: t('Кем проверено'),
                                                 dataIndex: 'whoChecked',
+                                                align: 'center',
                                             },
                                             {
                                                 title: t('Результат проверки'),
                                                 dataIndex: 'checkResult',
-                                                render: (text) => text ? 'принят' : 'не принят'
+                                                align: 'center',
+                                                render: (text) => isNil(text) ? 'Не проверено' : text ? 'принят' : 'не принят'
                                             },
                                             {
                                                 title: t('Комментарий'),
                                                 dataIndex: 'comment',
+                                                align: 'center',
                                             },
                                             {
                                                 title: t('Действия'),
@@ -180,6 +189,29 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                                     }} type={'dashed'}>
                                                         {t('Проверить')}
                                                     </Button>
+                                                    {get(data,'isApplicationBehalfToApplicant') &&<CustomUpload
+                                                        setFile={(_file) => {
+                                                            mutate({
+                                                                url: URLS.claimDocsAttach,
+                                                                attributes: {
+                                                                    claimNumber: parseInt(claimNumber),
+                                                                    materials: [{
+                                                                        id: get(_record, 'id'),
+                                                                        provideDate: dayjs(),
+                                                                        file: {
+                                                                            file: get(_file, '_id'),
+                                                                            url: get(_file, 'url')
+                                                                        }
+                                                                    }]
+                                                                }
+                                                            }, {
+                                                                onSuccess: () => {
+                                                                    refresh()
+                                                                }
+                                                            })
+                                                        }}
+
+                                                    />}
                                                 </Space>
                                             }
                                         ]
@@ -372,7 +404,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={12}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'whoRequested'}
-                                       initialValue={get(user, 'name')} label={t('Дата запроса')}>
+                                       initialValue={get(user, 'employee.fullname')} label={t('Кем запрошен')}>
                                 <Input disabled/>
                             </Form.Item>
                         </Col>
@@ -394,7 +426,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                             <Space className={'mt-4'}>
                                 <Button loading={isPending} htmlType={'submit'} className={'mr-3'} type="primary"
                                         name={'save'}>
-                                    {t('Передать в СЭК')}
+                                    {t('Запросить')}
                                 </Button>
                                 <Button onClick={() => setOpen(false)} danger type="primary"
                                 >
@@ -443,9 +475,16 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         <Col span={12}>
                             <Form.Item
                                 label={t('Дата предоставления')}>
-                                <DatePicker format={"DD.MM.YYYY"} value={dayjs(get(record, 'requestDate', new Date()))}
+                                <DatePicker format={"DD.MM.YYYY"} value={dayjs(get(record, 'provideDate', new Date()))}
                                             className={'w-full'}
                                             disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={t('Описание документа')}>
+                                <Input value={get(record, 'description')}
+                                       disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -458,11 +497,9 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                                name={'id'}
                                 rules={[{required: true, message: t('Обязательное поле')}]}
-                                initialValue={get(record, 'id')}
                                 label={t('Документ')}>
-                                <Input value={get(record, 'id')} disabled/>
+                                <Input/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -505,6 +542,13 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={12}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'comment'}
+                                       label={t('Комментарий')}>
+                                <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item hidden initialValue={get(record, 'id')}
+                                       rules={[{required: true, message: t('Обязательное поле')}]} name={'id'}
                                        label={t('Комментарий')}>
                                 <Input/>
                             </Form.Item>

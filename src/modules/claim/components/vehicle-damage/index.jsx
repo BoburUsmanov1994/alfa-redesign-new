@@ -259,7 +259,6 @@ const Index = ({
                                            initialValue={false} name={'insurantIsOwner'} label={t("Владеет Заявитель")}
                                 >
                                     <Switch
-                                        disabled={insurantIsOwnerDisabled}
                                         onChange={(val) => {
                                             if (val) {
                                                 if (isEqual(owner, 'person')) {
@@ -267,9 +266,6 @@ const Index = ({
                                                 } else {
                                                     form.setFieldValue(['vehicle', 'ownerOrganization'], _form.getFieldValue(['applicant', 'organization']));
                                                 }
-                                            } else {
-                                                form.setFieldValue(['vehicle', 'ownerPerson'], {});
-                                                form.setFieldValue(['vehicle', 'ownerOrganization'], {});
                                             }
                                         }}/>
                                 </Form.Item>

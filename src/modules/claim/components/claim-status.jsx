@@ -1,11 +1,12 @@
 import React from 'react';
-import {Button, Card, Col, Form, Input, Row, Select, Space} from "antd";
+import {Button, Card, Col, DatePicker, Form, Input, Row, Select, Space} from "antd";
 import {useTranslation} from "react-i18next";
-import {get} from "lodash"
+import {get, isEqual} from "lodash"
 import {URLS} from "../../../constants/url";
 import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
+import dayjs from "dayjs";
 
 const ClaimStatus = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
@@ -26,7 +27,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         <Input disabled/>
                     </Form.Item>
                 </Col>
-                <Col span={12}>
+                {isEqual(get(data, 'status'),'submitted') && <Col span={12}>
                     <Space>
                         <Button loading={isPending} onClick={() => {
                             mutate({
@@ -41,9 +42,9 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                                     refresh()
                                 }
                             })
-                        }} className={'mx-3'} type="dashed"
+                        }} className={'mr-3'} type="dashed"
                                 name={'save'}>
-                            {t('Зарегистрировать')}
+                            {t('Принять')}
                         </Button>
                         <Button loading={isPending} onClick={() => {
                             mutate({
@@ -62,7 +63,28 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                             {t('Отклонить')}
                         </Button>
                     </Space>
-                </Col>
+                </Col>}
+                {isEqual(get(data, 'status'),'submitted') && <Col span={24} className={'mb-6'}>
+                    <Space>
+                        <Button loading={isPending} onClick={() => {
+                            mutate({
+                                url: URLS.claimAction,
+                                attributes: {
+                                    claimNumber: parseInt(claimNumber),
+                                    action: 'accept'
+                                },
+                                method: 'put',
+                            }, {
+                                onSuccess: () => {
+                                    refresh()
+                                }
+                            })
+                        }} className={'mr-3'} type="dashed"
+                                name={'save'}>
+                            {t('Зарегистрировать')}
+                        </Button>
+                    </Space>
+                </Col>}
                 <Col span={6}>
                     <Form.Item label={t('Комментарий')}>
                         <Input/>
@@ -70,12 +92,12 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Регистрационный номер')}>
-                        <Input disabled/>
+                        <Input value={get(data,'regNumber')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Дата и время регистрации')}>
-                        <Input disabled/>
+                        <DatePicker format={'DD.MM.YYYY'} value={dayjs(get(data,'regDate'))} className={'w-full'} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -95,7 +117,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Статус отправки в НАПП')}>
-                        <Input disabled/>
+                        <Input value={get(data,'nappStatus')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -108,7 +130,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         <Input disabled/>
                     </Form.Item>
                 </Col>
-                <Col span={24}>
+                {isEqual(get(data,'nappStatus'),'new') && <Col span={24} className={'text-right'}>
                     <Button loading={isPendingPost} onClick={() => {
                         postRequest({
                             url: `${URLS.claimSend}?claimNumber=${claimNumber}`,
@@ -121,7 +143,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                             name={'save'}>
                         {t('Отправить претензию в НАПП')}
                     </Button>
-                </Col>
+                </Col>}
             </Row>
         </Card>
     );

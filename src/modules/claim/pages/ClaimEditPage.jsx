@@ -283,7 +283,7 @@ const ClaimEditPage = () => {
                         }}
                         onFinish={onFinish}
                     >
-                        <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ApplicantForm data={get(data, 'data')} applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>

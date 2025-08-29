@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Typography} from "antd";
+import {Button, Col, DatePicker, Divider, Form, Input, Radio, Row, Select, Switch, Typography} from "antd";
 import {get, isEqual} from "lodash";
 import MaskedInput from "../../../components/masked-input";
 import {ReloadOutlined} from "@ant-design/icons";
@@ -21,7 +21,8 @@ const ResponsibleForm = ({
                              regions = [],
                              ownershipForms = [],
                              hasResponsibleDamage = false,
-                             data
+                             data,
+                             _form
                          }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
@@ -35,7 +36,7 @@ const ResponsibleForm = ({
         enabled: !!(get(applicant, 'person.regionId') || get(applicant, 'organization.regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
-    console.log('datadata',data)
+    console.log('datadata', data)
     return (
         <>
             <Row gutter={16}>
@@ -44,7 +45,7 @@ const ResponsibleForm = ({
                         <Typography.Title level={5}>{t('Виновное лицо:')}</Typography.Title>
                     </Divider>
                 </Col>
-                <Col span={24}>
+                <Col span={12}>
                     <Form.Item
                         initialValue={!isNil(get(data, 'responsibleForDamage', null))}
                         layout={'horizontal'}
@@ -57,12 +58,33 @@ const ResponsibleForm = ({
                         }]}/>
                     </Form.Item>
                 </Col>
+                {
+                    hasResponsibleDamage && <Col span={12}>
+                        <Form.Item
+                            initialValue={false}
+                            layout={'horizontal'}
+                            label={t("Виновен Заявитель")}
+                        >
+                            <Switch
+                                onChange={(val) => {
+                                    if (val) {
+                                        if (isEqual(client, 'person')) {
+                                            _form.setFieldValue(['responsibleForDamage', 'person'], _form.getFieldValue(['applicant', 'person']));
+                                        } else {
+                                            _form.setFieldValue(['responsibleForDamage', 'organization'], _form.getFieldValue(['applicant', 'organization']));
+                                        }
+                                    }
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                }
             </Row>
             {
                 hasResponsibleDamage && <>
                     <Row gutter={16}>
                         <Col xs={6}>
-                            <Form.Item initialValue={'person'} name={'responsible'} label={t('Виновен Заявитель')}
+                            <Form.Item initialValue={get(data,'responsibleForDamage.person')?'person':get(data,'responsibleForDamage.organization')?'organization':'person'} name={'responsible'} label={t('Виновен Заявитель')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Radio.Group options={[{value: 'person', label: t('физ.лицо')}, {
                                     value: 'organization',

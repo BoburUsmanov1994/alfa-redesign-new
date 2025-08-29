@@ -31,10 +31,10 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
     };
 
     useEffect(() => {
-        if(!isEmpty(get(data,'sekVoteDetails.votes',[]))){
-            setSelectedRowKeys(get(data,'sekVoteDetails.votes',[])?.map(({member})=>member));
+        if (!isEmpty(get(data, 'sekVoteDetails.votes', []))) {
+            setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => member));
         }
-    },[data])
+    }, [data])
     return (
         <>
             <Card className={'mb-4'} bordered title={t('Статус дела в СЭК')}>
@@ -92,38 +92,38 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                         <Col span={24}>
                             <Form.Item>
                                 <Table
-                                    dataSource={get(members, 'data.data', [])}
+                                    dataSource={get(data, 'sekVoteDetails.votes', [])}
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
-                                        level={5}>{t('Голосование')}</Typography.Title> <Button
-                                        onClick={() => {
-                                            mutate({
-                                                url: URLS.claimSekAction,
-                                                attributes: {
-                                                    claimNumber: parseInt(claimNumber),
-                                                    action: 'accept'
-                                                },
-                                                method: 'put',
-                                            }, {
-                                                onSuccess: () => {
-                                                    refetch()
-                                                }
-                                            })
-                                        }}
-                                        type="dashed">
+                                        level={5}>{t('Голосование')}</Typography.Title> <Button disabled
+                                                                                                onClick={() => {
+                                                                                                    mutate({
+                                                                                                        url: URLS.claimSekAction,
+                                                                                                        attributes: {
+                                                                                                            claimNumber: parseInt(claimNumber),
+                                                                                                            action: 'accept'
+                                                                                                        },
+                                                                                                        method: 'put',
+                                                                                                    }, {
+                                                                                                        onSuccess: () => {
+                                                                                                            refetch()
+                                                                                                        }
+                                                                                                    })
+                                                                                                }}
+                                                                                                type="dashed">
                                         {t('Зафиксировать голосование')}
                                     </Button></Space>}
                                     columns={
                                         [
                                             {
                                                 title: t('Должность'),
-                                                dataIndex: 'role',
+                                                dataIndex: 'member',
                                                 render: (value) => get(value, 'name'),
                                             },
                                             {
                                                 title: t('Ф.И.О'),
-                                                dataIndex: 'employee',
-                                                render: (value) => get(value, 'fullname'),
+                                                dataIndex: 'member',
+                                                render: (value) => get(value, 'employee.fullname'),
                                             },
                                             {
                                                 title: t('Решение'),

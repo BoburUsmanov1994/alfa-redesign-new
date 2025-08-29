@@ -36,6 +36,7 @@ const ClaimCreatePage = () => {
     const [vehicleDamage, setVehicleDamage] = useState([]);
     const [otherPropertyDamage, setOtherPropertyDamage] = useState([]);
     const {mutate, isPending} = usePostQuery({})
+    const submitType = useRef(null);
     const {
         eventCircumstances,
         client,
@@ -169,23 +170,42 @@ const ClaimCreatePage = () => {
                           hasResponsibleDamage,
                           ...rest
                       }) => {
+        if (submitType.current) {
+            mutate({
+                url: URLS.claimCreate,
+                attributes: {
+                    ...rest,
+                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
+                    lifeDamage,
+                    healthDamage,
+                    vehicleDamage,
+                    otherPropertyDamage
+                }
+            }, {
+                onSuccess: () => {
+                    form.resetFields();
+                    navigate('/claims')
+                }
+            })
+        } else {
+            mutate({
+                url: URLS.claimDraft,
+                attributes: {
+                    ...rest,
+                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
+                    lifeDamage,
+                    healthDamage,
+                    vehicleDamage,
+                    otherPropertyDamage
+                }
+            }, {
+                onSuccess: () => {
+                    form.resetFields();
+                    navigate('/claims')
+                }
+            })
+        }
 
-        mutate({
-            url: URLS.claimDraft,
-            attributes: {
-                ...rest,
-                photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
-                lifeDamage,
-                healthDamage,
-                vehicleDamage,
-                otherPropertyDamage
-            }
-        }, {
-            onSuccess: () => {
-                form.resetFields();
-                navigate('/claims')
-            }
-        })
     };
 
     if (isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
@@ -212,7 +232,7 @@ const ClaimCreatePage = () => {
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage}
+                        <ResponsibleForm _form={form} hasResponsibleDamage={hasResponsibleDamage} applicant={responsibleForDamage}
                                          getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                          client={responsible} countryList={countryList} regions={regions}
                                          residentTypes={residentTypes} ownershipForms={ownershipForms}/>
@@ -354,9 +374,15 @@ const ClaimCreatePage = () => {
                         <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
 
                         <Flex className={'mt-6'}>
-                            <Button className={'mr-3'} type="default" htmlType={'submit'}
+                            <Button onClick={() => (submitType.current = false)} className={'mr-3'} type="default"
+                                    htmlType={'submit'}
                                     name={'draft'}>
                                 {t('Сохранить как черновик')}
+                            </Button>
+                            <Button onClick={() => (submitType.current = true)} className={'mr-3'} type="primary"
+                                    htmlType={'submit'}
+                                    name={'draft'}>
+                                {t('Подать заявление')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
                                 {t('Отменить')}

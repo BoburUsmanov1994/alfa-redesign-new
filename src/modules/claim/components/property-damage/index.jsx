@@ -39,7 +39,7 @@ const Index = ({
                    setOtherPropertyDamage,
                    title = 'Добавление информации о вреде имуществу:',
                    _form,
-                   insurantIsOwnerDisabled=false
+                   insurantIsOwnerDisabled = false
                }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
@@ -133,17 +133,13 @@ const Index = ({
                                            initialValue={false} name={'insurantIsOwner'} label={t("Владеет Заявитель")}
                                 >
                                     <Switch
-                                        disabled={insurantIsOwnerDisabled}
-                                        onChange={(val)=>{
-                                            if(val){
-                                                if(isEqual(owner,'person')) {
-                                                    form.setFieldValue(['ownerPerson'],_form.getFieldValue(['applicant', 'person']));
-                                                }else {
-                                                    form.setFieldValue(['ownerOrganization'],_form.getFieldValue(['applicant', 'organization']));
+                                        onChange={(val) => {
+                                            if (val) {
+                                                if (isEqual(owner, 'person')) {
+                                                    form.setFieldValue(['ownerPerson'], _form.getFieldValue(['applicant', 'person']));
+                                                } else {
+                                                    form.setFieldValue(['ownerOrganization'], _form.getFieldValue(['applicant', 'organization']));
                                                 }
-                                            }else{
-                                                form.setFieldValue(['ownerPerson'],{});
-                                                form.setFieldValue(['ownerOrganization'],{});
                                             }
                                         }}
                                     />

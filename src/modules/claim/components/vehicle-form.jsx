@@ -192,7 +192,6 @@ const VehicleForm = ({
                                        label={t("Владеет Виновное лицо")}
                             >
                                 <Switch
-                                    disabled={insurantIsOwnerDisabled}
                                     onChange={(val) => {
                                         if (val) {
                                             if (isEqual(owner, 'person')) {
@@ -200,9 +199,6 @@ const VehicleForm = ({
                                             } else {
                                                 form.setFieldValue(['responsibleVehicleInfo', 'ownerOrganization'], form.getFieldValue(['responsibleForDamage', 'organization']));
                                             }
-                                        } else {
-                                            form.setFieldValue(['responsibleVehicleInfo', 'ownerPerson'], {});
-                                            form.setFieldValue(['responsibleVehicleInfo', 'ownerOrganization'], {});
                                         }
                                     }}
                                 />

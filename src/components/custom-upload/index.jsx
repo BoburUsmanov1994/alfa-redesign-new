@@ -40,6 +40,7 @@ const Index = ({name, label, required = false, form, setFile}) => {
         <Upload
             onChange={handleChange}
             customRequest={customUpload}
+            showUploadList={false}
             listType="text"
             multiple={false}
         >

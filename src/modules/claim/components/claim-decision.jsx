@@ -34,6 +34,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
             url: URLS.claimDecisionPayment,
             attributes: {
                 claimNumber: parseInt(claimNumber),
+                preSave:submitType.current,
                 ..._attrs
             }
         }, {
@@ -69,7 +70,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             <Form.Item initialValue={dayjs()}
                                        rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'decisionDate']} label={t('Дата решения')}>
-                                <DatePicker format="DD.MM.YYYY" className={'w-full'} disabled/>
+                                <DatePicker format="DD.MM.YYYY" className={'w-full'} />
                             </Form.Item>
                         </Col>
                         {
@@ -104,12 +105,12 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             isEqual(get(decision, 'decisionId'), 1) && <>
                                 <Col span={6}>
                                     <Form.Item label={t('Статус отправки в НАПП')}>
-                                        <Input disabled value={get(data, 'nappStatus')} className={'w-full'}/>
+                                        <Input disabled  className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={6}>
                                     <Form.Item label={t('Дата отправки в НАПП')}>
-                                        <DatePicker format="DD.MM.YYYY" disabled value={dayjs()} className={'w-full'}/>
+                                        <DatePicker format="DD.MM.YYYY" disabled  className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -218,12 +219,12 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                     <Row gutter={16} align="middle" className={'mt-4'}>
                         <Col span={6}>
                             <Form.Item label={t('Статус отправки в НАПП')}>
-                                <Input disabled value={get(data, 'nappStatus')} className={'w-full'}/>
+                                <Input disabled  className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label={t('Дата отправки в НАПП')}>
-                                <DatePicker format="DD.MM.YYYY" disabled value={dayjs()} className={'w-full'}/>
+                                <DatePicker format="DD.MM.YYYY" disabled  className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
@@ -242,11 +243,15 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                     </Row>
                 </Card>
                 <Col span={24} className={'mt-8'}>
-                    <Button onClick={() => (submitType.current = true)} type="primary" className={'mr-4'}
+                    <Button onClick={() => (submitType.current = true)} type="default" className={'mr-4'}
+                            htmlType="submit">
+                        {t('Предварительно сохранить')}
+                    </Button>
+                    <Button onClick={() => (submitType.current = false)} type="primary" className={'mr-4'}
                             htmlType="submit">
                         {t('Сохранить')}
                     </Button>
-                    <Button htmlType={'submit'} onClick={() => (submitType.current = false)} danger type="primary"
+                    <Button onClick={() => (submitType.current = false)} htmlType={'submit'} danger type="primary"
                             name={'payment'}>
                         {t('Отмена')}
                     </Button>
