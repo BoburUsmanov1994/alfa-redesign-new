@@ -43,22 +43,19 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
             }
         })
     }
-    console.log('decision', decision)
-    console.log('payments', payments)
-    console.log('currency', currency)
+
     return (
         <Spin spinning={isPending}>
             <Form
                 name="decision"
                 form={form}
                 layout="vertical"
-                initialValues={{}}
                 onFinish={onFinish}
             >
                 <Card className={'mb-4'} bordered title={t('Решение по претензионному делу')}>
                     <Row gutter={16} align="bottom">
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item initialValue={get(data,'decision.decision.decisionId')} rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'decisionId']} label={t('Решение')}>
                                 <Select options={entries(get(decisions, 'data'))?.map(item => ({
                                     value: parseInt(head(item)),
@@ -67,7 +64,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item initialValue={dayjs()}
+                            <Form.Item initialValue={dayjs(get(data,'decision.decision.decisionDate'))}
                                        rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'decisionDate']} label={t('Дата решения')}>
                                 <DatePicker format="DD.MM.YYYY" className={'w-full'} />
@@ -75,7 +72,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         </Col>
                         {
                             isEqual(get(decision, 'decisionId'), 2) && <Col span={6}>
-                                <Form.Item name={['decision', 'rejectionReason']}
+                                <Form.Item initialValue={get(data,'decision.decision.rejectionReason')} name={['decision', 'rejectionReason']}
                                            label={t('Причина отказа')}>
                                     <Input/>
                                 </Form.Item>
@@ -83,19 +80,20 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         }
                         <Col span={6}>
                             <Form.Item
-                                       name={['decision', 'regressDate']} label={t('Дата передачи в регресс')}>
+                                       name={['decision', 'regressDate']} initialValue={dayjs(get(data,'decision.decision.regressDate'))} label={t('Дата передачи в регресс')}>
                                 <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
                             </Form.Item>
                         </Col>
 
                         <Col span={6}>
                             <Form.Item
+                                initialValue={get(data,'decision.decision.reinsurerShare')}
                                        name={['decision', 'reinsurerShare']} label={t('Доля перестраховщиков')}>
                                 <Input className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item initialValue={get(data,'decision.decision.reasonForPayment')} rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={['decision', 'reasonForPayment']}
                                        label={t('Номер протокола комитета/суда, которое является основанием для выплаты')}>
                                 <Input className={'w-full'}/>
