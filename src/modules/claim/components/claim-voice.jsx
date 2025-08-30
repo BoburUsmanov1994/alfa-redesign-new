@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Card, Col, DatePicker, Drawer, Form, Input, Row, Space, Switch, Table, Typography} from "antd";
 import {useTranslation} from "react-i18next";
-import {get, isEmpty} from "lodash"
+import {each, every, get, isEmpty} from "lodash"
 import {useGetAllQuery, usePutQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
@@ -95,7 +95,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                     dataSource={get(data, 'sekVoteDetails.votes', [])}
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
-                                        level={5}>{t('Голосование')}</Typography.Title> <Button disabled
+                                        level={5}>{t('Голосование')}</Typography.Title> <Button disabled={!every(get(data, 'sekVoteDetails.votes', []),'decision')}
                                                                                                 onClick={() => {
                                                                                                     mutate({
                                                                                                         url: URLS.claimSekAction,
@@ -127,12 +127,15 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                             },
                                             {
                                                 title: t('Решение'),
+                                                dataIndex: 'decision'
                                             },
                                             {
-                                                title: t('Дата')
+                                                title: t('Дата'),
+                                                dataIndex: 'date'
                                             },
                                             {
-                                                title: t('Примечание')
+                                                title: t('Примечание'),
+                                                dataIndex: 'comment'
                                             }
                                         ]
                                     }

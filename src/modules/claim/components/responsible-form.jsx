@@ -63,6 +63,7 @@ const ResponsibleForm = ({
                         <Form.Item
                             initialValue={false}
                             layout={'horizontal'}
+                            name={['responsibleForDamage','isApplicantResponsible']}
                             label={t("Виновен Заявитель")}
                         >
                             <Switch

@@ -8,12 +8,12 @@ import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import dayjs from "dayjs";
 
-const ClaimStatus = ({data, claimNumber, refresh}) => {
+const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
     const {t} = useTranslation();
     const {mutate, isPending} = usePutQuery({})
     const {mutate: postRequest, isPending: isPendingPost} = usePostQuery({})
     let {data: employees} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
-    employees=getSelectOptionsListFromData(get(employees,'data.data',[]),'_id','name')
+    employees = getSelectOptionsListFromData(get(employees, 'data.data', []), '_id', 'name')
     return (
         <Card className={'mb-4'} bordered title={t('Статус заявления')}>
             <Row gutter={16} align="middle">
@@ -22,19 +22,26 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         <Input value={get(data, 'status')} disabled/>
                     </Form.Item>
                 </Col>
+                <Col span={18}></Col>
                 <Col span={6}>
                     <Form.Item label={t('Запрос на редактирование')}>
-                        <Input disabled/>
+                        <Input value={get(data, 'editRequest.comment')} disabled/>
                     </Form.Item>
                 </Col>
-                {isEqual(get(data, 'status'),'submitted') && <Col span={12}>
+                <Col span={6}>
+                    <Form.Item name={'comment'} label={t('Комментарий')}>
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                {!disabled && <Col span={12}>
                     <Space>
                         <Button loading={isPending} onClick={() => {
                             mutate({
                                 url: URLS.claimAction,
                                 attributes: {
                                     claimNumber: parseInt(claimNumber),
-                                    action: 'accept'
+                                    action: 'accept',
+                                    comment: form.getFieldValue('comment'),
                                 },
                                 method: 'put',
                             }, {
@@ -64,14 +71,14 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         </Button>
                     </Space>
                 </Col>}
-                {isEqual(get(data, 'status'),'submitted') && <Col span={24} className={'mb-6'}>
+                {!disabled && isEqual(get(data, 'status'), 'submitted') && <Col span={24} className={'mb-6'}>
                     <Space>
                         <Button loading={isPending} onClick={() => {
                             mutate({
                                 url: URLS.claimAction,
                                 attributes: {
                                     claimNumber: parseInt(claimNumber),
-                                    action: 'accept'
+                                    action: 'register'
                                 },
                                 method: 'put',
                             }, {
@@ -85,24 +92,26 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         </Button>
                     </Space>
                 </Col>}
-                <Col span={6}>
-                    <Form.Item label={t('Комментарий')}>
-                        <Input/>
-                    </Form.Item>
-                </Col>
+
                 <Col span={6}>
                     <Form.Item label={t('Регистрационный номер')}>
-                        <Input value={get(data,'regNumber')} disabled/>
+                        <Input value={get(data, 'regNumber')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Дата и время регистрации')}>
-                        <DatePicker format={'DD.MM.YYYY'} value={dayjs(get(data,'regDate'))} className={'w-full'} disabled/>
+                        <DatePicker format={'DD.MM.YYYY'}
+                                    value={get(data, 'regDate') ? dayjs(get(data, 'regDate')) : null}
+                                    className={'w-full'}
+                                    disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
                     <Form.Item name={'employee'} label={t('Сотрудник')}>
-                        <Select options={employees}/>
+                        <Select onChange={(val, rest) => {
+                            form.setFieldValue('employeeRole', get(rest, 'option.employee.position.name'))
+                            form.setFieldValue('employeeContactNumber', get(rest, 'option.employee.telephonenumber'))
+                        }} options={employees}/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -117,7 +126,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Статус отправки в НАПП')}>
-                        <Input value={get(data,'nappStatus')} disabled/>
+                        <Input value={get(data, 'nappStatus')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -130,7 +139,7 @@ const ClaimStatus = ({data, claimNumber, refresh}) => {
                         <Input disabled/>
                     </Form.Item>
                 </Col>
-                {isEqual(get(data,'nappStatus'),'new') && <Col span={24} className={'text-right'}>
+                {!disabled && isEqual(get(data, 'nappStatus'), 'new') && <Col span={24} className={'text-right'}>
                     <Button loading={isPendingPost} onClick={() => {
                         postRequest({
                             url: `${URLS.claimSend}?claimNumber=${claimNumber}`,

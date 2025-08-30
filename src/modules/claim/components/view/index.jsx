@@ -30,7 +30,7 @@ import ClaimDamage from "../claim-damage";
 import {find} from "lodash/collection";
 
 
-const ClaimView = ({data, claimNumber, refresh}) => {
+const ClaimView = ({data, claimNumber, refresh,disabled=false}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -193,7 +193,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
 
     useEffect(() => {
         if (!isEmpty(get(data, 'photoVideoMaterials', []))) {
-            setFiles([get(data, 'photoVideoMaterials', {})])
+            setFiles(get(data, 'photoVideoMaterials', []))
         }
         if (!isEmpty(get(data, 'lifeDamage', []))) {
             setLifeDamage(get(data, 'lifeDamage', []))
@@ -223,6 +223,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
             >
                 <Spin spinning={isPending}>
                     <Form
+                        disabled={disabled}
                         name="view"
                         form={form}
                         layout="vertical"
@@ -278,12 +279,12 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             }
                         }}
                     >
-                        <ClaimStatus data={data} claimNumber={claimNumber} refresh={refresh}/>
+                        <ClaimStatus disabled={disabled} form={form} data={data} claimNumber={claimNumber} refresh={refresh}/>
                         {includes(['waiting_details', 'waiting_payment', 'paid'], get(data, 'status')) &&
                             <BankDetails bankDetails={bankDetails} data={data} claimNumber={claimNumber}
                                          refresh={refresh}/>}
-                        <ClaimDamage/>
-                        <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ClaimDamage data={data}/>
+                        <ApplicantForm  applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
@@ -434,7 +435,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             </Form.Item>
                         </Col>
 
-                        <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
+                        <FileForm disabled={disabled} enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
                         <Row gutter={16}>
                             <Col span={24}>
                                 <Divider orientation={'left'}>{t('Информация для Заключения ДУСП')}</Divider>
@@ -461,7 +462,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Flex className={'mt-6'}>
+                        {!disabled && <Flex className={'mt-6'}>
                             <Button className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
                                 {t('Сохранить дело')}
@@ -469,7 +470,7 @@ const ClaimView = ({data, claimNumber, refresh}) => {
                             <Button danger type={'primary'} onClick={() => navigate('/claims')}>
                                 {t('Отмена')}
                             </Button>
-                        </Flex>
+                        </Flex>}
                     </Form>
                 </Spin>
 

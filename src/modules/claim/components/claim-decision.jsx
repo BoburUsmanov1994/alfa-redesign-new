@@ -82,14 +82,14 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             </Col>
                         }
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item
                                        name={['decision', 'regressDate']} label={t('Дата передачи в регресс')}>
                                 <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
                             </Form.Item>
                         </Col>
 
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item
                                        name={['decision', 'reinsurerShare']} label={t('Доля перестраховщиков')}>
                                 <Input className={'w-full'}/>
                             </Form.Item>

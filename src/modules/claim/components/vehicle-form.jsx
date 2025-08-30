@@ -69,8 +69,9 @@ const VehicleForm = ({
                                 label={t("Серия тех. паспорта")}
                                 name={['responsibleVehicleInfo', 'techPassport', 'seria']}
                                 rules={[{required: true, message: t('Обязательное поле')}]}
+                                normalize={(value) => (value ? value.toUpperCase() : "")}
                             >
-                                <MaskedInput mask={'aaa'} className={'uppercase'} placeholder={'__'}/>
+                                <MaskedInput mask={'aaa'}  placeholder={'__'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>

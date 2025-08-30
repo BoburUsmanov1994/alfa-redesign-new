@@ -12,7 +12,8 @@ const {Dragger} = Upload;
 const FileForm = ({
                       files = [],
                       setFiles,
-                      enabled = false
+                      enabled = false,
+                      disabled = false
                   }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
@@ -53,8 +54,6 @@ const FileForm = ({
             }
         })
     }
-
-    console.log('files',files)
     return (
         <>
             <Row gutter={16} align="middle">
@@ -62,14 +61,14 @@ const FileForm = ({
                     <Divider orientation={'left'}>{t('Подтверждающие фото- и видео-материалы:')}</Divider>
                 </Col>
 
-                <Col span={4} className={'text-right'}>
+                {!disabled && <Col span={4} className={'text-right'}>
                     <Form.Item label={' '}
                     >
                         <Button disabled={!enabled} icon={<PlusOutlined/>} onClick={() => setOpen(true)}>
                             {t('Добавить файл')}
                         </Button>
                     </Form.Item>
-                </Col>
+                </Col>}
                 <Col span={24}>
                     <Table
                         loading={isPendingDelete}
@@ -82,7 +81,7 @@ const FileForm = ({
                             {
                                 title: t('URL-адрес файла'),
                                 dataIndex: 'url',
-                                render: (text, ) => <Button type={'link'} href={text}>
+                                render: (text,) => <Button type={'link'} href={text}>
                                     {text}
                                 </Button>
                             },
@@ -90,8 +89,8 @@ const FileForm = ({
                                 title: t('Действия'),
                                 dataIndex: '_id',
                                 align: 'right',
-                                render: (text, record) => <Button onClick={() => removeFile(record)} danger
-                                                                  shape="circle" icon={<DeleteOutlined/>}/>
+                                render: (text, record) => !disabled && <Button onClick={() => removeFile(record)} danger
+                                                                               shape="circle" icon={<DeleteOutlined/>}/>
                             }
                         ]}
                     />

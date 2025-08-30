@@ -135,8 +135,8 @@ const PoliceForm = ({
                                             },
                                             {
                                                 title: 'Страховая стоимость',
-                                                dataIndex: 'insurancePremium',
-                                                render: (text) => numeral(text).format('0,0.00'),
+                                                dataIndex: 'details',
+                                                render: (text) => numeral(get(text,'insuredValue')).format('0,0.00'),
                                             },
                                             {
                                                 title: 'Страховая сумма',
@@ -166,12 +166,13 @@ const PoliceForm = ({
                                             },
                                             {
                                                 title: 'Тип',
-                                                dataIndex: 'risk',
-                                                render: (text) => get(text,'riskType.name'),
+                                                dataIndex: 'franchiseType',
+                                                align: 'center',
                                             },
                                             {
                                                 title: 'Размер',
                                                 dataIndex: 'fixedValue',
+                                                align: 'center',
                                             },
                                             {
                                                 title: 'База',

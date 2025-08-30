@@ -22,7 +22,7 @@ import {KEYS} from "../../constants/key";
 import {URLS} from "../../constants/url";
 import {isNil} from "lodash/lang";
 import {useGetAllQuery} from "../../hooks/api";
-import {get} from "lodash";
+import {get, includes} from "lodash";
 import FullScreen from "../../components/full-screen";
 import {useTranslation} from "react-i18next";
 import {LogoutOutlined, UserOutlined, ExclamationCircleOutlined} from "@ant-design/icons"
@@ -41,7 +41,7 @@ function getItem(label, key, icon, children) {
     };
 }
 
-const items = [
+const getItems = (role) => [
     getItem('Продукты', '/products', <ProductOutlined/>, [
         getItem('Все продукты', '/products'),
         getItem('Группы продуктов', '/products/product-groups'),
@@ -94,7 +94,11 @@ const items = [
         getItem('Распределение СМР', '/insurance/smr/distribute'),
         getItem('Страхование кредитов НБУ', '/insurance/nbu-credits'),
     ]),
-    getItem('Претензионный портфель', '/claims', <InsuranceOutlined/>),
+    includes(['claim-admin', 'claim-user', 'sek-member'], role) && getItem('АИС ДУСП', '/claims',
+        <InsuranceOutlined/>, [
+            includes(['claim-admin', 'claim-user'], role) && getItem('Претензионный портфель', '/claims'),
+            includes(['sek-member'], role) && getItem('Журнал СЭК', '/claims/jurnal'),
+        ]),
 ];
 
 
@@ -151,7 +155,7 @@ const Index = ({children}) => {
             }} trigger={null} collapsible collapsed={collapsed} width={225}>
                 <Logo/>
                 <Menu onClick={({key}) => navigate(key)} theme="dark" defaultSelectedKeys={[location?.pathname]}
-                      mode="inline" items={items}/>
+                      mode="inline" items={getItems(get(user, 'role.name'))}/>
                 <img className={'absolute bottom-0 right-0 -z-10'} src={AlfaSvg} alt="alfa"/>
             </Sider>
             <Layout>

@@ -15,7 +15,7 @@ import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
 
 
-const ClaimListPage = () => {
+const ClaimJurnalPage = () => {
     const {t} = useTranslation();
     const actionRef = useRef();
     const navigate = useNavigate();
@@ -51,12 +51,7 @@ const ClaimListPage = () => {
         <>
             <PageHeader
                 className={'p-0 mb-3'}
-                title={t('Претензионный портфель')}
-                extra={[
-                    <Button onClick={() => navigate('/claims/create')} type="primary" icon={<PlusOutlined/>}>
-                        {t('Добавить')}
-                    </Button>,
-                ]}
+                title={t('Журнал СЭК')}
             />
             <Datagrid
                 span={4}
@@ -92,28 +87,30 @@ const ClaimListPage = () => {
                         hideInTable: true,
                     },
                     {
-                        title: t('Статус'),
-                        dataIndex: 'status',
+                        title: t('Дата передачи СЭК'),
+                        dataIndex: 'sekVoteDetails',
                         width: 100,
-                        fieldProps: {
-                            showSearch: true,
-                            placeholder: t('Поиск...'),
-                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
-                        },
-                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'draft')}>{text}</Tag>,
                         hideInSearch: true,
+                        align: 'center',
+                        render: (text) => dayjs(get(text, 'sentDate')).format('YYYY-MM-DD')
                     },
                     {
-                        title: t('Статус'),
-                        dataIndex: 'status',
-                        valueType: 'select',
-                        fieldProps: {
-                            showSearch: true,
-                            placeholder: t('Поиск...'),
-                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
-                        },
-                        hideInTable: true,
+                        title: t('Решение'),
+                        dataIndex: 'sekVoteDetails',
+                        width: 100,
+                        hideInSearch: true,
+                        align: 'center',
+                        render: (text) => get(text, 'votes[0].decision')
                     },
+                    {
+                        title: t('Проголосовано'),
+                        dataIndex: 'claimDate',
+                        width: 100,
+                        hideInSearch: true,
+                        align: 'center',
+                        render: (text) => '-'
+                    },
+
                     {
                         title: t('Юр/физ'),
                         dataIndex: 'applicant',
@@ -180,7 +177,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 100,
                         align: 'center',
-                        render: (text) => dayjs(get(text,'issueDate')).format('YYYY-MM-DD'),
+                        render: (text) => dayjs(get(text, 'issueDate')).format('YYYY-MM-DD'),
                     },
                     {
                         title: t('Страховая сумма'),
@@ -188,7 +185,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text)=>numeral(get(text,'insuranceSum')).format('0,0.00')
+                        render: (text) => numeral(get(text, 'insuranceSum')).format('0,0.00')
                     },
                     {
                         title: t('Дата события'),
@@ -216,7 +213,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text,'product.risk',[])?.map(({name})=>name)?.join(', '),
+                        render: (text) => get(text, 'product.risk', [])?.map(({name}) => name)?.join(', '),
                     },
                     {
                         title: t('Объект страхования'),
@@ -224,7 +221,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text,'objectOfInsurance',[])?.map(({type})=>type)?.join(', '),
+                        render: (text) => get(text, 'objectOfInsurance', [])?.map(({type}) => type)?.join(', '),
                     },
                     {
                         title: t('Сумма заявленного убытка'),
@@ -310,43 +307,21 @@ const ClaimListPage = () => {
                         title: t('Действия'),
                         dataIndex: 'id',
                         fixed: 'right',
-                        align: 'right',
-                        width: 125,
+                        align: 'center',
+                        width: 100,
                         hideInSearch: true,
                         render: (_id, record) => <Space>
-                            {!isEqual(get(record, 'status'), 'draft') &&
-                                <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
-                                        className={'cursor-pointer'}
-                                        icon={<EyeOutlined/>}/>}
-                            {isEqual(get(record, 'status'), 'draft') &&
-                                <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
-                                        className={'cursor-pointer'}
-                                        icon={<EditOutlined/>}/>}
-                            <Popconfirm
-                                title={t('Вы хотите удалить?')}
-                                onConfirm={() => remove(get(record, 'claimNumber'))}
-                                okButtonProps={{loading: isPending}}
-                            >
-                                <Tooltip title={t('Удалить')}>
-                                    <Button danger
-                                            className={'cursor-pointer'}
-                                            icon={<DeleteOutlined/>}/>
-                                </Tooltip>
-                            </Popconfirm>
+                            <Button onClick={() => navigate(`/claims/jurnal/view/${get(record, 'claimNumber')}`)}
+                                    className={'cursor-pointer'}
+                                    icon={<EyeOutlined/>}/>
 
                         </Space>
                     }
 
                 ]}
-                url={`${URLS.claims}`}>
-                {({actionRef}) => <Space>
-                    <Button type={'dashed'} icon={<DownloadOutlined/>}>
-                        {t('Отчет')}
-                    </Button>
-                </Space>}
-            </Datagrid>
+                url={`${URLS.claims}`}/>
         </>
     );
 };
 
-export default ClaimListPage;
+export default ClaimJurnalPage;

@@ -24,7 +24,7 @@ import CustomUpload from "../../../components/custom-upload";
 import {EyeOutlined, DeleteOutlined} from "@ant-design/icons";
 import {isNil} from "lodash/lang";
 
-const ClaimDocs = ({data, claimNumber, refresh}) => {
+const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
     const [requestForm] = Form.useForm();
@@ -48,12 +48,12 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
         }
     }, [data]);
 
-    console.log('DATAAA',data)
 
     return (
         <>
             <Spin spinning={isPending}>
                 <Form
+                    disabled={disabled}
                     name="docs"
                     form={form}
                     layout="vertical"
@@ -72,7 +72,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                 }/>
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        {!disabled && <Col span={6}>
                             <Form.Item>
                                 <Button onClick={() => {
                                     mutate({
@@ -89,7 +89,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                     {t("Сформировать")}
                                 </Button>
                             </Form.Item>
-                        </Col>
+                        </Col>}
 
                         <Col span={24}>
                             <Form.Item>
@@ -98,13 +98,14 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                     dataSource={get(data, 'documents.materials', [])}
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
-                                        level={5}>{t('Материалы по претензионному делу')}</Typography.Title> <Button
-                                        onClick={() => {
-                                            setOpen(true);
-                                        }}
-                                        type="dashed">
-                                        {t('Запросить документ')}
-                                    </Button></Space>}
+                                        level={5}>{t('Материалы по претензионному делу')}</Typography.Title> {!disabled &&
+                                        <Button
+                                            onClick={() => {
+                                                setOpen(true);
+                                            }}
+                                            type="dashed">
+                                            {t('Запросить документ')}
+                                        </Button>}</Space>}
                                     columns={
                                         [
                                             {
@@ -166,53 +167,74 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                             },
                                             {
                                                 title: t('Действия'),
-                                                render: (text, _record) => <Space>
-                                                    <Button
-                                                        onClick={() => {
-                                                            mutate({
-                                                                url: URLS.claimDocsDeny,
-                                                                attributes: {
-                                                                    claimNumber: parseInt(claimNumber),
-                                                                    docId: get(_record, 'id')
-                                                                },
-                                                            }, {
-                                                                onSuccess: () => {
-                                                                    refresh()
-                                                                }
-                                                            })
-                                                        }}
-                                                        danger type={'dashed'}>
-                                                        {t('Отозвать')}
-                                                    </Button>
-                                                    <Button onClick={() => {
-                                                        setRecord(_record)
-                                                    }} type={'dashed'}>
-                                                        {t('Проверить')}
-                                                    </Button>
-                                                    {get(data,'isApplicationBehalfToApplicant') &&<CustomUpload
-                                                        setFile={(_file) => {
-                                                            mutate({
-                                                                url: URLS.claimDocsAttach,
-                                                                attributes: {
-                                                                    claimNumber: parseInt(claimNumber),
-                                                                    materials: [{
-                                                                        id: get(_record, 'id'),
-                                                                        provideDate: dayjs(),
-                                                                        file: {
-                                                                            file: get(_file, '_id'),
-                                                                            url: get(_file, 'url')
+                                                render: (text, _record) => !disabled && !get(_record, 'checkResult') &&
+                                                    <Space>
+                                                        {!get(_record, 'file.url') && <Button
+                                                            onClick={() => {
+                                                                mutate({
+                                                                    url: URLS.claimDocsDeny,
+                                                                    attributes: {
+                                                                        claimNumber: parseInt(claimNumber),
+                                                                        docId: get(_record, 'id')
+                                                                    },
+                                                                }, {
+                                                                    onSuccess: () => {
+                                                                        refresh()
+                                                                    }
+                                                                })
+                                                            }}
+                                                            danger type={'dashed'}>
+                                                            {t('Отозвать')}
+                                                        </Button>}
+                                                        <Button onClick={() => {
+                                                            setRecord(_record)
+                                                        }} type={'dashed'}>
+                                                            {t('Проверить')}
+                                                        </Button>
+                                                        {get(data, 'isApplicationBehalfToApplicant') && !get(_record, 'file.url') &&
+                                                            <CustomUpload
+                                                                setFile={(_file) => {
+                                                                    mutate({
+                                                                        url: URLS.claimDocsAttach,
+                                                                        attributes: {
+                                                                            claimNumber: parseInt(claimNumber),
+                                                                            materials: [{
+                                                                                id: get(_record, 'id'),
+                                                                                provideDate: dayjs(),
+                                                                                file: {
+                                                                                    file: get(_file, '_id'),
+                                                                                    url: get(_file, 'url')
+                                                                                }
+                                                                            }]
                                                                         }
-                                                                    }]
-                                                                }
-                                                            }, {
-                                                                onSuccess: () => {
-                                                                    refresh()
-                                                                }
-                                                            })
-                                                        }}
+                                                                    }, {
+                                                                        onSuccess: () => {
+                                                                            refresh()
+                                                                        }
+                                                                    })
+                                                                }}
 
-                                                    />}
-                                                </Space>
+                                                            />}
+
+                                                        {
+                                                            get(data, 'isApplicationBehalfToApplicant') && get(_record, 'file.url') &&
+                                                            <Button onClick={() => {
+                                                                mutate({
+                                                                    url: URLS.claimDocsDetach,
+                                                                    attributes: {
+                                                                        claimNumber: parseInt(claimNumber),
+                                                                        materialId: get(_record, 'id')
+                                                                    }
+                                                                }, {
+                                                                    onSuccess: () => {
+                                                                        refresh()
+                                                                    }
+                                                                })
+                                                            }} type={'dashed'} danger
+                                                                    icon={
+                                                                        <DeleteOutlined/>}>{t('Удалить файл')}</Button>
+                                                        }
+                                                    </Space>
                                             }
                                         ]
                                     }
@@ -230,7 +252,7 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                 }/>
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        {!disabled && <Col span={6}>
                             <Form.Item>
                                 <Button onClick={() => {
                                     mutate({
@@ -247,131 +269,132 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                                     {t("Сформировать")}
                                 </Button>
                             </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item layout={'horizontal'}
-                                       label={t('Решение СЭК')}>
-                                <Input value={get(data, 'documents.decisionSek.url')} disabled suffix={
-                                    get(data, 'documents.decisionSek.url') ?
-                                        <Button href={get(data, 'documents.decisionSek.url')}
-                                                icon={<EyeOutlined/>} type="link"/> : null
-                                }/>
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item>
-                                <Button onClick={() => {
-                                    mutate({
-                                        url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
-                                        attributes: {},
-                                        method: 'put'
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }} type="dashed"
-                                >
-                                    {t("Сформировать")}
-                                </Button>
-                            </Form.Item>
-                        </Col>
+                        </Col>}
+                        {!disabled && <>
+                            <Col span={12}>
+                                <Form.Item layout={'horizontal'}
+                                           label={t('Решение СЭК')}>
+                                    <Input value={get(data, 'documents.decisionSek.url')} disabled suffix={
+                                        get(data, 'documents.decisionSek.url') ?
+                                            <Button href={get(data, 'documents.decisionSek.url')}
+                                                    icon={<EyeOutlined/>} type="link"/> : null
+                                    }/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item>
+                                    <Button onClick={() => {
+                                        mutate({
+                                            url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
+                                            attributes: {},
+                                            method: 'put'
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }} type="dashed"
+                                    >
+                                        {t("Сформировать")}
+                                    </Button>
+                                </Form.Item>
+                            </Col>
 
-                        <Col span={12}>
-                            <Form.Item layout={'horizontal'}
-                                       label={t('Акт о страховом случае (для ОСГОР)')}>
-                                <Input value={get(data, 'documents.claimAct.url')} disabled
-                                       suffix={
-                                           get(data, 'documents.claimAct.url') ?
-                                               <Button href={get(data, 'documents.claimAct.url')}
-                                                       icon={<EyeOutlined/>} type="link"/> : null
-                                       }
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item>
-                                <Button onClick={() => {
-                                    mutate({
-                                        url: `${URLS.claimGenAct}?claimNumber=${claimNumber}`,
-                                        attributes: {},
-                                        method: 'put'
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }} type="dashed"
-                                >
-                                    {t("Сформировать")}
-                                </Button>
-                            </Form.Item>
-                        </Col>
+                            <Col span={12}>
+                                <Form.Item layout={'horizontal'}
+                                           label={t('Акт о страховом случае (для ОСГОР)')}>
+                                    <Input value={get(data, 'documents.claimAct.url')} disabled
+                                           suffix={
+                                               get(data, 'documents.claimAct.url') ?
+                                                   <Button href={get(data, 'documents.claimAct.url')}
+                                                           icon={<EyeOutlined/>} type="link"/> : null
+                                           }
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item>
+                                    <Button onClick={() => {
+                                        mutate({
+                                            url: `${URLS.claimGenAct}?claimNumber=${claimNumber}`,
+                                            attributes: {},
+                                            method: 'put'
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }} type="dashed"
+                                    >
+                                        {t("Сформировать")}
+                                    </Button>
+                                </Form.Item>
+                            </Col>
 
-                        <Col span={12}>
-                            <Form.Item layout={'horizontal'}
-                                       label={t('Платежные документы')}>
-                                {
-                                    get(paymentDocs, 'url') ? <Flex align={'center'}><Input disabled
-                                                                                            value={get(paymentDocs, 'url')}
-                                                                                            suffix={
-                                                                                                <Button
-                                                                                                    href={get(paymentDocs, 'url')}
-                                                                                                    icon={
-                                                                                                        <EyeOutlined/>}
-                                                                                                    type="link"/>
-                                                                                            }
-                                        /><Button loading={isPendingDelete} onClick={() => {
-                                            deleteRequest({
-                                                url: `${URLS.file}/${get(paymentDocs, 'file')}`
-                                            }, {
-                                                onSuccess: () => {
-                                                    setPaymentDocs({})
-                                                }
-                                            })
-                                        }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
-                                        <CustomUpload setFile={(_file) => {
-                                            setPaymentDocs({
-                                                file: get(_file, 'id'),
-                                                url: get(_file, 'url')
-                                            })
-                                        }}/>
-                                }
+                            <Col span={12}>
+                                <Form.Item layout={'horizontal'}
+                                           label={t('Платежные документы')}>
+                                    {
+                                        get(paymentDocs, 'url') ? <Flex align={'center'}><Input disabled
+                                                                                                value={get(paymentDocs, 'url')}
+                                                                                                suffix={
+                                                                                                    <Button
+                                                                                                        href={get(paymentDocs, 'url')}
+                                                                                                        icon={
+                                                                                                            <EyeOutlined/>}
+                                                                                                        type="link"/>
+                                                                                                }
+                                            /><Button loading={isPendingDelete} onClick={() => {
+                                                deleteRequest({
+                                                    url: `${URLS.file}/${get(paymentDocs, 'file')}`
+                                                }, {
+                                                    onSuccess: () => {
+                                                        setPaymentDocs({})
+                                                    }
+                                                })
+                                            }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
+                                            <CustomUpload setFile={(_file) => {
+                                                setPaymentDocs({
+                                                    file: get(_file, 'id'),
+                                                    url: get(_file, 'url')
+                                                })
+                                            }}/>
+                                    }
 
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item layout={'horizontal'}
-                                       label={t('Обоснование ФАТФ')}>
-                                {
-                                    get(conclusionFatf, 'url') ? <Flex align={'center'}><Input disabled
-                                                                                               value={get(conclusionFatf, 'url')}
-                                                                                               suffix={
-                                                                                                   <Button
-                                                                                                       href={get(conclusionFatf, 'url')}
-                                                                                                       icon={
-                                                                                                           <EyeOutlined/>}
-                                                                                                       type="link"/>
-                                                                                               }
-                                        /><Button loading={isPendingDelete} onClick={() => {
-                                            deleteRequest({
-                                                url: `${URLS.file}/${get(conclusionFatf, 'file')}`
-                                            }, {
-                                                onSuccess: () => {
-                                                    setConclusionFatf({})
-                                                }
-                                            })
-                                        }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
-                                        <CustomUpload setFile={(_file) => {
-                                            setConclusionFatf({
-                                                file: get(_file, 'id'),
-                                                url: get(_file, 'url')
-                                            })
-                                        }}/>
-                                }
-                            </Form.Item>
-                        </Col>
-
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item layout={'horizontal'}
+                                           label={t('Обоснование ФАТФ')}>
+                                    {
+                                        get(conclusionFatf, 'url') ? <Flex align={'center'}><Input disabled
+                                                                                                   value={get(conclusionFatf, 'url')}
+                                                                                                   suffix={
+                                                                                                       <Button
+                                                                                                           href={get(conclusionFatf, 'url')}
+                                                                                                           icon={
+                                                                                                               <EyeOutlined/>}
+                                                                                                           type="link"/>
+                                                                                                   }
+                                            /><Button loading={isPendingDelete} onClick={() => {
+                                                deleteRequest({
+                                                    url: `${URLS.file}/${get(conclusionFatf, 'file')}`
+                                                }, {
+                                                    onSuccess: () => {
+                                                        setConclusionFatf({})
+                                                    }
+                                                })
+                                            }} className={'ml-3'} danger icon={<DeleteOutlined/>}/></Flex> :
+                                            <CustomUpload setFile={(_file) => {
+                                                setConclusionFatf({
+                                                    file: get(_file, 'id'),
+                                                    url: get(_file, 'url')
+                                                })
+                                            }}/>
+                                    }
+                                </Form.Item>
+                            </Col></>
+                        }
                     </Row>
                 </Form>
             </Spin>
@@ -499,7 +522,9 @@ const ClaimDocs = ({data, claimNumber, refresh}) => {
                             <Form.Item
                                 rules={[{required: true, message: t('Обязательное поле')}]}
                                 label={t('Документ')}>
-                                <Input/>
+                                <Input value={get(record, 'file.url')} disabled
+                                       suffix={<Button href={get(record, 'file.url')} type={'link'}
+                                                       icon={<EyeOutlined/>}/>}/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>

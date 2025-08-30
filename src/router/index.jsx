@@ -46,6 +46,8 @@ import ClaimListPage from "../modules/claim/pages/ClaimListPage";
 import ClaimCreatePage from "../modules/claim/pages/ClaimCreatePage";
 import ClaimViewPage from "../modules/claim/pages/ClaimViewPage";
 import ClaimEditPage from "../modules/claim/pages/ClaimEditPage";
+import ClaimJurnalPage from "../modules/claim/pages/ClaimJurnalPage";
+import ClaimJurnalViewPage from "../modules/claim/pages/ClaimJurnalViewPage";
 
 const Index = () => {
     return (
@@ -461,6 +463,26 @@ const Index = () => {
                             <PrivateRoute>
                                 <MainLayout>
                                     <ClaimEditPage/>
+                                </MainLayout>
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/claims/jurnal"
+                        element={
+                            <PrivateRoute>
+                                <MainLayout>
+                                    <ClaimJurnalPage/>
+                                </MainLayout>
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/claims/jurnal/view/:claimNumber"
+                        element={
+                            <PrivateRoute>
+                                <MainLayout>
+                                    <ClaimJurnalViewPage/>
                                 </MainLayout>
                             </PrivateRoute>
                         }
