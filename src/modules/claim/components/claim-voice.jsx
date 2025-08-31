@@ -51,21 +51,22 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                        valuePropName="checked"
                                        initialValue={get(data, 'sekVoteDetails.isSentToSek', false)}
                                        name={'isSentToSek'} label={t('Дело передано в СЭК')}>
-                                <Switch/>
+                                <Switch disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                initialValue={get(data, 'sekVoteDetails.whoSent', get(user, 'employee.fullname'))}
-                                rules={[{required: true, message: t('Обязательное поле')}]} name={'whoSent'}
+                                // initialValue={get(data, 'sekVoteDetails.whoSent', get(user, 'employee.fullname'))}
+                                // rules={[{required: true, message: t('Обязательное поле')}]} name={'whoSent'}
                                 label={t('Кем передано')}>
                                 <Input disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item initialValue={dayjs(get(data, 'sekVoteDetails.sentDate', new Date()))}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}
-                                       name={'sentDate'} label={t('Дата передачи')}>
+                            <Form.Item
+                                // initialValue={dayjs(get(data, 'sekVoteDetails.sentDate', new Date()))}
+                                //        rules={[{required: true, message: t('Обязательное поле')}]}
+                                name={'sentDate'} label={t('Дата передачи')}>
                                 <DatePicker format={"DD.MM.YYYY"} className={'w-full'} disabled/>
                             </Form.Item>
                         </Col>
@@ -95,22 +96,23 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                     dataSource={get(data, 'sekVoteDetails.votes', [])}
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
-                                        level={5}>{t('Голосование')}</Typography.Title> <Button disabled={!every(get(data, 'sekVoteDetails.votes', []),'decision')}
-                                                                                                onClick={() => {
-                                                                                                    mutate({
-                                                                                                        url: URLS.claimSekAction,
-                                                                                                        attributes: {
-                                                                                                            claimNumber: parseInt(claimNumber),
-                                                                                                            action: 'accept'
-                                                                                                        },
-                                                                                                        method: 'put',
-                                                                                                    }, {
-                                                                                                        onSuccess: () => {
-                                                                                                            refetch()
-                                                                                                        }
-                                                                                                    })
-                                                                                                }}
-                                                                                                type="dashed">
+                                        level={5}>{t('Голосование')}</Typography.Title> <Button
+                                        disabled={!every(get(data, 'sekVoteDetails.votes', []), 'decision')}
+                                        onClick={() => {
+                                            mutate({
+                                                url: URLS.claimSekAction,
+                                                attributes: {
+                                                    claimNumber: parseInt(claimNumber),
+                                                    action: 'accept'
+                                                },
+                                                method: 'put',
+                                            }, {
+                                                onSuccess: () => {
+                                                    refetch()
+                                                }
+                                            })
+                                        }}
+                                        type="dashed">
                                         {t('Зафиксировать голосование')}
                                     </Button></Space>}
                                     columns={

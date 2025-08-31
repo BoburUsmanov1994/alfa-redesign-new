@@ -75,6 +75,7 @@ const ClaimJurnalViewPage = () => {
                                     {
                                         title: t('Типы операций'),
                                         dataIndex: 'operation',
+                                        render: (text) => t(text)
                                     },
                                     {
                                         title: t('Комментарий'),

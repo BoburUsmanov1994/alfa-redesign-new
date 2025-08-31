@@ -100,7 +100,7 @@ const ClaimListPage = () => {
                             placeholder: t('Поиск...'),
                             options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'draft')}>{text}</Tag>,
+                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'draft')}>{t(text)}</Tag>,
                         hideInSearch: true,
                     },
                     {
@@ -110,7 +110,7 @@ const ClaimListPage = () => {
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
-                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
+                            options: get(statusList, 'data', [])?.map(item => ({value: item, label: t(item)})) || [],
                         },
                         hideInTable: true,
                     },

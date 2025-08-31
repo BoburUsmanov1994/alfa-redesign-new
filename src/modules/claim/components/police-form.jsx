@@ -11,7 +11,8 @@ import numeral from "numeral";
 const PoliceForm = ({
                         form,
                         polisSeria,
-                        polisNumber
+                        polisNumber,
+                        initialData
                     }) => {
 
     let {data} = useGetAllQuery({
@@ -32,7 +33,6 @@ const PoliceForm = ({
             form.setFieldValue('polisUuid', get(data, 'data.policy.uuid'))
         }
     }, [data]);
-    console.log('data', data)
     return (
         <>
             <Row gutter={16}>
@@ -54,7 +54,7 @@ const PoliceForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item name={['applicantStatus']} label={t('Статус заявителя')}
+                            <Form.Item initialValue={get(initialData,'data.applicantStatus',get(initialData,'eventCircumstances.applicantStatus'))} name={['applicantStatus']} label={t('Статус заявителя')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Radio.Group options={[{
                                     value: 'страхователь',

@@ -30,7 +30,7 @@ import ClaimDamage from "../claim-damage";
 import {find} from "lodash/collection";
 
 
-const ClaimView = ({data, claimNumber, refresh,disabled=false}) => {
+const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -177,7 +177,7 @@ const ClaimView = ({data, claimNumber, refresh,disabled=false}) => {
             attributes: {
                 ...rest,
                 claimNumber: parseInt(claimNumber),
-                photoVideoMaterials:files,
+                photoVideoMaterials: files,
                 lifeDamage,
                 healthDamage,
                 vehicleDamage,
@@ -276,18 +276,20 @@ const ClaimView = ({data, claimNumber, refresh,disabled=false}) => {
                                     ...get(data, 'eventCircumstances.courtDecision', {}),
                                     courtDecisionDate: dayjs(get(data, 'eventCircumstances.courtDecision.courtDecisionDate'))
                                 }
-                            }
+                            },
+                            employee: get(data, 'employee._id')
                         }}
                     >
-                        <ClaimStatus disabled={disabled} form={form} data={data} claimNumber={claimNumber} refresh={refresh}/>
+                        <ClaimStatus disabled={disabled} form={form} data={data} claimNumber={claimNumber}
+                                     refresh={refresh}/>
                         {includes(['waiting_details', 'waiting_payment', 'paid'], get(data, 'status')) &&
                             <BankDetails bankDetails={bankDetails} data={data} claimNumber={claimNumber}
                                          refresh={refresh}/>}
                         <ClaimDamage data={data}/>
-                        <ApplicantForm  applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
+                        <PoliceForm initialData={data} form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
                         <ResponsibleForm data={data} hasResponsibleDamage={hasResponsibleDamage}
@@ -435,7 +437,8 @@ const ClaimView = ({data, claimNumber, refresh,disabled=false}) => {
                             </Form.Item>
                         </Col>
 
-                        <FileForm disabled={disabled} enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
+                        <FileForm disabled={disabled} enabled={isApplicationBehalfToApplicant} files={files}
+                                  setFiles={setFiles}/>
                         <Row gutter={16}>
                             <Col span={24}>
                                 <Divider orientation={'left'}>{t('Информация для Заключения ДУСП')}</Divider>

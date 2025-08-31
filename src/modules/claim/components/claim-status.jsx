@@ -12,14 +12,15 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
     const {t} = useTranslation();
     const {mutate, isPending} = usePutQuery({})
     const {mutate: postRequest, isPending: isPendingPost} = usePostQuery({})
-    let {data: employees} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
+    let {data: employees,isLoading} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
     employees = getSelectOptionsListFromData(get(employees, 'data.data', []), '_id', 'name')
+
     return (
         <Card className={'mb-4'} bordered title={t('Статус заявления')}>
             <Row gutter={16} align="middle">
                 <Col span={6}>
                     <Form.Item label={t('Статус')}>
-                        <Input value={get(data, 'status')} disabled/>
+                        <Input value={t(get(data, 'status'))} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={18}></Col>
@@ -107,8 +108,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item name={'employee'} label={t('Сотрудник')}>
-                        <Select onChange={(val, rest) => {
+                    <Form.Item  name={'employee'} label={t('Сотрудник')}>
+                        <Select  onChange={(val, rest) => {
                             form.setFieldValue('employeeRole', get(rest, 'option.employee.position.name'))
                             form.setFieldValue('employeeContactNumber', get(rest, 'option.employee.telephonenumber'))
                         }} options={employees}/>
@@ -126,7 +127,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Статус отправки в НАПП')}>
-                        <Input value={get(data, 'nappStatus')} disabled/>
+                        <Input value={t(get(data, 'nappStatus'))} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>

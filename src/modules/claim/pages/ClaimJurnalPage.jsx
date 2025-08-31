@@ -100,15 +100,52 @@ const ClaimJurnalPage = () => {
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
-                        render: (text) => get(text, 'votes[0].decision')
+                        render: (text) => t(get(text, 'votes[0].decision'))
+                    },
+                    {
+                        title: t('Решение'),
+                        dataIndex: 'sekVoteDetails',
+                        hideInTable: true,
+                        valueType: 'select',
+                        fieldProps: {
+                            showSearch: true,
+                            options: [
+                                {value: 'agree', label: t('соглашаюсь')},
+                                {
+                                    value: 'disagree',
+                                    label: t('против')
+                                },
+                                {
+                                    value: 'abstain',
+                                    label: t('воздержусь')
+                                }
+                            ],
+                        },
                     },
                     {
                         title: t('Проголосовано'),
-                        dataIndex: 'claimDate',
+                        dataIndex: 'sekVoteDetails',
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
-                        render: (text) => '-'
+                        render: (text) => get(text, 'votes[0].decision') ? 'Да' : 'Нет'
+                    },
+                    {
+                        title: t('Проголосовано'),
+                        dataIndex: 'sekVoteDetails',
+                        hideInTable: true,
+                        valueType: 'select',
+                        fieldProps: {
+                            showSearch: true,
+                            options: [{
+                                value: true,
+                                label: 'Да'
+                            },
+                                {
+                                    value: false,
+                                    label: 'Нет'
+                                }],
+                        },
                     },
 
                     {
