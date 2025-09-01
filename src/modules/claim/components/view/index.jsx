@@ -450,7 +450,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             </Col>
 
                             <Col span={6}>
-                                <Form.Item initialValue={dayjs()} name={['conclusionDUSP', 'date']} label={t('Дата заключения')}>
+                                <Form.Item name={['conclusionDUSP', 'date']}  label={t('Дата заключения')}>
                                     <DatePicker format={'DD.MM.YYYY'} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
