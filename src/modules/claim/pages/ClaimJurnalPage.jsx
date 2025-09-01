@@ -3,13 +3,13 @@ import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button, Popconfirm, Space, Tag, Tooltip} from "antd";
-import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutlined} from "@ant-design/icons";
+import {Button,Space} from "antd";
+import {EyeOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
-import {CLAIM_STATUS_LIST, PERSON_TYPE} from "../../../constants";
-import {get, isEqual, values} from "lodash";
-import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
+import {PERSON_TYPE} from "../../../constants";
+import {get,values} from "lodash";
+import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
@@ -19,7 +19,6 @@ const ClaimJurnalPage = () => {
     const {t} = useTranslation();
     const actionRef = useRef();
     const navigate = useNavigate();
-    const {mutate, isPending} = useDeleteQuery({})
     let {data: branches} = useGetAllQuery({
         key: KEYS.branches, url: `${URLS.branches}/list`, params: {
             params: {
@@ -29,23 +28,6 @@ const ClaimJurnalPage = () => {
     })
     branches = getSelectOptionsListFromData(get(branches, `data.data`, []), '_id', 'branchName')
 
-    let {data: statusList} = useGetAllQuery({
-        key: KEYS.claimStatus, url: `${URLS.claimStatus}`, params: {
-            params: {
-                limit: 100
-            }
-        }
-    })
-
-    const remove = (_id) => {
-        mutate({
-            url: `${URLS.claimDelete}?claimNumber=${_id}`,
-        }, {
-            onSuccess: () => {
-                actionRef.current?.reload()
-            }
-        })
-    }
 
     return (
         <>

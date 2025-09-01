@@ -32,13 +32,14 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
 
     useEffect(() => {
         if (!isEmpty(get(data, 'sekVoteDetails.votes', []))) {
-            setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => member));
+            setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => get(member,'_id')));
         }
     }, [data])
     return (
         <>
             <Card className={'mb-4'} bordered title={t('Статус дела в СЭК')}>
                 <Form
+                    disabled={get(data, 'sekVoteDetails.isVotesFixed')}
                     name="status"
                     form={form}
                     layout="vertical"
@@ -56,16 +57,15 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                // initialValue={get(data, 'sekVoteDetails.whoSent', get(user, 'employee.fullname'))}
-                                // rules={[{required: true, message: t('Обязательное поле')}]} name={'whoSent'}
+                                initialValue={get(data, 'sekVoteDetails.whoSent')}
+                                name={'whoSent'}
                                 label={t('Кем передано')}>
                                 <Input disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                // initialValue={dayjs(get(data, 'sekVoteDetails.sentDate', new Date()))}
-                                //        rules={[{required: true, message: t('Обязательное поле')}]}
+                                initialValue={get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate')) : null}
                                 name={'sentDate'} label={t('Дата передачи')}>
                                 <DatePicker format={"DD.MM.YYYY"} className={'w-full'} disabled/>
                             </Form.Item>
@@ -84,6 +84,10 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                             action: 'deny'
                                         },
                                         method: 'put',
+                                    },{
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
                                     })
                                 }} danger type={'primary'}>
                                     {t('Отозвать дело')}
@@ -97,7 +101,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
                                         level={5}>{t('Голосование')}</Typography.Title> <Button
-                                        disabled={!every(get(data, 'sekVoteDetails.votes', []), 'decision')}
+                                        disabled={get(data,'sekVoteDetails.isVotesFixed') || isEmpty(get(data, 'sekVoteDetails.votes', [])) || !every(get(data, 'sekVoteDetails.votes', []), 'decision')}
                                         onClick={() => {
                                             mutate({
                                                 url: URLS.claimSekAction,
@@ -108,7 +112,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                                 method: 'put',
                                             }, {
                                                 onSuccess: () => {
-                                                    refetch()
+                                                    refresh()
                                                 }
                                             })
                                         }}
@@ -129,7 +133,8 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                             },
                                             {
                                                 title: t('Решение'),
-                                                dataIndex: 'decision'
+                                                dataIndex: 'decision',
+                                                render: (value) => t(value)
                                             },
                                             {
                                                 title: t('Дата'),
@@ -157,8 +162,8 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                         [
                             {
                                 title: t('Должность'),
-                                dataIndex: 'role',
-                                render: (value) => get(value, 'name'),
+                                dataIndex: 'employee',
+                                render: (value) => get(value, 'position.name'),
                             },
                             {
                                 title: t('Ф.И.О'),

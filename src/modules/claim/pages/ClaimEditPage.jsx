@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
@@ -8,7 +8,7 @@ import {
     Spin, Switch,
 } from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
+import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
 import {get, isArray, isEmpty, toUpper} from "lodash";
 import dayjs from "dayjs";
@@ -28,6 +28,7 @@ import PropertyDamage from "../components/property-damage";
 
 const ClaimEditPage = () => {
     const {claimNumber} = useParams();
+    const submitType = useRef()
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -36,6 +37,7 @@ const ClaimEditPage = () => {
     const [vehicleDamage, setVehicleDamage] = useState([]);
     const [otherPropertyDamage, setOtherPropertyDamage] = useState([]);
     const {mutate, isPending} = usePostQuery({})
+    const {mutate:patchRequest, isPending:isPendingPatch} = usePutQuery({})
     const {
         eventCircumstances,
         client,
@@ -173,22 +175,43 @@ const ClaimEditPage = () => {
                           hasPropertyDamage,
                           ...rest
                       }) => {
-        mutate({
-            url: URLS.claimCreate,
-            attributes: {
-                ...rest,
-                lifeDamage,
-                healthDamage,
-                vehicleDamage,
-                otherPropertyDamage,
-                photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
-            }
-        }, {
-            onSuccess: () => {
-                form.resetFields();
-                navigate('/claims')
-            }
-        })
+        if(submitType?.current) {
+            mutate({
+                url: URLS.claimCreate,
+                attributes: {
+                    ...rest,
+                    claimNumber: parseInt(claimNumber),
+                    lifeDamage,
+                    healthDamage,
+                    vehicleDamage,
+                    otherPropertyDamage,
+                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
+                }
+            }, {
+                onSuccess: () => {
+                    form.resetFields();
+                    navigate('/claims')
+                }
+            })
+        }else{
+            patchRequest({
+                url: URLS.claimEdit,
+                attributes: {
+                    ...rest,
+                    claimNumber: parseInt(claimNumber),
+                    lifeDamage,
+                    healthDamage,
+                    vehicleDamage,
+                    otherPropertyDamage,
+                    photoVideoMaterials: files?.map(({id, url}) => ({file: id, url}))
+                }
+            }, {
+                onSuccess: () => {
+                    form.resetFields();
+                    navigate('/claims')
+                }
+            })
+        }
     };
 
 
@@ -228,7 +251,7 @@ const ClaimEditPage = () => {
             <PageHeader
                 title={t('Редактировать заявление')}
             >
-                <Spin spinning={isPending}>
+                <Spin spinning={isPending || isPendingPatch}>
                     <Form
                         name="create"
                         form={form}
@@ -437,7 +460,11 @@ const ClaimEditPage = () => {
                         <FileForm enabled={isApplicationBehalfToApplicant} files={files} setFiles={setFiles}/>
 
                         <Flex className={'mt-6'}>
-                            <Button className={'mr-3'} type="primary"
+                            <Button onClick={() => (submitType.current = false)} className={'mr-3'} type="default"
+                                    htmlType={'submit'} name={'save'}>
+                                {t('Сохранить как черновик')}
+                            </Button>
+                            <Button onClick={() => (submitType.current = true)}  className={'mr-3'} type="primary"
                                     htmlType={'submit'} name={'save'}>
                                 {t('Подать заявление')}
                             </Button>

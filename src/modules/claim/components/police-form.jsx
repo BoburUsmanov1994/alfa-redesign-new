@@ -54,7 +54,7 @@ const PoliceForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item initialValue={get(initialData,'data.applicantStatus',get(initialData,'eventCircumstances.applicantStatus'))} name={['applicantStatus']} label={t('Статус заявителя')}
+                            <Form.Item name={'applicantStatus'} label={t('Статус заявителя')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Radio.Group options={[{
                                     value: 'страхователь',
@@ -87,7 +87,8 @@ const PoliceForm = ({
                                     label={t('Страховой продукт')}>{get(data, 'data.product.name')}</Descriptions.Item>
                                 <Descriptions.Item
                                     label={t('Филиал')}>{get(data, 'data.branch.branchName')}</Descriptions.Item>
-                                <Descriptions.Item label={t('Классы страхования')}>{get(data,'data.product.risk[0].insuranceClass.name')}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label={t('Классы страхования')}>{get(data, 'data.product.risk[0].insuranceClass.name')}</Descriptions.Item>
                                 <Descriptions.Item
                                     label={t('Дата выдачи полиса')}>{dayjs(get(data, 'data.policy.issueDate')).format("DD-MM-YYYY")}</Descriptions.Item>
                                 <Descriptions.Item
@@ -120,39 +121,43 @@ const PoliceForm = ({
                                 {get(data, 'data.beneficiary.person') && <Descriptions.Item
                                     label={t('Отчество')}>{get(data, 'data.beneficiary.person.fullName.middlename')}</Descriptions.Item>}
                             </Descriptions>}
-                            {!isEmpty(get(data, 'data.objectOfInsurance', [])) && <Descriptions className={'mb-4'} title={''} bordered>
-                                <Descriptions.Item label={'Объекты страхования'}>
-                                    <Table
-                                        columns={[
-                                            {
-                                                title: 'Тип',
-                                                dataIndex: 'type',
-                                            },
-                                            {
-                                                title: 'Описание',
-                                                dataIndex: 'details',
-                                                render: (text) => get(text,'propertyDescription',get(text,'registrationNumber'))
-                                            },
-                                            {
-                                                title: 'Страховая стоимость',
-                                                dataIndex: 'details',
-                                                render: (text) => numeral(get(text,'insuredValue')).format('0,0.00'),
-                                            },
-                                            {
-                                                title: 'Страховая сумма',
-                                                dataIndex: 'insuranceSum',
-                                                render: (text) => numeral(text).format('0,0.00'),
-                                            }
-                                        ]}
-                                        dataSource={get(data, 'data.objectOfInsurance', [])}
-                                    />
-                                </Descriptions.Item>
+                            {!isEmpty(get(data, 'data.objectOfInsurance', [])) &&
+                                <Descriptions className={'mb-4'} title={''} bordered>
+                                    <Descriptions.Item label={'Объекты страхования'}>
+                                        <Table
+                                            columns={[
+                                                {
+                                                    title: 'Тип',
+                                                    dataIndex: 'type',
+                                                },
+                                                {
+                                                    title: 'Описание',
+                                                    dataIndex: 'details',
+                                                    render: (text) => get(text, 'propertyDescription', get(text, 'registrationNumber'))
+                                                },
+                                                {
+                                                    title: 'Страховая стоимость',
+                                                    dataIndex: 'details',
+                                                    render: (text) => numeral(get(text, 'insuredValue')).format('0,0.00'),
+                                                },
+                                                {
+                                                    title: 'Страховая сумма',
+                                                    dataIndex: 'insuranceSum',
+                                                    render: (text) => numeral(text).format('0,0.00'),
+                                                }
+                                            ]}
+                                            dataSource={get(data, 'data.objectOfInsurance', [])}
+                                        />
+                                    </Descriptions.Item>
 
-                            </Descriptions>}
-                            {get(data,'data') && <Descriptions className={'mb-4'} title={''} bordered>
-                                <Descriptions.Item label={t('Страховая премия по полису')}>{numeral(get(data,'data.policy.insurancePremium')).format('0,0.00')}</Descriptions.Item>
-                                <Descriptions.Item label={t('Оплаченная страховая премия')}>{numeral(get(data,'data.policy.insurancePremiumPaid')).format('0,0.00')}</Descriptions.Item>
-                                <Descriptions.Item label={t('Дата оплаты премии')}>{dayjs(get(data,'data.policy.issueDate')).format("YYYY-MM-DD")}</Descriptions.Item>
+                                </Descriptions>}
+                            {get(data, 'data') && <Descriptions className={'mb-4'} title={''} bordered>
+                                <Descriptions.Item
+                                    label={t('Страховая премия по полису')}>{numeral(get(data, 'data.policy.insurancePremium')).format('0,0.00')}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label={t('Оплаченная страховая премия')}>{numeral(get(data, 'data.policy.insurancePremiumPaid')).format('0,0.00')}</Descriptions.Item>
+                                <Descriptions.Item
+                                    label={t('Дата оплаты премии')}>{dayjs(get(data, 'data.policy.issueDate')).format("YYYY-MM-DD")}</Descriptions.Item>
                             </Descriptions>}
 
                             {!isEmpty(get(data, 'data.franchise')) && <Descriptions title={''} bordered>
@@ -162,7 +167,7 @@ const PoliceForm = ({
                                             {
                                                 title: 'Класс',
                                                 dataIndex: 'risk',
-                                                render: (text) => get(text,'insuranceClass.name'),
+                                                render: (text) => get(text, 'insuranceClass.name'),
                                             },
                                             {
                                                 title: 'Тип',

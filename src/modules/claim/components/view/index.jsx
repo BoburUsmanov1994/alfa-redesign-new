@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
-    Button, Col, Divider,
+    Button, Col, DatePicker, Divider,
     Flex,
     Form, Input, Radio, Row,
     Spin, Switch,
@@ -444,23 +444,23 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                                 <Divider orientation={'left'}>{t('Информация для Заключения ДУСП')}</Divider>
                             </Col>
                             <Col span={6}>
-                                <Form.Item label={t('Номер заключения')}>
-                                    <Input disabled/>
+                                <Form.Item name={['conclusionDUSP', 'number']} label={t('Номер заключения')}>
+                                    <Input/>
                                 </Form.Item>
                             </Col>
 
                             <Col span={6}>
-                                <Form.Item label={t('Дата заключения')}>
-                                    <Input disabled/>
+                                <Form.Item initialValue={dayjs()} name={['conclusionDUSP', 'date']} label={t('Дата заключения')}>
+                                    <DatePicker format={'DD.MM.YYYY'} className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={t('Вывод специалиста')}>
+                                <Form.Item name={['conclusionDUSP', 'conclusion']} label={t('Вывод специалиста')}>
                                     <Input.TextArea/>
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={t('Регресс')}>
+                                <Form.Item name={['conclusionDUSP', 'regress']} label={t('Регресс')}>
                                     <Input/>
                                 </Form.Item>
                             </Col>

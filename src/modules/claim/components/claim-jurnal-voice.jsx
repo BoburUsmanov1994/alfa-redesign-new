@@ -102,7 +102,8 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
                 </Form>
             </Card>
             <Card title={t('Принять решение')} className={'w-full'}>
-                <Form layout="vertical" onFinish={onFinish} form={form}>
+                <Form disabled={get(data, 'sekVoteDetails.isVotesFixed')} layout="vertical" onFinish={onFinish}
+                      form={form}>
                     <Row gutter={16} align="middle">
                         <Col span={24}>
                             <Form.Item layout={'horizontal'} rules={[{required: true, message: t('Обязательное поле')}]}
