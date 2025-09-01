@@ -104,7 +104,7 @@ const ClaimJurnalPage = () => {
                     },
                     {
                         title: t('Решение'),
-                        dataIndex: 'sekVoteDetails',
+                        dataIndex: 'voteDecision',
                         hideInTable: true,
                         valueType: 'select',
                         fieldProps: {
@@ -132,7 +132,7 @@ const ClaimJurnalPage = () => {
                     },
                     {
                         title: t('Проголосовано'),
-                        dataIndex: 'sekVoteDetails',
+                        dataIndex: 'isVoted',
                         hideInTable: true,
                         valueType: 'select',
                         fieldProps: {
