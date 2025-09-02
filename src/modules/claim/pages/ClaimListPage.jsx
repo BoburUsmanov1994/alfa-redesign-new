@@ -94,13 +94,14 @@ const ClaimListPage = () => {
                     {
                         title: t('Статус'),
                         dataIndex: 'status',
-                        width: 100,
+                        align: 'center',
+                        width: 125,
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
                             options: get(statusList, 'data', [])?.map(item => ({value: item, label: item})) || [],
                         },
-                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'draft')}>{t(text)}</Tag>,
+                        render: (text) => <Tag color={get(CLAIM_STATUS_LIST, `${text}`, 'default')}>{t(text)}</Tag>,
                         hideInSearch: true,
                     },
                     {
@@ -180,7 +181,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 100,
                         align: 'center',
-                        render: (text) => dayjs(get(text,'issueDate')).format('YYYY-MM-DD'),
+                        render: (text) => dayjs(get(text, 'issueDate')).format('YYYY-MM-DD'),
                     },
                     {
                         title: t('Страховая сумма'),
@@ -188,7 +189,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text)=>numeral(get(text,'insuranceSum')).format('0,0.00')
+                        render: (text) => numeral(get(text, 'insuranceSum')).format('0,0.00')
                     },
                     {
                         title: t('Дата события'),
@@ -216,7 +217,7 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text,'product.risk',[])?.map(({name})=>name)?.join(', '),
+                        render: (text) => get(text, 'product.risk', [])?.map(({name}) => name)?.join(', '),
                     },
                     {
                         title: t('Объект страхования'),
@@ -224,12 +225,12 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text,'objectOfInsurance',[])?.map(({type})=>type)?.join(', '),
+                        render: (text) => get(text, 'objectOfInsurance', [])?.map(({type}) => t(type))?.join(', '),
                     },
                     {
                         title: t('Сумма заявленного убытка'),
                         dataIndex: 'totalDamageSum',
-                        render: (text)=>numeral(text).format('0,0.00'),
+                        render: (text) => numeral(text).format('0,0.00'),
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
@@ -237,7 +238,7 @@ const ClaimListPage = () => {
                     {
                         title: t('Сумма выплаты'),
                         dataIndex: 'totalPaymentSum',
-                        render: (text)=>numeral(text).format('0,0.00'),
+                        render: (text) => numeral(text).format('0,0.00'),
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
@@ -263,7 +264,8 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Дата выплаты'),
-                        dataIndex: 'paymentDate',
+                        dataIndex: 'payment',
+                        render: (text) => get(text, '[0].payoutDate') ? dayjs(get(text, '[0].payoutDate')).format('YYYY-MM-DD') : '-',
                         width: 100,
                         align: 'center',
                         hideInSearch: true,
@@ -284,24 +286,24 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Регресс'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'conclusionDUSP',
+                        render: (text) => get(text, 'regress'),
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
                     },
                     {
                         title: t('Дата регресса'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'conclusionDUSP',
+                        render: (text) => get(text, 'regressDate'),
                         width: 100,
                         align: 'center',
                         hideInSearch: true,
                     },
                     {
                         title: t('Доля перестраховщиков'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'decision',
+                        render: (text) => numeral(get(text, 'decision.reinsurerShare',0)).format('0,0.00'),
                         width: 125,
                         align: 'center',
                         hideInSearch: true,

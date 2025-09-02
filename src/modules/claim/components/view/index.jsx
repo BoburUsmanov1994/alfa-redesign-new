@@ -277,7 +277,11 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                                     courtDecisionDate: dayjs(get(data, 'eventCircumstances.courtDecision.courtDecisionDate'))
                                 }
                             },
-                            employee: get(data, 'employee._id')
+                            employee: get(data, 'employee._id'),
+                            conclusionDUSP:{
+                                ...get(data, 'conclusionDUSP', {}),
+                                date: dayjs(get(data, 'conclusionDUSP.date')),
+                            }
                         }}
                     >
                         <ClaimStatus disabled={disabled} form={form} data={data} claimNumber={claimNumber}
@@ -292,7 +296,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                         <PoliceForm initialData={data} form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
-                        <ResponsibleForm data={data} hasResponsibleDamage={hasResponsibleDamage}
+                        <ResponsibleForm _form={form} data={data} hasResponsibleDamage={hasResponsibleDamage}
                                          applicant={responsibleForDamage}
                                          getPersonInfo={getPersonInfo}
                                          getOrgInfo={getOrgInfo}

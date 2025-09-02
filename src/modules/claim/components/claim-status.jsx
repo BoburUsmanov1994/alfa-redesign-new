@@ -26,7 +26,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 <Col span={18}></Col>
                 <Col span={6}>
                     <Form.Item label={t('Запрос на редактирование')}>
-                        <Input value={get(data, 'editRequest.comment')} disabled/>
+                        <Input value={get(data, 'editRequest.text')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -132,12 +132,12 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Дата отправки в НАПП')}>
-                        <Input disabled/>
+                        <Input value={t(get(data, 'sendDate'))} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('UUID претензии в НАПП')}>
-                        <Input disabled/>
+                        <Input value={t(get(data, 'claimUuid'))} disabled/>
                     </Form.Item>
                 </Col>
                 {!disabled && isEqual(get(data, 'nappStatus'), 'new') && <Col span={24} className={'text-right'}>

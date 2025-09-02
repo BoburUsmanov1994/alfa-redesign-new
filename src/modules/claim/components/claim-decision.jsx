@@ -127,7 +127,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                 isEqual(get(decision, 'decisionId'), 1) && <>
                                     <Col span={6}>
                                         <Form.Item label={t('Статус отправки в НАПП')}>
-                                            <Input disabled className={'w-full'}/>
+                                            <Input value={t(get(data, 'nappStatus'))} disabled className={'w-full'}/>
                                         </Form.Item>
                                     </Col>
                                     <Col span={6}>
@@ -246,7 +246,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         <Row gutter={16} align="middle" className={'mt-4'}>
                             <Col span={6}>
                                 <Form.Item label={t('Статус отправки в НАПП')}>
-                                    <Input disabled className={'w-full'}/>
+                                    <Input value={t(get(data, 'nappStatus'))} disabled className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -299,7 +299,11 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         <Col span={6}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={'type'} label={t('Тип оплаты')}>
-                                <Select options={get(payments, 'data.data.damage', get(payments, 'data.damage', []))?.map(({type})=>({value:type,label:t(type)}))}/>
+                                <Select
+                                    options={get(payments, 'data.data.damage', get(payments, 'data.damage', []))?.map(({type}) => ({
+                                        value: type,
+                                        label: t(type)
+                                    }))}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
