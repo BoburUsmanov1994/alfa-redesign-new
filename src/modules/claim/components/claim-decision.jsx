@@ -299,7 +299,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         <Col span={6}>
                             <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={'type'} label={t('Тип оплаты')}>
-                                <Input/>
+                                <Select options={get(payments, 'data.data.damage', get(payments, 'data.damage', []))?.map(({type})=>({value:type,label:t(type)}))}/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
