@@ -3,12 +3,12 @@ import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button,Space} from "antd";
+import {Button, Space} from "antd";
 import {EyeOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {PERSON_TYPE} from "../../../constants";
-import {get,values} from "lodash";
+import {get, values} from "lodash";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
@@ -147,7 +147,7 @@ const ClaimJurnalPage = () => {
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
-                            options: values(PERSON_TYPE)?.map(item => ({value: item, label: item})) || [],
+                            options: values(PERSON_TYPE)?.map(item => ({value: item, label: t(item)})) || [],
                         },
                         hideInTable: true,
                     },
@@ -240,20 +240,20 @@ const ClaimJurnalPage = () => {
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text, 'objectOfInsurance', [])?.map(({type}) => type)?.join(', '),
+                        render: (text) => get(text, 'objectOfInsurance', [])?.map(({type}) => t(type))?.join(', '),
                     },
                     {
                         title: t('Сумма заявленного убытка'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'totalDamageSum',
+                        render: (text) => numeral(text).format('0,0.00'),
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
                     },
                     {
                         title: t('Сумма выплаты'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'totalPaymentSum',
+                        render: (text) => numeral(text).format('0,0.00'),
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
@@ -279,15 +279,14 @@ const ClaimJurnalPage = () => {
                     },
                     {
                         title: t('Дата выплаты'),
-                        dataIndex: 'paymentDate',
+                        dataIndex: 'payment',
+                        render: (text) => get(text, '[0].payoutDate') ? dayjs(get(text, '[0].payoutDate')).format('YYYY-MM-DD') : '-',
                         width: 100,
                         align: 'center',
                         hideInSearch: true,
                     },
                     {
                         title: t('Дата выплаты'),
-                        dataIndex: 'paymentDate',
-                        width: 100,
                         valueType: 'dateRange',
                         search: {
                             transform: (value) => ({
@@ -300,24 +299,24 @@ const ClaimJurnalPage = () => {
                     },
                     {
                         title: t('Регресс'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'conclusionDUSP',
+                        render: (text) => get(text, 'regress'),
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
                     },
                     {
                         title: t('Дата регресса'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'conclusionDUSP',
+                        render: (text) => get(text, 'regressDate'),
                         width: 100,
                         align: 'center',
                         hideInSearch: true,
                     },
                     {
                         title: t('Доля перестраховщиков'),
-                        dataIndex: 'claimType',
-                        render: (text) => '-',
+                        dataIndex: 'decision',
+                        render: (text) => numeral(get(text, 'decision.reinsurerShare', 0)).format('0,0.00'),
                         width: 125,
                         align: 'center',
                         hideInSearch: true,

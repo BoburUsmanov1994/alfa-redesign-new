@@ -12,7 +12,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
     const {t} = useTranslation();
     const {mutate, isPending} = usePutQuery({})
     const {mutate: postRequest, isPending: isPendingPost} = usePostQuery({})
-    let {data: employees,isLoading} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
+    let {data: employees, isLoading} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
     employees = getSelectOptionsListFromData(get(employees, 'data.data', []), '_id', 'name')
 
     return (
@@ -108,8 +108,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item  name={'employee'} label={t('Сотрудник')}>
-                        <Select  onChange={(val, rest) => {
+                    <Form.Item name={'employee'} label={t('Сотрудник')}>
+                        <Select onChange={(val, rest) => {
                             form.setFieldValue('employeeRole', get(rest, 'option.employee.position.name'))
                             form.setFieldValue('employeeContactNumber', get(rest, 'option.employee.telephonenumber'))
                         }} options={employees}/>
@@ -132,7 +132,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Дата отправки в НАПП')}>
-                        <Input value={t(get(data, 'sendDate'))} disabled/>
+                        <Input value={dayjs(get(data, 'sentDate')).format("YYYY-MM-DD")} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>

@@ -132,7 +132,7 @@ const ClaimListPage = () => {
                         fieldProps: {
                             showSearch: true,
                             placeholder: t('Поиск...'),
-                            options: values(PERSON_TYPE)?.map(item => ({value: item, label: item})) || [],
+                            options: values(PERSON_TYPE)?.map(item => ({value: item, label: t(item)})) || [],
                         },
                         hideInTable: true,
                     },
