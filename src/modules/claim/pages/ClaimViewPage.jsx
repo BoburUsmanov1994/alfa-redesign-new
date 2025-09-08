@@ -8,7 +8,7 @@ import {
 import {useParams, useSearchParams} from "react-router-dom";
 import {useGetAllQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
-import {get} from "lodash";
+import {get, includes} from "lodash";
 import {KEYS} from "../../../constants/key";
 import Datagrid from "../../../containers/datagrid";
 import View from "../components/view";
@@ -16,10 +16,12 @@ import ClaimVoice from "../components/claim-voice";
 import ClaimDocs from "../components/claim-docs";
 import dayjs from "dayjs";
 import ClaimDecision from "../components/claim-decision";
+import {useStore} from "../../../store";
 
 
 const ClaimViewPage = () => {
     const {claimNumber} = useParams();
+    const {user} = useStore()
     const [searchParams, setSearchParams] = useSearchParams()
     const {t} = useTranslation();
     let {data, isLoading, refetch: refresh} = useGetAllQuery({
@@ -37,7 +39,7 @@ const ClaimViewPage = () => {
     return (
         <>
             <PageHeader
-                title={t('Детали  портфель')}
+                title={t('Претензионный портфель')}
             >
                 <Tabs
                     onTabClick={(tab) => {
@@ -81,7 +83,7 @@ const ClaimViewPage = () => {
                                 ]} url={`${URLS.claimHistory}?claimNumber=${claimNumber}`}/>
                             </Card>
                         },
-                        {
+                        includes(['claim-admin'], get(user, 'role.name')) && {
                             key: 'voice',
                             label: t('СЭК'),
                             children: <ClaimVoice refresh={refresh} claimNumber={claimNumber} data={get(data, 'data')}/>
@@ -92,7 +94,7 @@ const ClaimViewPage = () => {
                             children: <ClaimDecision claimNumber={claimNumber} data={get(data, 'data')}
                                                      refresh={refresh}/>
                         },
-                    ]}
+                    ]?.filter(Boolean)}
                 />
             </PageHeader>
 

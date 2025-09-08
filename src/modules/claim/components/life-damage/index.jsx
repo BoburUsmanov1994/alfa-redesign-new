@@ -125,12 +125,9 @@ const Index = ({
                                 </Form.Item>
                             </Col>
                             <Col xs={8}>
-                                <Form.Item
-                                    label={t("ПИНФЛ")}
-                                    name={['person', 'passportData', 'pinfl']}
-                                    rules={[{required: true, message: t('Обязательное поле')}]}
-                                >
-                                    <Input/>
+                                <Form.Item name={['person', 'birthDate']} label={t('Дата рождения')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <DatePicker className={'w-full'} format="DD.MM.YYYY"/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
@@ -143,9 +140,12 @@ const Index = ({
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
-                                <Form.Item name={['person', 'birthDate']} label={t('Дата рождения')}
-                                           rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <DatePicker className={'w-full'} format="DD.MM.YYYY"/>
+
+                                <Form.Item
+                                    label={t("ПИНФЛ")}
+                                    name={['person', 'passportData', 'pinfl']}
+                                >
+                                    <Input/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>

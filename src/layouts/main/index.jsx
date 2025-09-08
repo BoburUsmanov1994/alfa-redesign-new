@@ -42,19 +42,19 @@ function getItem(label, key, icon, children) {
 }
 
 const getItems = (role) => [
-    getItem('Продукты', '/products', <ProductOutlined/>, [
+    includes(['admin'], role) && getItem('Продукты', '/products', <ProductOutlined/>, [
         getItem('Все продукты', '/products'),
         getItem('Группы продуктов', '/products/product-groups'),
         getItem('Подгруппы продуктов', '/products/product-subgroups'),
         getItem('Статус продукта', '/products/product-status'),
     ]),
-    getItem('Соглашения', '/agreements', <FileOutlined/>),
-    getItem('Клиенты', '/clients', <TeamOutlined/>, [
+    includes(['admin'], role) && getItem('Соглашения', '/agreements', <FileOutlined/>),
+    includes(['admin'], role) && getItem('Клиенты', '/clients', <TeamOutlined/>, [
         getItem('Физические лица', '/clients/physical'),
         getItem('Юридические лица', '/clients/juridical'),
         getItem('Тип человека', '/clients/person-type'),
     ]),
-    getItem('Агенты', '/agents', <UserSwitchOutlined/>, [
+    includes(['admin'], role) && getItem('Агенты', '/agents', <UserSwitchOutlined/>, [
         getItem('Страховые агенты', '/agents/insurance-agents'),
         getItem('Типы агентов', '/agents/types'),
         getItem('Роли агента', '/agents/roles'),
@@ -64,12 +64,12 @@ const getItems = (role) => [
         getItem('Подготовка актов выполненных работ', '/agents/report'),
         getItem('Управление актами выполненных работ', '/agents/report-control'),
     ]),
-    getItem('Аккаунты', '/accounts', <IdcardOutlined/>, [
+    includes(['admin'], role) && getItem('Аккаунты', '/accounts', <IdcardOutlined/>, [
         getItem('Пользователи', '/accounts/list'),
         getItem('Роль аккаунта', '/accounts/role'),
         getItem('Статус аккаунта', '/accounts/status'),
     ]),
-    getItem('Филиалы и сотрудники', '/branches', <BankOutlined/>, [
+    includes(['admin'], role) && getItem('Филиалы и сотрудники', '/branches', <BankOutlined/>, [
         getItem('Филиалы', '/branches/list'),
         getItem('Сотрудники', '/branches/employees'),
         getItem('Должность', '/branches/position'),
@@ -77,7 +77,7 @@ const getItems = (role) => [
         getItem('Статус отделения', '/branches/branch-status'),
         getItem('Банк реквизиты филиалов', '/branches/branch-settings'),
     ]),
-    getItem('Бухгалтерия', '/accounting', <CalculatorOutlined/>, [
+    includes(['admin'], role) && getItem('Бухгалтерия', '/accounting', <CalculatorOutlined/>, [
         getItem('Импорт платёжных документов', '/accounting/import-payment-documents'),
         getItem('Распределение', '/accounting/distribtion'),
         getItem('Тип распределения', '/accounting/distribution-type'),
@@ -85,8 +85,8 @@ const getItems = (role) => [
         getItem('Счета', '/accounting/account'),
         getItem('Журналы транзакций', '/accounting/transaction-logs'),
     ]),
-    getItem('Индоссамент', '/endorsement', <CheckSquareOutlined/>),
-    getItem('Страховой', '/insurance', <InsuranceOutlined/>, [
+    includes(['admin'], role) && getItem('Индоссамент', '/endorsement', <CheckSquareOutlined/>),
+    includes(['admin'], role) && getItem('Страховой', '/insurance', <InsuranceOutlined/>, [
         getItem('ОСГОР', '/insurance/osgor'),
         getItem('ОСГОП', '/insurance/osgop'),
         getItem('ОСАГО', '/insurance/osago'),

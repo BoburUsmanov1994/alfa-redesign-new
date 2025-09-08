@@ -38,7 +38,7 @@ const ClaimJurnalViewPage = () => {
     return (
         <>
             <PageHeader
-                title={t('Детали  портфель')}
+                title={t('Претензионный портфель')}
             >
                 <Tabs
                     onTabClick={(tab) => {

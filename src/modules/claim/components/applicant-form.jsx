@@ -42,8 +42,10 @@ const ApplicantForm = ({
                     </Divider>
                 </Col>
                 <Col xs={6}>
-                    <Form.Item initialValue={get(data,'applicant.person') ? 'person' : get(data,'applicant.organization') ? 'organization':'person'} name={'client'} label={t('Физ / юр. лицо:')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                    <Form.Item
+                        initialValue={get(data, 'applicant.person') ? 'person' : get(data, 'applicant.organization') ? 'organization' : 'person'}
+                        name={'client'} label={t('Физ / юр. лицо:')}
+                        rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Radio.Group options={[{value: 'person', label: t('физ.лицо')}, {
                             value: 'organization',
                             label: t('юр.лицо')
@@ -72,11 +74,11 @@ const ApplicantForm = ({
                         </Col>
                         <Col xs={6}>
                             <Form.Item
-                                label={t("ПИНФЛ")}
-                                name={['applicant', 'person', 'passportData', 'pinfl']}
+                                label={t("Дата рождения")}
+                                name={['applicant', 'person', 'birthDate']}
                                 rules={[{required: true, message: t('Обязательное поле')}]}
                             >
-                                <Input/>
+                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
@@ -126,9 +128,9 @@ const ApplicantForm = ({
                     </Form.Item>
                 </Col>
                 <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'birthDate']} label={t('Дата рождения')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
-                        <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                    <Form.Item name={['applicant', 'person', 'passportData', 'pinfl']} label={t('ПИНФЛ')}
+                    >
+                        <Input/>
                     </Form.Item>
                 </Col>
                 <Col xs={6}>

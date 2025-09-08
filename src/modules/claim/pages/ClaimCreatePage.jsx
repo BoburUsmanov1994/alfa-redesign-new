@@ -100,11 +100,11 @@ const ClaimCreatePage = () => {
             attributes: {
                 passportSeries: toUpper(_form.getFieldValue([...type, 'passportData', 'seria'])),
                 passportNumber: _form.getFieldValue([...type, 'passportData', 'number']),
-                pinfl: _form.getFieldValue([...type, 'passportData', 'pinfl']),
+                birthDate:dayjs( _form.getFieldValue([...type, 'birthDate'])).format('YYYY-MM-DD'),
             }
         }, {
             onSuccess: ({data: result}) => {
-                _form.setFieldValue([...type, 'birthDate'], dayjs(get(result, 'birthDate')))
+                _form.setFieldValue([...type, 'passportData', 'pinfl'], get(result, 'pinfl'))
                 _form.setFieldValue([...type, 'fullName', 'firstname'], get(result, 'firstNameLatin'))
                 _form.setFieldValue([...type, 'fullName', 'lastname'], get(result, 'lastNameLatin'))
                 _form.setFieldValue([...type, 'fullName', 'middlename'], get(result, 'middleNameLatin'))

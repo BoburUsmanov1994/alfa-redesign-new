@@ -102,7 +102,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             <Col span={6}>
                                 <Form.Item
                                     name={['decision', 'regressDate']}
-                                    initialValue={dayjs(get(data, 'decision.decision.regressDate'))}
+                                    initialValue={get(data, 'decision.decision.regressDate') ? dayjs(get(data, 'decision.decision.regressDate')):null}
                                     label={t('Дата передачи в регресс')}>
                                     <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
                                 </Form.Item>
@@ -132,7 +132,8 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                     </Col>
                                     <Col span={6}>
                                         <Form.Item label={t('Дата отправки в НАПП')}>
-                                            <DatePicker value={get(data,'sentDate') ? dayjs(get(data,'sentDate')) : null} format="DD.MM.YYYY" disabled className={'w-full'}/>
+                                            <DatePicker value={get(data, 'sentDate') ? dayjs(get(data, 'sentDate')) : null}
+                                                        format="DD.MM.YYYY" disabled className={'w-full'}/>
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
@@ -250,8 +251,9 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
-                                <Form.Item  label={t('Дата отправки в НАПП')}>
-                                    <DatePicker value={get(data,'sentDate') ? dayjs(get(data,'sentDate')) : null} format="DD.MM.YYYY" disabled className={'w-full'}/>
+                                <Form.Item label={t('Дата отправки в НАПП')}>
+                                    <DatePicker value={get(data, 'sentDate') ? dayjs(get(data, 'sentDate')) : null}
+                                                format="DD.MM.YYYY" disabled className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -390,6 +392,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
+                                initialValue={860}
                                 name={'currencyId'}
                                 label={t('Валюта')}>
                                 <Select options={currency}/>

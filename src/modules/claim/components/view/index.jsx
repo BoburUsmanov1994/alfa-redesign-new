@@ -28,6 +28,7 @@ import ClaimStatus from "../claim-status";
 import BankDetails from "../bank-details";
 import ClaimDamage from "../claim-damage";
 import {find} from "lodash/collection";
+import {isNil} from "lodash/lang";
 
 
 const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
@@ -280,7 +281,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             employee: get(data, 'employee._id'),
                             conclusionDUSP: {
                                 ...get(data, 'conclusionDUSP', {}),
-                                date: dayjs(get(data, 'conclusionDUSP.date')),
+                                date: get(data, 'conclusionDUSP.date') ? dayjs(get(data, 'conclusionDUSP.date')) : null,
                             }
                         }}
                     >
@@ -454,7 +455,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             </Col>
 
                             <Col span={6}>
-                                <Form.Item name={['conclusionDUSP', 'date']} label={t('Дата заключения')}>
+                                <Form.Item  name={['conclusionDUSP', 'date']}
+                                           label={t('Дата заключения')}>
                                     <DatePicker format={'DD.MM.YYYY'} className={'w-full'}/>
                                 </Form.Item>
                             </Col>

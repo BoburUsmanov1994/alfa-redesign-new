@@ -56,7 +56,7 @@ const VehicleForm = ({
                     >
                         <Radio.Group options={[{value: false, label: t('нет')}, {
                             value: true,
-                            label: t('нанесен')
+                            label: t('есть')
                         }]}/>
                     </Form.Item>
                 </Col>
@@ -226,12 +226,10 @@ const VehicleForm = ({
                                     </Form.Item>
                                 </Col>
                                 <Col xs={8}>
-                                    <Form.Item
-                                        label={t("ПИНФЛ")}
-                                        name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'pinfl']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
-                                    >
-                                        <Input/>
+                                    <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']}
+                                               label={t('Дата рождения')}
+                                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                                        <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={4}>
@@ -283,10 +281,11 @@ const VehicleForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']}
-                                       label={t('Дата рождения')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                            <Form.Item
+                                label={t("ПИНФЛ")}
+                                name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'pinfl']}
+                            >
+                                <Input/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>

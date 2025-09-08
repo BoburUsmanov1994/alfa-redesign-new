@@ -45,7 +45,7 @@ const LoginPage = () => {
                     {
                         onSuccess: (data) => {
                             setToken(get(data, "data.access_token"))
-                            navigate('/agreements');
+                            navigate('/claims');
 
                         },
                         onError: () => {

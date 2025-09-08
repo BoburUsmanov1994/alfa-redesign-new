@@ -32,7 +32,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
 
     useEffect(() => {
         if (!isEmpty(get(data, 'sekVoteDetails.votes', []))) {
-            setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => get(member,'_id')));
+            setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => get(member, '_id')));
         }
     }, [data])
     return (
@@ -84,7 +84,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                             action: 'deny'
                                         },
                                         method: 'put',
-                                    },{
+                                    }, {
                                         onSuccess: () => {
                                             refresh()
                                         }
@@ -101,7 +101,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
                                         level={5}>{t('Голосование')}</Typography.Title> <Button
-                                        disabled={get(data,'sekVoteDetails.isVotesFixed') || isEmpty(get(data, 'sekVoteDetails.votes', [])) || !every(get(data, 'sekVoteDetails.votes', []), 'decision')}
+                                        disabled={get(data, 'sekVoteDetails.isVotesFixed') || isEmpty(get(data, 'sekVoteDetails.votes', [])) || !every(get(data, 'sekVoteDetails.votes', []), 'decision')}
                                         onClick={() => {
                                             mutate({
                                                 url: URLS.claimSekAction,
@@ -124,7 +124,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                             {
                                                 title: t('Должность'),
                                                 dataIndex: 'member',
-                                                render: (value) => get(value, 'name'),
+                                                render: (value) => get(value, 'employee.position.name'),
                                             },
                                             {
                                                 title: t('Ф.И.О'),

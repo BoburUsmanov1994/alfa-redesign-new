@@ -179,9 +179,9 @@ const ClaimListPage = () => {
                         title: t('Период страхования'),
                         dataIndex: 'policy',
                         hideInSearch: true,
-                        width: 100,
+                        width: 200,
                         align: 'center',
-                        render: (text) => dayjs(get(text, 'issueDate')).format('YYYY-MM-DD'),
+                        render: (text) => <span>{dayjs(get(text, 'startDate')).format('YYYY-MM-DD')} / {dayjs(get(text, 'endDate')).format('YYYY-MM-DD')}</span>,
                     },
                     {
                         title: t('Страховая сумма'),
@@ -213,11 +213,10 @@ const ClaimListPage = () => {
                     },
                     {
                         title: t('Страховой риск'),
-                        dataIndex: 'agreement',
+                        dataIndex: 'insuranceRisk',
                         hideInSearch: true,
                         width: 150,
                         align: 'center',
-                        render: (text) => get(text, 'product.risk', [])?.map(({name}) => name)?.join(', '),
                     },
                     {
                         title: t('Объект страхования'),

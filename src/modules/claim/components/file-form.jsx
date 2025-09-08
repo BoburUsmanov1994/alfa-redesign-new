@@ -81,7 +81,7 @@ const FileForm = ({
                             {
                                 title: t('URL-адрес файла'),
                                 dataIndex: 'url',
-                                render: (text,) => <Button type={'link'} href={text}>
+                                render: (text,) => <Button disabled={false} type={'link'} href={text}>
                                     {text}
                                 </Button>
                             },

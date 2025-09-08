@@ -54,7 +54,7 @@ const ResponsibleForm = ({
                     >
                         <Radio.Group options={[{value: false, label: t('нет')}, {
                             value: true,
-                            label: t('нанесен')
+                            label: t('есть')
                         }]}/>
                     </Form.Item>
                 </Col>
@@ -63,7 +63,7 @@ const ResponsibleForm = ({
                         <Form.Item
                             initialValue={false}
                             layout={'horizontal'}
-                            name={['responsibleForDamage','isApplicantResponsible']}
+                            name={['responsibleForDamage', 'isApplicantResponsible']}
                             label={t("Виновен Заявитель")}
                         >
                             <Switch
@@ -85,8 +85,10 @@ const ResponsibleForm = ({
                 hasResponsibleDamage && <>
                     <Row gutter={16}>
                         <Col xs={6}>
-                            <Form.Item initialValue={get(data,'responsibleForDamage.person')?'person':get(data,'responsibleForDamage.organization')?'organization':'person'} name={'responsible'} label={t('Виновен Заявитель')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
+                            <Form.Item
+                                initialValue={get(data, 'responsibleForDamage.person') ? 'person' : get(data, 'responsibleForDamage.organization') ? 'organization' : 'person'}
+                                name={'responsible'} label={t('Виновен Заявитель')}
+                                rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Radio.Group options={[{value: 'person', label: t('физ.лицо')}, {
                                     value: 'organization',
                                     label: t('юр.лицо')
@@ -114,12 +116,9 @@ const ResponsibleForm = ({
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
-                                    <Form.Item
-                                        label={t("ПИНФЛ")}
-                                        name={['responsibleForDamage', 'person', 'passportData', 'pinfl']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
-                                    >
-                                        <Input/>
+                                    <Form.Item name={['responsibleForDamage', 'person', 'birthDate']} label={t('Дата рождения')}
+                                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                                        <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col xs={6}>
@@ -171,9 +170,11 @@ const ResponsibleForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item name={['responsibleForDamage', 'person', 'birthDate']} label={t('Дата рождения')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                            <Form.Item
+                                label={t("ПИНФЛ")}
+                                name={['responsibleForDamage', 'person', 'passportData', 'pinfl']}
+                            >
+                                <Input/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>

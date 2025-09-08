@@ -292,12 +292,9 @@ const Index = ({
                                         </Form.Item>
                                     </Col>
                                     <Col xs={8}>
-                                        <Form.Item
-                                            label={t("ПИНФЛ")}
-                                            name={['vehicle', 'ownerPerson', 'passportData', 'pinfl']}
-                                            rules={[{required: true, message: t('Обязательное поле')}]}
-                                        >
-                                            <Input/>
+                                        <Form.Item name={['vehicle', 'ownerPerson', 'birthDate']} label={t('Дата рождения')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                         </Form.Item>
                                     </Col>
                                     <Col xs={4}>
@@ -335,9 +332,12 @@ const Index = ({
                         </Row>
                         {isEqual(owner, 'person') ? <Row gutter={16}>
                             <Col xs={6}>
-                                <Form.Item name={['vehicle', 'ownerPerson', 'birthDate']} label={t('Дата рождения')}
-                                           rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+
+                                <Form.Item
+                                    label={t("ПИНФЛ")}
+                                    name={['vehicle', 'ownerPerson', 'passportData', 'pinfl']}
+                                >
+                                    <Input/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
