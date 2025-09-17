@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import {entries} from "lodash/object";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
-import {filter} from "lodash/collection";
+import {filter, find} from "lodash/collection";
 import {DeleteOutlined} from "@ant-design/icons";
 
 const ClaimDecision = ({data, claimNumber, refresh}) => {
@@ -220,6 +220,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                     {
                                         title: 'Валюта',
                                         dataIndex: 'currencyId',
+                                        render: (text) => get(find(currency,(item)=>isEqual(text,get(item,'value'))),'label')
                                     },
                                     {
                                         title: 'Дата выплаты',
