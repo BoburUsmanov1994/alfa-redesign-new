@@ -113,58 +113,25 @@ const ApplicantForm = ({
                 </Col>
             </Row>
             {isEqual(client, 'person') ? <Row gutter={16}>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'passportData', 'givenPlace']}
-                               label={t(' Кем выдан паспорт')}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'passportData', 'issueDate']}
-                               label={t('Дата выдачи паспорта')}
-                    >
-                        <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'passportData', 'pinfl']} label={t('ПИНФЛ')}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'fullName', 'lastname']} label={t('Фамилия')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Input/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'fullName', 'firstname']} label={t('Имя')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Input/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'fullName', 'middlename']} label={t('Отчество')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Input/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'residentType']} label={t('Резидент')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
-                        <Select options={residentTypes}/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item initialValue={210} name={['applicant', 'person', 'countryId']}
-                               label={t('Страна')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
-                        <Select options={countryList}/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'gender']} label={t('Пол')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Select options={[
@@ -179,13 +146,33 @@ const ApplicantForm = ({
                         ]}/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
+                    <Form.Item name={['applicant', 'person', 'residentType']} label={t('Резидент')}
+                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                        <Select options={residentTypes}/>
+                    </Form.Item>
+                </Col>
+                <Col xs={8}>
+                    <Form.Item name={['applicant', 'person', 'passportData', 'pinfl']} label={t('ПИНФЛ')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={8}>
+                    <Form.Item initialValue={210} name={['applicant', 'person', 'countryId']}
+                               label={t('Страна')}
+                               >
+                        <Select options={countryList}/>
+                    </Form.Item>
+                </Col>
+
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'regionId']} label={t('Область')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Select options={regions}/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'districtId']} label={t('Район')}
                     >
                         <Select options={districts}/>
@@ -194,20 +181,6 @@ const ApplicantForm = ({
                 <Col xs={12}>
                     <Form.Item name={['applicant', 'person', 'address']} label={t('Адрес')}
                                rules={[{required: true, message: t('Обязательное поле')}]}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'driverLicenseSeria']}
-                               label={t(' Серия вод. удостоверения')}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'person', 'driverLicenseNumber']}
-                               label={t('Номер вод. удостоверения')}
                     >
                         <Input/>
                     </Form.Item>
@@ -236,9 +209,41 @@ const ApplicantForm = ({
                         <Input/>
                     </Form.Item>
                 </Col>
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person', 'passportData', 'givenPlace']}
+                               label={t(' Кем выдан паспорт')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person', 'passportData', 'issueDate']}
+                               label={t('Дата выдачи паспорта')}
+                    >
+                        <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                    </Form.Item>
+                </Col>
+
+
+
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person', 'driverLicenseSeria']}
+                               label={t('Серия вод. удостоверения водителя')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={6}>
+                    <Form.Item name={['applicant', 'person', 'driverLicenseNumber']}
+                               label={t('Номер вод. удостоверения водителя')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+
 
             </Row> : <Row gutter={16}>
-                <Col xs={12}>
+                <Col xs={24}>
                     <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                name={['applicant', 'organization', 'name']}
                                label={t('Наименование')}
@@ -246,14 +251,14 @@ const ApplicantForm = ({
                         <Input/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'organization', 'ownershipFormId']}
                                label={t('Форма собственности')}
                     >
                         <Select options={ownershipForms}/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
                                name={['applicant', 'organization', 'oked']}
                                label={t('ОКЭД')}
@@ -261,20 +266,27 @@ const ApplicantForm = ({
                         <Input/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
+                    <Form.Item name={['applicant', 'organization', 'checkingAccount']}
+                               label={t('Расчетный счет')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={8}>
                     <Form.Item initialValue={210} name={['applicant', 'organization', 'countryId']}
                                label={t('Страна')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Select options={countryList}/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'organization', 'regionId']} label={t('Область')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Select options={regions}/>
                     </Form.Item>
                 </Col>
-                <Col xs={6}>
+                <Col xs={8}>
                     <Form.Item name={['applicant', 'organization', 'districtId']} label={t('Район')}
                     >
                         <Select options={districts}/>
@@ -283,27 +295,6 @@ const ApplicantForm = ({
                 <Col xs={12}>
                     <Form.Item name={['applicant', 'organization', 'address']} label={t('Адрес')}
                                rules={[{required: true, message: t('Обязательное поле')}]}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'organization', 'checkingAccount']}
-                               label={t('Расчетный счет')}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'organization', 'representativeName']}
-                               label={t('Фамилия представителя')}
-                    >
-                        <Input/>
-                    </Form.Item>
-                </Col>
-                <Col xs={6}>
-                    <Form.Item name={['applicant', 'organization', 'position']}
-                               label={t('Должность представителя')}
                     >
                         <Input/>
                     </Form.Item>
@@ -332,6 +323,22 @@ const ApplicantForm = ({
                         <Input/>
                     </Form.Item>
                 </Col>
+
+                <Col xs={12}>
+                    <Form.Item name={['applicant', 'organization', 'representativeName']}
+                               label={t('Фамилия представителя')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+                <Col xs={12}>
+                    <Form.Item name={['applicant', 'organization', 'position']}
+                               label={t('Должность представителя')}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
+
             </Row>}
         </>
     );

@@ -251,6 +251,8 @@ const ClaimCreatePage = () => {
                                 layout={'horizontal'}
                                 label={t("Вред жизни (летальный исход)")}
                                 name={'hasLifeDamage'}
+                                labelCol={{span: 4}}
+                                labelAlign={'left'}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
                                     value: true,
@@ -277,7 +279,9 @@ const ClaimCreatePage = () => {
                             <Form.Item
                                 initialValue={false}
                                 layout={'horizontal'}
-                                label={t("Вред здоровью:")}
+                                label={t("Вред здоровью")}
+                                labelCol={{span: 4 }}
+                                labelAlign={'left'}
                                 name={'hasHealthDamage'}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
@@ -305,6 +309,8 @@ const ClaimCreatePage = () => {
                                 layout={'horizontal'}
                                 label={t("Вред автомобилю:")}
                                 name={'hasVehicleDamage'}
+                                labelCol={{span: 4 }}
+                                labelAlign={'left'}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
                                     value: true,
@@ -338,6 +344,8 @@ const ClaimCreatePage = () => {
                                 layout={'horizontal'}
                                 label={t("Вред имуществу:")}
                                 name={'hasPropertyDamage'}
+                                labelCol={{span: 4 }}
+                                labelAlign={'left'}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
                                     value: true,

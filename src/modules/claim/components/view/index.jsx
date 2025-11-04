@@ -318,6 +318,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             <Form.Item
                                 initialValue={false}
                                 layout={'horizontal'}
+                                labelAlign={'left'}
+                                labelCol={{span: 4}}
                                 label={t("Вред жизни (летальный исход)")}
                                 name={'hasLifeDamage'}
                             >
@@ -346,7 +348,9 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             <Form.Item
                                 initialValue={false}
                                 layout={'horizontal'}
-                                label={t("Вред здоровью:")}
+                                label={t("Вред здоровью")}
+                                labelAlign={'left'}
+                                labelCol={{span: 4}}
                                 name={'hasHealthDamage'}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
@@ -372,8 +376,10 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             <Form.Item
                                 initialValue={false}
                                 layout={'horizontal'}
-                                label={t("Вред автомобилю:")}
+                                label={t("Вред автомобилю")}
                                 name={'hasVehicleDamage'}
+                                labelAlign={'left'}
+                                labelCol={{span: 4}}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
                                     value: true,
@@ -406,8 +412,10 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             <Form.Item
                                 initialValue={false}
                                 layout={'horizontal'}
-                                label={t("Вред имуществу:")}
+                                label={t("Вред имуществу")}
                                 name={'hasPropertyDamage'}
+                                labelAlign={'left'}
+                                labelCol={{span: 4}}
                             >
                                 <Radio.Group options={[{value: false, label: t('нет')}, {
                                     value: true,

@@ -19,7 +19,7 @@ export function  AuthProvider  ({children})  {
         mutate({url:URLS.login,attributes:{..._attrs}},{
             onSuccess: ({data})=>{
                 setToken(get(data,'access_token'));
-                navigate('/agreements');
+                navigate('/claims');
             }
         });
     }

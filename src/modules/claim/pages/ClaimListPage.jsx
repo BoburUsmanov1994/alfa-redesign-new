@@ -3,8 +3,8 @@ import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button, Popconfirm, Space, Tag, Tooltip} from "antd";
-import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutlined} from "@ant-design/icons";
+import {Button, Modal, Space, Tag} from "antd";
+import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutlined,ExclamationCircleFilled} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {CLAIM_STATUS_LIST, PERSON_TYPE} from "../../../constants";
@@ -13,7 +13,7 @@ import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
-
+const { confirm } = Modal;
 
 const ClaimListPage = () => {
     const {t} = useTranslation();
@@ -46,6 +46,22 @@ const ClaimListPage = () => {
             }
         })
     }
+
+    const showDeleteConfirm = (_id) => {
+        confirm({
+            title: t('Вы хотите удалить?'),
+            icon: <ExclamationCircleFilled />,
+            okText: 'Да',
+            okType: 'danger',
+            cancelText: 'Нет',
+            onOk() {
+                remove(_id)
+            },
+            onCancel() {
+
+            },
+        });
+    };
 
     return (
         <>
@@ -323,29 +339,23 @@ const ClaimListPage = () => {
                                 <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
                                         className={'cursor-pointer'}
                                         icon={<EditOutlined/>}/>}
-                            <Popconfirm
-                                title={t('Вы хотите удалить?')}
-                                onConfirm={() => remove(get(record, 'claimNumber'))}
-                                okButtonProps={{loading: isPending}}
-                            >
-                                <Tooltip title={t('Удалить')}>
-                                    <Button danger
-                                            className={'cursor-pointer'}
-                                            icon={<DeleteOutlined/>}/>
-                                </Tooltip>
-                            </Popconfirm>
+                            <Button onClick={()=>showDeleteConfirm(get(record, 'claimNumber'))} danger
+                                    className={'cursor-pointer'}
+                                    icon={<DeleteOutlined/>}/>
 
                         </Space>
                     }
 
                 ]}
                 url={`${URLS.claims}`}>
-                {({actionRef}) => <Space>
+                {() => <Space>
                     <Button type={'dashed'} icon={<DownloadOutlined/>}>
                         {t('Отчет')}
                     </Button>
                 </Space>}
             </Datagrid>
+
+
         </>
     );
 };

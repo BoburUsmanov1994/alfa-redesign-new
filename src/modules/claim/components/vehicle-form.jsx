@@ -51,6 +51,8 @@ const VehicleForm = ({
                     <Form.Item
                         initialValue={!isNil(get(data, 'responsibleVehicleInfo', null))}
                         layout={'horizontal'}
+                        labelAlign={'left'}
+                        labelCol={{span: 4}}
                         label={t("Виновное лицо")}
                         name={'hasResponsibleVehicle'}
                     >
