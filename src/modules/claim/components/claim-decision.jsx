@@ -1,5 +1,21 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, Card, Col, DatePicker, Drawer, Flex, Form, Input, Radio, Row, Select, Space, Spin, Table} from "antd";
+import {
+    Button,
+    Card,
+    Col,
+    DatePicker,
+    Drawer,
+    Flex,
+    Form,
+    Input,
+    Popconfirm,
+    Radio,
+    Row,
+    Select,
+    Space,
+    Spin,
+    Table
+} from "antd";
 import {useTranslation} from "react-i18next";
 import {get, head, isEmpty, isEqual, last} from "lodash"
 import {URLS} from "../../../constants/url";
@@ -137,31 +153,45 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
-                                        <Button onClick={() => {
-                                            mutate({
-                                                url: `${URLS.claimSendDecision}?claimNumber=${claimNumber}`,
-                                            }, {
-                                                onSuccess: () => {
-                                                    refresh()
-                                                }
-                                            })
-                                        }} type="dashed"
+                                        <Popconfirm
+                                            title="Отправить решение в НАПП?"
+                                            onConfirm={() => {
+                                                mutate({
+                                                    url: `${URLS.claimSendDecision}?claimNumber=${claimNumber}`,
+                                                }, {
+                                                    onSuccess: () => {
+                                                        refresh()
+                                                    }
+                                                })
+                                            }}
+                                            okText="Подтвердить"
+                                            cancelText="Отменить"
+                                        >
+                                        <Button  type="dashed"
                                                 className={'mr-4'}
                                                 name={'send'}>
                                             {t('Отправить решение в НАПП')}
                                         </Button>
-                                        <Button onClick={() => {
-                                            mutate({
-                                                url: `${URLS.claimSendDecision1c}?claimNumber=${claimNumber}`,
-                                            }, {
-                                                onSuccess: () => {
-                                                    refresh()
-                                                }
-                                            })
-                                        }} type="dashed"
+                                        </Popconfirm>
+                                        <Popconfirm
+                                            title="Отправить решение в 1С?"
+                                            onConfirm={() => {
+                                                mutate({
+                                                    url: `${URLS.claimSendDecision1c}?claimNumber=${claimNumber}`,
+                                                }, {
+                                                    onSuccess: () => {
+                                                        refresh()
+                                                    }
+                                                })
+                                            }}
+                                            okText="Подтвердить"
+                                            cancelText="Отменить"
+                                        >
+                                        <Button type="dashed"
                                                 name={'payment'}>
                                             {t('Отправить решение в 1С')}
                                         </Button>
+                                        </Popconfirm>
                                     </Col>
                                 </>
                             }
@@ -258,17 +288,24 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
-                                <Button type={'dashed'} onClick={() => {
-                                    mutate({
-                                        url: `${URLS.claimSendPayment}?claimNumber=${claimNumber}`,
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }}>
+                                <Popconfirm
+                                    title="Отправить выплату в НАП?"
+                                    onConfirm={() => {
+                                        mutate({
+                                            url: `${URLS.claimSendPayment}?claimNumber=${claimNumber}`,
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }}
+                                    okText="Подтвердить"
+                                    cancelText="Отменить"
+                                >
+                                <Button type={'dashed'}>
                                     {t('Отправить выплату в НАПП')}
                                 </Button>
+                                </Popconfirm>
                             </Col>
                         </Row>
                     </Card>

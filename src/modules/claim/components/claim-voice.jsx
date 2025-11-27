@@ -1,5 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, DatePicker, Drawer, Form, Input, Row, Space, Switch, Table, Typography} from "antd";
+import {
+    Button,
+    Card,
+    Col,
+    DatePicker,
+    Drawer,
+    Form,
+    Input,
+    Popconfirm,
+    Row,
+    Space,
+    Switch,
+    Table,
+    Typography
+} from "antd";
 import {useTranslation} from "react-i18next";
 import {each, every, get, isEmpty} from "lodash"
 import {useGetAllQuery, usePutQuery} from "../../../hooks/api";
@@ -76,22 +90,29 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                         name={'save'}>
                                     {t('Передать дело в СЭК')}
                                 </Button>
-                                <Button loading={isPending} onClick={() => {
-                                    mutate({
-                                        url: URLS.claimSekAction,
-                                        attributes: {
-                                            claimNumber: parseInt(claimNumber),
-                                            action: 'deny'
-                                        },
-                                        method: 'put',
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }} danger type={'primary'}>
-                                    {t('Отозвать дело')}
-                                </Button>
+                                <Popconfirm
+                                    title="Отозвать дело?"
+                                    onConfirm={() => {
+                                        mutate({
+                                            url: URLS.claimSekAction,
+                                            attributes: {
+                                                claimNumber: parseInt(claimNumber),
+                                                action: 'deny'
+                                            },
+                                            method: 'put',
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }}
+                                    okText="Подтвердить"
+                                    cancelText="Отменить"
+                                >
+                                    <Button loading={isPending} danger type={'primary'}>
+                                        {t('Отозвать дело')}
+                                    </Button>
+                                </Popconfirm>
                             </Space>
                         </Col>
                         <Col span={24}>
@@ -100,25 +121,33 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                     dataSource={get(data, 'sekVoteDetails.votes', [])}
                                     title={() => <Space className={'flex justify-between'} block
                                                         align={'center'}><Typography.Title
-                                        level={5}>{t('Голосование')}</Typography.Title> <Button
-                                        disabled={get(data, 'sekVoteDetails.isVotesFixed') || isEmpty(get(data, 'sekVoteDetails.votes', [])) || !every(get(data, 'sekVoteDetails.votes', []), 'decision')}
-                                        onClick={() => {
-                                            mutate({
-                                                url: URLS.claimSekAction,
-                                                attributes: {
-                                                    claimNumber: parseInt(claimNumber),
-                                                    action: 'accept'
-                                                },
-                                                method: 'put',
-                                            }, {
-                                                onSuccess: () => {
-                                                    refresh()
-                                                }
-                                            })
-                                        }}
-                                        type="dashed">
-                                        {t('Зафиксировать голосование')}
-                                    </Button></Space>}
+                                        level={5}>{t('Голосование')}</Typography.Title>
+                                        <Popconfirm
+                                            title="Зафиксировать голосование?"
+                                            onConfirm={() => {
+                                                mutate({
+                                                    url: URLS.claimSekAction,
+                                                    attributes: {
+                                                        claimNumber: parseInt(claimNumber),
+                                                        action: 'accept'
+                                                    },
+                                                    method: 'put',
+                                                }, {
+                                                    onSuccess: () => {
+                                                        refresh()
+                                                    }
+                                                })
+                                            }}
+                                            okText="Подтвердить"
+                                            cancelText="Отменить"
+                                        >
+                                            <Button
+                                                disabled={get(data, 'sekVoteDetails.isVotesFixed') || isEmpty(get(data, 'sekVoteDetails.votes', [])) || !every(get(data, 'sekVoteDetails.votes', []), 'decision')}
+                                                type="dashed">
+                                                {t('Зафиксировать голосование')}
+                                            </Button>
+                                        </Popconfirm>
+                                    </Space>}
                                     columns={
                                         [
                                             {

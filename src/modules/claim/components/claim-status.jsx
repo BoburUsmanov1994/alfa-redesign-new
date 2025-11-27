@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Card, Col, DatePicker, Form, Input, Row, Select, Space} from "antd";
+import {Button, Card, Col, DatePicker, Form, Input, Popconfirm, Row, Select, Space} from "antd";
 import {useTranslation} from "react-i18next";
 import {get, isEqual} from "lodash"
 import {URLS} from "../../../constants/url";
@@ -36,61 +36,82 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 {!disabled && <Col span={12}>
                     <Space>
-                        <Button loading={isPending} onClick={() => {
-                            mutate({
-                                url: URLS.claimAction,
-                                attributes: {
-                                    claimNumber: parseInt(claimNumber),
-                                    action: 'accept',
-                                    comment: form.getFieldValue('comment'),
-                                },
-                                method: 'put',
-                            }, {
-                                onSuccess: () => {
-                                    refresh()
-                                }
-                            })
-                        }} className={'mr-3'} type="dashed"
+                        <Popconfirm
+                            title="Принять?"
+                            onConfirm={() => {
+                                mutate({
+                                    url: URLS.claimAction,
+                                    attributes: {
+                                        claimNumber: parseInt(claimNumber),
+                                        action: 'accept',
+                                        comment: form.getFieldValue('comment'),
+                                    },
+                                    method: 'put',
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }}
+                            okText="Подтвердить"
+                            cancelText="Отменить"
+                        >
+                        <Button loading={isPending}  className={'mr-3'} type="dashed"
                                 name={'save'}>
                             {t('Принять')}
                         </Button>
-                        <Button loading={isPending} onClick={() => {
-                            mutate({
-                                url: URLS.claimAction,
-                                attributes: {
-                                    claimNumber: parseInt(claimNumber),
-                                    action: 'deny'
-                                },
-                                method: 'put',
-                            }, {
-                                onSuccess: () => {
-                                    refresh()
-                                }
-                            })
-                        }} danger type={'dashed'}>
+                        </Popconfirm>
+                        <Popconfirm
+                            title="Отклонить?"
+                            onConfirm={() => {
+                                mutate({
+                                    url: URLS.claimAction,
+                                    attributes: {
+                                        claimNumber: parseInt(claimNumber),
+                                        action: 'deny'
+                                    },
+                                    method: 'put',
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }}
+                            okText="Подтвердить"
+                            cancelText="Отменить"
+                        >
+                        <Button loading={isPending}  danger type={'dashed'}>
                             {t('Отклонить')}
                         </Button>
+                        </Popconfirm>
                     </Space>
                 </Col>}
                 {!disabled && isEqual(get(data, 'status'), 'submitted') && <Col span={24} className={'mb-6'}>
                     <Space>
-                        <Button loading={isPending} onClick={() => {
-                            mutate({
-                                url: URLS.claimAction,
-                                attributes: {
-                                    claimNumber: parseInt(claimNumber),
-                                    action: 'register'
-                                },
-                                method: 'put',
-                            }, {
-                                onSuccess: () => {
-                                    refresh()
-                                }
-                            })
-                        }} className={'mr-3'} type="dashed"
+                        <Popconfirm
+                            title="Зарегистрировать?"
+                            onConfirm={() => {
+                                mutate({
+                                    url: URLS.claimAction,
+                                    attributes: {
+                                        claimNumber: parseInt(claimNumber),
+                                        action: 'register'
+                                    },
+                                    method: 'put',
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }}
+                            okText="Подтвердить"
+                            cancelText="Отменить"
+                        >
+                        <Button loading={isPending}  className={'mr-3'} type="dashed"
                                 name={'save'}>
                             {t('Зарегистрировать')}
                         </Button>
+                        </Popconfirm>
                     </Space>
                 </Col>}
 
@@ -141,18 +162,25 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                     </Form.Item>
                 </Col>
                 {!disabled && isEqual(get(data, 'nappStatus'), 'new') && <Col span={24} className={'text-right'}>
-                    <Button loading={isPendingPost} onClick={() => {
-                        postRequest({
-                            url: `${URLS.claimSend}?claimNumber=${claimNumber}`,
-                        }, {
-                            onSuccess: () => {
-                                refresh()
-                            }
-                        })
-                    }} type="dashed"
+                    <Popconfirm
+                        title="Отправить претензию в НАПП?"
+                        onConfirm={() => {
+                            postRequest({
+                                url: `${URLS.claimSend}?claimNumber=${claimNumber}`,
+                            }, {
+                                onSuccess: () => {
+                                    refresh()
+                                }
+                            })
+                        }}
+                        okText="Подтвердить"
+                        cancelText="Отменить"
+                    >
+                    <Button loading={isPendingPost}  type="dashed"
                             name={'save'}>
                         {t('Отправить претензию в НАПП')}
                     </Button>
+                    </Popconfirm>
                 </Col>}
             </Row>
         </Card>

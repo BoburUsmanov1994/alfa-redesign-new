@@ -291,7 +291,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             <BankDetails bankDetails={bankDetails} data={data} claimNumber={claimNumber}
                                          refresh={refresh}/>}
                         <ClaimDamage data={data}/>
-                        <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ApplicantForm data={data} applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
                         <PoliceForm initialData={data} form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>

@@ -26,6 +26,7 @@ export function  AuthProvider  ({children})  {
     const logout = () => {
         setToken(false);
     }
+    
     return (
         <AuthContext.Provider value={{ token, login, logout,isLoading:isPending }}>
             {children}

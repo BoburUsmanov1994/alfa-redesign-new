@@ -28,6 +28,7 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
             }
         })
     }
+
     return (
         <Spin spinning={isPending}>
             <Card className={'mb-4'} bordered title={t('Статус дела в СЭК')}>
@@ -48,14 +49,14 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                initialValue={get(data, 'sekVoteDetails.whoSent', get(user, 'employee.fullname'))}
+                                initialValue={get(data, 'sekVoteDetails.whoSent', '')}
                                 rules={[{required: true, message: t('Обязательное поле')}]} name={'whoSent'}
                                 label={t('Кем передано')}>
                                 <Input disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item initialValue={dayjs(get(data, 'sekVoteDetails.sentDate', new Date()))}
+                            <Form.Item initialValue={get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate', null)): null}
                                        rules={[{required: true, message: t('Обязательное поле')}]}
                                        name={'sentDate'} label={t('Дата передачи')}>
                                 <DatePicker format={"DD.MM.YYYY"} className={'w-full'} disabled/>

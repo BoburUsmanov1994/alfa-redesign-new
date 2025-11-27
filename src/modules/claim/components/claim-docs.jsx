@@ -6,7 +6,7 @@ import {
     Drawer,
     Flex,
     Form,
-    Input,
+    Input, Popconfirm,
     Radio,
     Row,
     Space,
@@ -74,20 +74,27 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                         </Col>
                         {!disabled && <Col span={6}>
                             <Form.Item>
-                                <Button onClick={() => {
-                                    mutate({
-                                        url: `${URLS.claimGenStatement}?claimNumber=${claimNumber}`,
-                                        attributes: {},
-                                        method: 'put'
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }} type="dashed"
+                                <Popconfirm
+                                    title="Сформировать?"
+                                    onConfirm={() => {
+                                        mutate({
+                                            url: `${URLS.claimGenStatement}?claimNumber=${claimNumber}`,
+                                            attributes: {},
+                                            method: 'put'
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }}
+                                    okText="Подтвердить"
+                                    cancelText="Отменить"
                                 >
-                                    {t("Сформировать")}
-                                </Button>
+                                    <Button type="dashed"
+                                    >
+                                        {t("Сформировать")}
+                                    </Button>
+                                </Popconfirm>
                             </Form.Item>
                         </Col>}
 
@@ -123,7 +130,8 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                 title: t('Шаблон'),
                                                 dataIndex: 'template',
                                                 align: 'center',
-                                                render: (text, record) => <Button disabled={false} icon={<EyeOutlined/>} type={'link'}
+                                                render: (text, record) => <Button disabled={false} icon={<EyeOutlined/>}
+                                                                                  type={'link'}
                                                                                   href={get(text, 'url')}/>
                                             },
                                             {
@@ -254,20 +262,27 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                         </Col>
                         {!disabled && <Col span={6}>
                             <Form.Item>
-                                <Button onClick={() => {
-                                    mutate({
-                                        url: `${URLS.claimGenConclusionDusp}?claimNumber=${claimNumber}`,
-                                        attributes: {},
-                                        method: 'put'
-                                    }, {
-                                        onSuccess: () => {
-                                            refresh()
-                                        }
-                                    })
-                                }} type="dashed"
+                                <Popconfirm
+                                    title="Сформировать?"
+                                    onConfirm={() => {
+                                        mutate({
+                                            url: `${URLS.claimGenConclusionDusp}?claimNumber=${claimNumber}`,
+                                            attributes: {},
+                                            method: 'put'
+                                        }, {
+                                            onSuccess: () => {
+                                                refresh()
+                                            }
+                                        })
+                                    }}
+                                    okText="Подтвердить"
+                                    cancelText="Отменить"
                                 >
-                                    {t("Сформировать")}
-                                </Button>
+                                    <Button  type="dashed"
+                                    >
+                                        {t("Сформировать")}
+                                    </Button>
+                                </Popconfirm>
                             </Form.Item>
                         </Col>}
                         {!disabled && <>
@@ -283,20 +298,27 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                             </Col>
                             <Col span={6}>
                                 <Form.Item>
-                                    <Button onClick={() => {
-                                        mutate({
-                                            url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
-                                            attributes: {},
-                                            method: 'put'
-                                        }, {
-                                            onSuccess: () => {
-                                                refresh()
-                                            }
-                                        })
-                                    }} type="dashed"
+                                    <Popconfirm
+                                        title="Сформировать?"
+                                        onConfirm={() => {
+                                            mutate({
+                                                url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
+                                                attributes: {},
+                                                method: 'put'
+                                            }, {
+                                                onSuccess: () => {
+                                                    refresh()
+                                                }
+                                            })
+                                        }}
+                                        okText="Подтвердить"
+                                        cancelText="Отменить"
+                                    >
+                                    <Button  type="dashed"
                                     >
                                         {t("Сформировать")}
                                     </Button>
+                                    </Popconfirm>
                                 </Form.Item>
                             </Col>
 
@@ -314,20 +336,27 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                             </Col>
                             <Col span={6}>
                                 <Form.Item>
-                                    <Button onClick={() => {
-                                        mutate({
-                                            url: `${URLS.claimGenAct}?claimNumber=${claimNumber}`,
-                                            attributes: {},
-                                            method: 'put'
-                                        }, {
-                                            onSuccess: () => {
-                                                refresh()
-                                            }
-                                        })
-                                    }} type="dashed"
+                                    <Popconfirm
+                                        title="Сформировать?"
+                                        onConfirm={() => {
+                                            mutate({
+                                                url: `${URLS.claimGenAct}?claimNumber=${claimNumber}`,
+                                                attributes: {},
+                                                method: 'put'
+                                            }, {
+                                                onSuccess: () => {
+                                                    refresh()
+                                                }
+                                            })
+                                        }}
+                                        okText="Подтвердить"
+                                        cancelText="Отменить"
+                                    >
+                                    <Button  type="dashed"
                                     >
                                         {t("Сформировать")}
                                     </Button>
+                                    </Popconfirm>
                                 </Form.Item>
                             </Col>
 
@@ -344,7 +373,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                                                                             <EyeOutlined/>}
                                                                                                         type="link"/>
                                                                                                 }
-                                            /><Button  loading={isPendingDelete} onClick={() => {
+                                            /><Button loading={isPendingDelete} onClick={() => {
                                                 deleteRequest({
                                                     url: `${URLS.file}/${get(paymentDocs, 'file')}`
                                                 }, {
@@ -566,7 +595,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item  name={'comment'}
+                            <Form.Item name={'comment'}
                                        label={t('Комментарий')}>
                                 <Input/>
                             </Form.Item>

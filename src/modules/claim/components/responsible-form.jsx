@@ -36,7 +36,6 @@ const ResponsibleForm = ({
         enabled: !!(get(applicant, 'person.regionId') || get(applicant, 'organization.regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
-    console.log('datadata', data)
     return (
         <>
             <Row gutter={16}>
