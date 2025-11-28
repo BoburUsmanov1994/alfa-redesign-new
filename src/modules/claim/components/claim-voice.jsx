@@ -31,7 +31,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [attrs, setAttrs] = useState({});
 
-    let {data: members, refetch} = useGetAllQuery({key: KEYS.claimSekMembers, url: URLS.claimSekMembers})
+    let {data: members} = useGetAllQuery({key: KEYS.claimSekMembers, url: URLS.claimSekMembers})
     const onFinish = (_attrs) => {
         setAttrs(_attrs);
         setOpen(true);
@@ -48,7 +48,13 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
         if (!isEmpty(get(data, 'sekVoteDetails.votes', []))) {
             setSelectedRowKeys(get(data, 'sekVoteDetails.votes', [])?.map(({member}) => get(member, '_id')));
         }
+      if(data){
+          form.setFieldValue('isSentToSek',get(data, 'sekVoteDetails.isSentToSek', false))
+          form.setFieldValue('whoSent',get(data, 'sekVoteDetails.whoSent'))
+          form.setFieldValue('sentDate',get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate')):null)
+      }
     }, [data])
+
     return (
         <>
             <Card className={'mb-4'} bordered title={t('Статус дела в СЭК')}>
@@ -74,7 +80,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                 initialValue={get(data, 'sekVoteDetails.whoSent')}
                                 name={'whoSent'}
                                 label={t('Кем передано')}>
-                                <Input disabled/>
+                                <Input  disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>

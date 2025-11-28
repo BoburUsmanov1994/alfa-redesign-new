@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, Card, Col, DatePicker, Form, Input, Radio, Row, Space, Spin, Switch, Table, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {get} from "lodash"
@@ -28,6 +28,14 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
             }
         })
     }
+
+    useEffect(() => {
+        if(data){
+            form.setFieldValue('isSentToSek',get(data, 'sekVoteDetails.isSentToSek', false))
+            form.setFieldValue('whoSent',get(data, 'sekVoteDetails.whoSent'))
+            form.setFieldValue('sentDate',get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate')):null)
+        }
+    },[data])
 
     return (
         <Spin spinning={isPending}>
