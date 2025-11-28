@@ -15,17 +15,15 @@ import {
     Typography
 } from "antd";
 import {useTranslation} from "react-i18next";
-import {each, every, get, isEmpty} from "lodash"
+import {every, get, isEmpty} from "lodash"
 import {useGetAllQuery, usePutQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
 import dayjs from "dayjs";
-import {useStore} from "../../../store";
 
 const ClaimVoice = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
-    const {user} = useStore()
     const [open, setOpen] = useState(false);
     const {mutate, isPending} = usePutQuery({})
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -51,6 +49,7 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
       if(data){
           form.setFieldValue('isSentToSek',get(data, 'sekVoteDetails.isSentToSek', false))
           form.setFieldValue('whoSent',get(data, 'sekVoteDetails.whoSent'))
+          form.setFieldValue('decisionWithoutSek',get(data, 'sekVoteDetails.decisionWithoutSek',false))
           form.setFieldValue('sentDate',get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate')):null)
       }
     }, [data])
@@ -73,6 +72,14 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                        initialValue={get(data, 'sekVoteDetails.isSentToSek', false)}
                                        name={'isSentToSek'} label={t('Дело передано в СЭК')}>
                                 <Switch disabled/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                                       valuePropName="checked"
+                                       initialValue={get(data, 'sekVoteDetails.decisionWithoutSek', false)}
+                                       name={'decisionWithoutSek'} label={t('Решение принято без СЭК')}>
+                                <Switch />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
