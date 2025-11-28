@@ -67,7 +67,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                        label={t('Заявление о страховом событии')}>
                                 <Input value={get(data, 'documents.claimStatement.url')} disabled suffix={
                                     get(data, 'documents.claimStatement.url') ?
-                                        <Button disabled={false} href={get(data, 'documents.claimStatement.url')}
+                                        <Button target={'_blank'} disabled={false} href={get(data, 'documents.claimStatement.url')}
                                                 icon={<EyeOutlined/>} type="link"/> : null
                                 }/>
                             </Form.Item>
@@ -130,7 +130,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                 title: t('Шаблон'),
                                                 dataIndex: 'template',
                                                 align: 'center',
-                                                render: (text, record) => <Button disabled={false} icon={<EyeOutlined/>}
+                                                render: (text, record) => <Button target={"_blank"} disabled={false} icon={<EyeOutlined/>}
                                                                                   type={'link'}
                                                                                   href={get(text, 'url')}/>
                                             },
@@ -148,7 +148,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                 dataIndex: 'file',
                                                 align: 'center',
                                                 render: (text, record) => get(text, 'url') ?
-                                                    <Button disabled={false} icon={<EyeOutlined/>} type={'link'}
+                                                    <Button target={'_blank'} disabled={false} icon={<EyeOutlined/>} type={'link'}
                                                             href={get(text, 'url')}/> : ''
                                             },
                                             {
@@ -255,7 +255,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                        label={t('Заключение ДУСП')}>
                                 <Input value={get(data, 'documents.conclusionDusp.url')} disabled suffix={
                                     get(data, 'documents.conclusionDusp.url') ?
-                                        <Button disabled={false} href={get(data, 'documents.conclusionDusp.url')}
+                                        <Button target={"_blank"} disabled={false} href={get(data, 'documents.conclusionDusp.url')}
                                                 icon={<EyeOutlined/>} type="link"/> : null
                                 }/>
                             </Form.Item>
@@ -291,7 +291,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                            label={t('Решение СЭК')}>
                                     <Input value={get(data, 'documents.decisionSek.url')} disabled suffix={
                                         get(data, 'documents.decisionSek.url') ?
-                                            <Button disabled={false} href={get(data, 'documents.decisionSek.url')}
+                                            <Button target={"_blank"} disabled={false} href={get(data, 'documents.decisionSek.url')}
                                                     icon={<EyeOutlined/>} type="link"/> : null
                                     }/>
                                 </Form.Item>
@@ -328,7 +328,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                     <Input value={get(data, 'documents.claimAct.url')} disabled
                                            suffix={
                                                get(data, 'documents.claimAct.url') ?
-                                                   <Button disabled={false} href={get(data, 'documents.claimAct.url')}
+                                                   <Button target={"_blank"} disabled={false} href={get(data, 'documents.claimAct.url')}
                                                            icon={<EyeOutlined/>} type="link"/> : null
                                            }
                                     />
@@ -368,6 +368,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                                                                 value={get(paymentDocs, 'url')}
                                                                                                 suffix={
                                                                                                     <Button
+                                                                                                        target={"_blank"}
                                                                                                         href={get(paymentDocs, 'url')}
                                                                                                         icon={
                                                                                                             <EyeOutlined/>}
@@ -400,6 +401,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                                                                                    value={get(conclusionFatf, 'url')}
                                                                                                    suffix={
                                                                                                        <Button
+                                                                                                           target={"_blank"}
                                                                                                            href={get(conclusionFatf, 'url')}
                                                                                                            icon={
                                                                                                                <EyeOutlined/>}
@@ -543,7 +545,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                             <Form.Item
                                 label={t('Шаблон')}>
                                 <Input value={get(record, 'template.url')} disabled
-                                       suffix={<Button href={get(record, 'template.url')} type={'link'}
+                                       suffix={<Button target={"_blank"} href={get(record, 'template.url')} type={'link'}
                                                        icon={<EyeOutlined/>}/>}/>
                             </Form.Item>
                         </Col>
@@ -552,7 +554,7 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                 rules={[{required: true, message: t('Обязательное поле')}]}
                                 label={t('Документ')}>
                                 <Input value={get(record, 'file.url')} disabled
-                                       suffix={<Button href={get(record, 'file.url')} type={'link'}
+                                       suffix={<Button target={"_blank"} href={get(record, 'file.url')} type={'link'}
                                                        icon={<EyeOutlined/>}/>}/>
                             </Form.Item>
                         </Col>

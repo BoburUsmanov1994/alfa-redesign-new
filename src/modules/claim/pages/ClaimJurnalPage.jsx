@@ -328,7 +328,7 @@ const ClaimJurnalPage = () => {
                         width: 100,
                         hideInSearch: true,
                         render: (_id, record) => <Space>
-                            <Button onClick={() => navigate(`/claims/jurnal/view/${get(record, 'claimNumber')}`)}
+                            <Button  onClick={() => navigate(`/claims/jurnal/view/${get(record, 'claimNumber')}`)}
                                     className={'cursor-pointer'}
                                     icon={<EyeOutlined/>}/>
 
