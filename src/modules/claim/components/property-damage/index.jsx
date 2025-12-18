@@ -7,7 +7,7 @@ import {
     Drawer,
     Flex,
     Form,
-    Input,
+    Input, InputNumber,
     Radio,
     Row,
     Select,
@@ -24,6 +24,7 @@ import {getSelectOptionsListFromData, stripNonDigits} from "../../../../utils";
 import {useGetAllQuery} from "../../../../hooks/api";
 import {URLS} from "../../../../constants/url";
 import {KEYS} from "../../../../constants/key";
+import dayjs from "dayjs";
 
 const Index = ({
                    isPending = false,
@@ -404,7 +405,7 @@ const Index = ({
                             <Col span={6}>
                                 <Form.Item
                                     label={t("Электронная почта")}
-                                    name={['organization', 'email']}
+                                    name={['ownerOrganization', 'email']}
                                     rules={[
                                         {
                                             type: 'email',
@@ -450,7 +451,12 @@ const Index = ({
                                     name={'claimedDamage'}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <Input/>
+                                    <InputNumber   style={{ width: '100%' }}
+                                                   min={0}
+                                                   formatter={(value) =>
+                                                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                   }
+                                                   parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
                                 </Form.Item>
                             </Col>
                         </Row>

@@ -5,6 +5,7 @@ import storage from "../storage";
 import config from "../../config";
 import Swal from "sweetalert2";
 import i18n from 'i18next';
+import {formatDatesDeep} from "../../utils";
 
 NProgress.configure({
     showSpinner: true,
@@ -24,6 +25,9 @@ request.interceptors.request.use((config) => {
     const token = get(JSON.parse(storage.get('settings')), 'state.token', null);
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
+    }
+    if (config.data) {
+        config.data = formatDatesDeep(config.data);
     }
     return config;
 }, (error) => {

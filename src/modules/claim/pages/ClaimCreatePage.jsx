@@ -211,8 +211,6 @@ const ClaimCreatePage = () => {
     if (isLoadingCountry || isLoadingResident || isLoadingRegion || isLoadingOwnershipForms) {
         return <Spin spinning fullscreen/>
     }
-
-
     return (
         <>
             <PageHeader

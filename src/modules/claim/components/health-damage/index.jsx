@@ -1,5 +1,21 @@
 import React, {useState} from 'react';
-import {Button, Card, Col, DatePicker, Divider, Drawer, Flex, Form, Input, Row, Select, Space, Spin, Table} from "antd";
+import {
+    Button,
+    Card,
+    Col,
+    DatePicker,
+    Divider,
+    Drawer,
+    Flex,
+    Form,
+    Input,
+    InputNumber,
+    Row,
+    Select,
+    Space,
+    Spin,
+    Table
+} from "antd";
 import {DeleteOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
 import {get, isEqual} from "lodash";
 import {filter} from "lodash/collection";
@@ -292,7 +308,12 @@ const Index = ({
                                     name={'claimedDamage'}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <Input/>
+                                    <InputNumber   style={{ width: '100%' }}
+                                                   min={0}
+                                                   formatter={(value) =>
+                                                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                   }
+                                                   parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
                                 </Form.Item>
                             </Col>
                         </Row>

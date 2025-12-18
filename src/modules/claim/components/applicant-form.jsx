@@ -8,6 +8,7 @@ import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
+import dayjs from "dayjs";
 
 const ApplicantForm = ({
                            client,
@@ -77,6 +78,7 @@ const ApplicantForm = ({
                                 label={t("Дата рождения")}
                                 name={['applicant', 'person', 'birthDate']}
                                 rules={[{required: true, message: t('Обязательное поле')}]}
+
                             >
                                 <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                             </Form.Item>
@@ -161,7 +163,7 @@ const ApplicantForm = ({
                 <Col xs={8}>
                     <Form.Item initialValue={210} name={['applicant', 'person', 'countryId']}
                                label={t('Страна')}
-                               >
+                    >
                         <Select options={countryList}/>
                     </Form.Item>
                 </Col>
@@ -223,7 +225,6 @@ const ApplicantForm = ({
                         <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                     </Form.Item>
                 </Col>
-
 
 
                 <Col xs={6}>

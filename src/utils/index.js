@@ -39,9 +39,9 @@ const formatDate = (date) => {
 
 const getSelectOptionsListFromData = (data = [], value = 'id', label = 'title') => {
     return isArray(data) ? data?.map(item => ({
-        value:  item[value],
+        value: item[value],
         label: isArray(label) ? label.map(_label => get(item, _label))?.join(' ') : get(item, label),
-        option:item
+        option: item
     })) : [];
 }
 
@@ -71,7 +71,39 @@ const stripNonDigits = (value) => value?.replace(/\D/g, '');
 const disablePastDates = (current) => {
     return current && current < dayjs().startOf('day');
 };
+const DATE_TIME_FIELDS = new Set([
+    'eventDateTime',
+]);
 
+const formatDatesDeep = (
+    data,
+    keyPath = []
+) => {
+    if (dayjs.isDayjs(data)) {
+        const fieldName = keyPath[keyPath.length - 1];
+
+        if (DATE_TIME_FIELDS.has(fieldName)) {
+            return data.format('YYYY-MM-DD HH:mm:ss');
+        }
+
+        return data.format('YYYY-MM-DD');
+    }
+
+    if (Array.isArray(data)) {
+        return data.map((item) => formatDatesDeep(item, keyPath));
+    }
+
+    if (data && typeof data === 'object') {
+        return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+                key,
+                formatDatesDeep(value, [...keyPath, key]),
+            ])
+        );
+    }
+
+    return data;
+};
 export {
     addDetectClick,
     removeDetectClick,
@@ -81,5 +113,6 @@ export {
     getFieldType,
     saveFile,
     stripNonDigits,
-    disablePastDates
+    disablePastDates,
+    formatDatesDeep
 }
