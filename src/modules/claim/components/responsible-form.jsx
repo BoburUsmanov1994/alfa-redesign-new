@@ -238,7 +238,10 @@ const ResponsibleForm = ({
                                 label={t("Телефон")}
                                 name={['responsibleForDamage', 'person', 'phone']}
                                 getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                rules={[{required: true, message: t('Обязательное поле')},{
+                                    pattern: /^998\d{9}$/,
+                                    message: t('Номер телефона указан неверно.')
+                                }]}
                             >
                                 <MaskedInput mask={"+\\9\\98 (99) 999-99-99"}/>
                             </Form.Item>
@@ -354,7 +357,10 @@ const ResponsibleForm = ({
                                 label={t("Контактный номер")}
                                 name={['responsibleForDamage', 'organization', 'phone']}
                                 getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                rules={[{required: true, message: t('Обязательное поле')},{
+                                    pattern: /^998\d{9}$/,
+                                    message: t('Номер телефона указан неверно.')
+                                }]}
                             >
                                 <MaskedInput mask={"+\\9\\98 (99) 999-99-99"}/>
                             </Form.Item>

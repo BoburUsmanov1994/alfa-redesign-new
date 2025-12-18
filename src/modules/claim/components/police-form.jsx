@@ -12,7 +12,6 @@ const PoliceForm = ({
                         form,
                         polisSeria,
                         polisNumber,
-                        initialData
                     }) => {
 
     let {data} = useGetAllQuery({
@@ -29,7 +28,7 @@ const PoliceForm = ({
     const {t} = useTranslation();
 
     useEffect(() => {
-        if (get(data, 'data')) {
+        if (get(data, 'data.policy.uuid')) {
             form.setFieldValue('polisUuid', get(data, 'data.policy.uuid'))
         }
     }, [data]);

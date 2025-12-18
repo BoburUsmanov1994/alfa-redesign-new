@@ -301,7 +301,10 @@ const Index = ({
                                     label={t("Телефон")}
                                     name={['ownerPerson', 'phone']}
                                     getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                    rules={[{required: true, message: t('Обязательное поле')}]}
+                                    rules={[{required: true, message: t('Обязательное поле')},{
+                                        pattern: /^998\d{9}$/,
+                                        message: t('Номер телефона указан неверно.')
+                                    }]}
                                 >
                                     <MaskedInput mask={"+\\9\\98 (99) 999-99-99"}/>
                                 </Form.Item>
@@ -397,7 +400,10 @@ const Index = ({
                                     label={t("Контактный номер")}
                                     name={['ownerOrganization', 'phone']}
                                     getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                    rules={[{required: true, message: t('Обязательное поле')}]}
+                                    rules={[{required: true, message: t('Обязательное поле')},{
+                                        pattern: /^998\d{9}$/,
+                                        message: t('Номер телефона указан неверно.')
+                                    }]}
                                 >
                                     <MaskedInput mask={"+\\9\\98 (99) 999-99-99"}/>
                                 </Form.Item>
