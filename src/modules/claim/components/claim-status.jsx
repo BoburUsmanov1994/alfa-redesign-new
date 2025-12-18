@@ -117,7 +117,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
 
                 <Col span={6}>
                     <Form.Item label={t('Регистрационный номер')}>
-                        <Input value={get(data, 'regNumber')} disabled/>
+                        <Input value={get(data, 'claimNumber')} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
