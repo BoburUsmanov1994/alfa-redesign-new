@@ -557,7 +557,7 @@ const Index = ({
                                     label={t("ИНН оценщика")}
                                     name={'appraiserInn'}
                                 >
-                                    <MaskedInput mask={'99999999'} maskChar={null}/>
+                                    <MaskedInput mask={'999999999'} maskChar={null}/>
                                 </Form.Item>
                             </Col>
                             <Col xs={6}>
