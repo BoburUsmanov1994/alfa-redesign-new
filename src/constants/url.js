@@ -257,4 +257,5 @@ export const URLS = {
     claimDocsAttach: 'api/claim/docs-attach',
     claimDocsDetach: 'api/claim/docs-detach',
     claimVote: 'api/claim/vote',
+    claimEditDamage: 'api/claim/edit/damage',
 }

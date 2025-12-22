@@ -15,16 +15,16 @@ import {
     Spin, Switch,
     Table
 } from "antd";
-import {DeleteOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
-import {get, isEqual} from "lodash";
+import {DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
+import {get, isEqual, isNil} from "lodash";
 import {filter} from "lodash/collection";
 import {useTranslation} from "react-i18next";
 import MaskedInput from "../../../../components/masked-input";
 import {getSelectOptionsListFromData, stripNonDigits} from "../../../../utils";
-import {useGetAllQuery} from "../../../../hooks/api";
+import {useGetAllQuery, usePutQuery} from "../../../../hooks/api";
 import {URLS} from "../../../../constants/url";
 import {KEYS} from "../../../../constants/key";
-import dayjs from "dayjs";
+import numeral from "numeral";
 
 const Index = ({
                    isPending = false,
@@ -40,12 +40,17 @@ const Index = ({
                    setOtherPropertyDamage,
                    title = 'Добавление информации о вреде имуществу:',
                    _form,
+                   claimNumber,
+                   refresh = ()=>{},
                    insurantIsOwnerDisabled = false
                }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
+    const [editRow, setEditRow] = useState(null);
     const [form] = Form.useForm();
+    const [updateForm] = Form.useForm();
     const {owner, ownerPerson, ownerOrganization} = Form.useWatch([], form) || {}
+    const {mutate, isPending: isPendingUpdate} = usePutQuery({listKeyId: KEYS.claimShow})
 
 
     let {data: districts} = useGetAllQuery({
@@ -59,7 +64,6 @@ const Index = ({
         enabled: !!(get(ownerPerson, 'regionId') || get(ownerOrganization, 'regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
-
     return (
         <>
             <Card className={'mb-4'} title={t(title)} extra={[<Form.Item label={' '}
@@ -80,11 +84,16 @@ const Index = ({
                                 {
                                     title: t(' Заявленный размер вреда'),
                                     dataIndex: 'claimedDamage',
+                                    align: 'center',
+                                    render: (text) => numeral(text).format(''),
                                 },
                                 {
                                     title: t('Действия'),
                                     dataIndex: '_id',
+                                    align: 'right',
                                     render: (text, record, index) => <Space>
+                                        <Button onClick={() => setEditRow(record)}
+                                                shape="circle" icon={<EditOutlined/>}/>
                                         <Button
                                             onClick={() => setOtherPropertyDamage(prev => filter(prev, (_, _index) => !isEqual(_index, index)))}
                                             danger
@@ -301,7 +310,7 @@ const Index = ({
                                     label={t("Телефон")}
                                     name={['ownerPerson', 'phone']}
                                     getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                    rules={[{required: true, message: t('Обязательное поле')},{
+                                    rules={[{required: true, message: t('Обязательное поле')}, {
                                         pattern: /^998\d{9}$/,
                                         message: t('Номер телефона указан неверно.')
                                     }]}
@@ -400,7 +409,7 @@ const Index = ({
                                     label={t("Контактный номер")}
                                     name={['ownerOrganization', 'phone']}
                                     getValueFromEvent={(e) => stripNonDigits(e.target.value)}
-                                    rules={[{required: true, message: t('Обязательное поле')},{
+                                    rules={[{required: true, message: t('Обязательное поле')}, {
                                         pattern: /^998\d{9}$/,
                                         message: t('Номер телефона указан неверно.')
                                     }]}
@@ -457,12 +466,12 @@ const Index = ({
                                     name={'claimedDamage'}
                                     rules={[{required: true, message: t('Обязательное поле')}]}
                                 >
-                                    <InputNumber   style={{ width: '100%' }}
-                                                   min={0}
-                                                   formatter={(value) =>
-                                                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                   }
-                                                   parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
+                                    <InputNumber style={{width: '100%'}}
+                                                 min={0}
+                                                 formatter={(value) =>
+                                                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                 }
+                                                 parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -472,6 +481,58 @@ const Index = ({
                             </Button>
                             <Button danger type={'primary'} onClick={() => {
                                 setOpen(false)
+                            }}>
+                                {t('Отмена')}
+                            </Button>
+                        </Flex>
+                    </Form>
+                </Spin>
+            </Drawer>
+            <Drawer title={t('Обновите заявленную сумму ущерба.')} open={!isNil(editRow)}
+                    onClose={() => setEditRow(null)}>
+                <Spin spinning={isPendingUpdate}>
+                    <Form
+                        name="health-damage-update"
+                        layout="vertical"
+                        onFinish={({claimedDamage}) => {
+                            mutate({
+                                url:URLS.claimEditDamage,
+                                attributes:{
+                                    uuid:get(editRow,'uuid'),
+                                    claimNumber:parseInt(claimNumber),
+                                    claimedDamage,
+                                }
+                            },{
+                                onSuccess: () => {
+                                    updateForm.resetFields()
+                                    setEditRow(null)
+                                    refresh()
+                                }
+                            })
+                        }}
+                        form={updateForm}
+                        initialValues={{
+                            claimedDamage: get(editRow, 'claimedDamage', 0)
+                        }}
+                    >
+                        <Form.Item
+                            label={t("Заявленный размер вреда")}
+                            name={'claimedDamage'}
+                            rules={[{required: true, message: t('Обязательное поле')}]}
+                        >
+                            <InputNumber style={{width: '100%'}}
+                                         min={0}
+                                         formatter={(value) =>
+                                             `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                         }
+                                         parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
+                        </Form.Item>
+                        <Flex className={'mt-6'}>
+                            <Button className={'mr-2'} type="primary" htmlType={'submit'} name={'save'}>
+                                {t('Сохранять')}
+                            </Button>
+                            <Button danger type={'primary'} onClick={() => {
+                                setEditRow(null)
                             }}>
                                 {t('Отмена')}
                             </Button>

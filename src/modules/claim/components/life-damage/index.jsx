@@ -16,14 +16,15 @@ import {
     Table
 } from "antd";
 import MaskedInput from "../../../../components/masked-input";
-import {DeleteOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
 import {getSelectOptionsListFromData, stripNonDigits} from "../../../../utils";
-import {get, isEqual} from "lodash";
+import {get, isEqual, isNil} from "lodash";
 import {filter} from "lodash/collection";
 import {useTranslation} from "react-i18next";
-import {useGetAllQuery} from "../../../../hooks/api";
+import {useGetAllQuery, usePutQuery} from "../../../../hooks/api";
 import {KEYS} from "../../../../constants/key";
 import {URLS} from "../../../../constants/url";
+import numeral from "numeral";
 
 const Index = ({
                    lifeDamage = [],
@@ -34,12 +35,18 @@ const Index = ({
                    regions = [],
                    isPending = false,
                    getPersonInfo = () => {
-                   }
+                   },
+                   claimNumber,
+                   refresh = () => {
+                   },
                }) => {
     const {t} = useTranslation();
+    const [editRow, setEditRow] = useState(null);
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
+    const [updateForm] = Form.useForm();
     const {person} = Form.useWatch([], form) || {}
+    const {mutate, isPending: isPendingUpdate} = usePutQuery({listKeyId: KEYS.claimShow})
     let {data: districts} = useGetAllQuery({
         key: [KEYS.districts, get(person, 'regionId')],
         url: `${URLS.districts}/list`,
@@ -91,11 +98,15 @@ const Index = ({
                                 {
                                     title: t(' Заявленный размер вреда'),
                                     dataIndex: 'claimedDamage',
+                                    align: 'center',
+                                    render: (text) => numeral(text).format(''),
                                 },
                                 {
                                     title: t('Действия'),
                                     dataIndex: '_id',
                                     render: (text, record, index) => <Space>
+                                        <Button onClick={() => setEditRow(record)}
+                                                shape="circle" icon={<EditOutlined/>}/>
                                         <Button
                                             onClick={() => setLifeDamage(prev => filter(prev, (_, _index) => !isEqual(_index, index)))}
                                             danger
@@ -295,6 +306,58 @@ const Index = ({
                                 {t('Добавить')}
                             </Button>
                             <Button danger type={'primary'} onClick={() => setOpen(false)}>
+                                {t('Отмена')}
+                            </Button>
+                        </Flex>
+                    </Form>
+                </Spin>
+            </Drawer>
+            <Drawer title={t('Обновите заявленную сумму ущерба.')} open={!isNil(editRow)}
+                    onClose={() => setEditRow(null)}>
+                <Spin spinning={isPendingUpdate}>
+                    <Form
+                        name="health-damage-update"
+                        layout="vertical"
+                        onFinish={({claimedDamage}) => {
+                            mutate({
+                                url: URLS.claimEditDamage,
+                                attributes: {
+                                    uuid: get(editRow, 'uuid'),
+                                    claimNumber: parseInt(claimNumber),
+                                    claimedDamage,
+                                }
+                            }, {
+                                onSuccess: () => {
+                                    updateForm.resetFields()
+                                    setEditRow(null)
+                                    refresh()
+                                }
+                            })
+                        }}
+                        form={updateForm}
+                        initialValues={{
+                            claimedDamage: get(editRow, 'claimedDamage', 0)
+                        }}
+                    >
+                        <Form.Item
+                            label={t("Заявленный размер вреда")}
+                            name={'claimedDamage'}
+                            rules={[{required: true, message: t('Обязательное поле')}]}
+                        >
+                            <InputNumber style={{width: '100%'}}
+                                         min={0}
+                                         formatter={(value) =>
+                                             `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                         }
+                                         parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
+                        </Form.Item>
+                        <Flex className={'mt-6'}>
+                            <Button className={'mr-2'} type="primary" htmlType={'submit'} name={'save'}>
+                                {t('Сохранять')}
+                            </Button>
+                            <Button danger type={'primary'} onClick={() => {
+                                setEditRow(null)
+                            }}>
                                 {t('Отмена')}
                             </Button>
                         </Flex>

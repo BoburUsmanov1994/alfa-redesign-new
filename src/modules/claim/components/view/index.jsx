@@ -332,7 +332,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                         <Col span={24}>
                             {
                                 hasLifeDamage &&
-                                <LifeDamage getPersonInfo={getPersonInfo}
+                                <LifeDamage refresh={refresh}
+                                            claimNumber={claimNumber} getPersonInfo={getPersonInfo}
                                             regions={regions}
                                             residentTypes={residentTypes}
                                             countryList={countryList}
@@ -362,6 +363,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                         <Col span={24}>
                             {
                                 hasHealthDamage && <HealthDamage
+                                    refresh={refresh}
+                                    claimNumber={claimNumber}
                                     getPersonInfo={getPersonInfo}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -391,6 +394,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                             {
                                 hasVehicleDamage &&
                                 <VehicleDamage
+                                    refresh={refresh}
+                                    claimNumber={claimNumber}
                                     insurantIsOwnerDisabled
                                     _form={form}
                                     getPersonInfo={getPersonInfo}
@@ -426,6 +431,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                         <Col span={24}>
                             {
                                 hasPropertyDamage && <PropertyDamage
+                                    refresh={refresh}
+                                    claimNumber={claimNumber}
                                     insurantIsOwnerDisabled
                                     _form={form}
                                     ownershipForms={ownershipForms}

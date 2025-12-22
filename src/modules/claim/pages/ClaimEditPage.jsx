@@ -60,7 +60,7 @@ const ClaimEditPage = () => {
     const [files, setFiles] = useState([]);
 
 
-    let {data, isLoading} = useGetAllQuery({
+    let {data, isLoading,refetch} = useGetAllQuery({
         key: [KEYS.claimShow, claimNumber],
         url: `${URLS.claimShow}?claimNumber=${claimNumber}`,
         enabled: !!(claimNumber)
@@ -347,7 +347,8 @@ const ClaimEditPage = () => {
                         <Col span={24}>
                             {
                                 hasLifeDamage &&
-                                <LifeDamage getPersonInfo={getPersonInfo}
+                                <LifeDamage refresh={refetch}
+                                            claimNumber={claimNumber} getPersonInfo={getPersonInfo}
                                             regions={regions}
                                             residentTypes={residentTypes}
                                             countryList={countryList}
@@ -377,6 +378,8 @@ const ClaimEditPage = () => {
                         <Col span={24}>
                             {
                                 hasHealthDamage && <HealthDamage
+                                    refresh={refetch}
+                                    claimNumber={claimNumber}
                                     getPersonInfo={getPersonInfo}
                                     regions={regions}
                                     residentTypes={residentTypes}
@@ -406,6 +409,8 @@ const ClaimEditPage = () => {
                             {
                                 hasVehicleDamage &&
                                 <VehicleDamage
+                                    refresh={refetch}
+                                    claimNumber={claimNumber}
                                     insurantIsOwnerDisabled
                                     _form={form}
                                     getPersonInfo={getPersonInfo}
@@ -441,6 +446,8 @@ const ClaimEditPage = () => {
                         <Col span={24}>
                             {
                                 hasPropertyDamage && <PropertyDamage
+                                    refresh={refetch}
+                                    claimNumber={claimNumber}
                                     insurantIsOwnerDisabled
                                     _form={form}
                                     ownershipForms={ownershipForms}

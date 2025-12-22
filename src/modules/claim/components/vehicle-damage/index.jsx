@@ -15,15 +15,16 @@ import {
     Switch,
     Table
 } from "antd";
-import {DeleteOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
-import {get, isEqual} from "lodash";
+import {DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined} from "@ant-design/icons";
+import {get, isEqual, isNil} from "lodash";
 import {filter} from "lodash/collection";
 import MaskedInput from "../../../../components/masked-input";
 import {useTranslation} from "react-i18next";
-import {useGetAllQuery, usePostQuery} from "../../../../hooks/api";
+import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../../hooks/api";
 import {KEYS} from "../../../../constants/key";
 import {URLS} from "../../../../constants/url";
 import {getSelectOptionsListFromData, stripNonDigits} from "../../../../utils";
+import numeral from "numeral";
 
 const Index = ({
                    vehicleTypes = [],
@@ -41,12 +42,17 @@ const Index = ({
                    setVehicleDamage,
                    title = 'Добавление информации о вреде автомобилю:',
                    _form,
+                   claimNumber,
+                   refresh = ()=>{},
                    insurantIsOwnerDisabled = false
                }) => {
     const {t} = useTranslation();
     const [open, setOpen] = useState(false);
+    const [editRow, setEditRow] = useState(null);
     const [form] = Form.useForm();
+    const [updateForm] = Form.useForm();
     const {mutate, isPending} = usePostQuery({})
+    const {mutate:editRequest, isPending: isPendingUpdate} = usePutQuery({listKeyId: KEYS.claimShow})
     const {vehicle, owner} = Form.useWatch([], form) || {}
 
     let {data: districts} = useGetAllQuery({
@@ -89,21 +95,27 @@ const Index = ({
                                 {
                                     title: t('Серия тех.паспорта'),
                                     dataIndex: 'vehicle',
-                                    render: (text) => get(text, 'techPassport.seria')
+                                    render: (text) => get(text, 'techPassport.seria'),
+                                    align: 'center',
                                 },
                                 {
                                     title: t('Номер тех.паспорта'),
                                     dataIndex: 'vehicle',
-                                    render: (text) => get(text, 'techPassport.number')
+                                    render: (text) => get(text, 'techPassport.number'),
+                                    align: 'center',
                                 },
                                 {
                                     title: t(' Заявленный размер вреда'),
                                     dataIndex: 'claimedDamage',
+                                    align: 'center',
+                                    render: (text) => numeral(text).format(''),
                                 },
                                 {
                                     title: t('Действия'),
                                     dataIndex: '_id',
                                     render: (text, record, index) => <Space>
+                                        <Button onClick={() => setEditRow(record)}
+                                                shape="circle" icon={<EditOutlined/>}/>
                                         <Button
                                             onClick={() => setVehicleDamage(prev => filter(prev, (_, _index) => !isEqual(_index, index)))}
                                             danger
@@ -597,6 +609,58 @@ const Index = ({
                             </Button>
                             <Button danger type={'primary'} onClick={() => {
                                 setOpen(false)
+                            }}>
+                                {t('Отмена')}
+                            </Button>
+                        </Flex>
+                    </Form>
+                </Spin>
+            </Drawer>
+            <Drawer title={t('Обновите заявленную сумму ущерба.')} open={!isNil(editRow)}
+                    onClose={() => setEditRow(null)}>
+                <Spin spinning={isPendingUpdate}>
+                    <Form
+                        name="health-damage-update"
+                        layout="vertical"
+                        onFinish={({claimedDamage}) => {
+                            editRequest({
+                                url:URLS.claimEditDamage,
+                                attributes:{
+                                    uuid:get(editRow,'uuid'),
+                                    claimNumber:parseInt(claimNumber),
+                                    claimedDamage,
+                                }
+                            },{
+                                onSuccess: () => {
+                                    updateForm.resetFields()
+                                    setEditRow(null)
+                                    refresh()
+                                }
+                            })
+                        }}
+                        form={updateForm}
+                        initialValues={{
+                            claimedDamage: get(editRow, 'claimedDamage', 0)
+                        }}
+                    >
+                        <Form.Item
+                            label={t("Заявленный размер вреда")}
+                            name={'claimedDamage'}
+                            rules={[{required: true, message: t('Обязательное поле')}]}
+                        >
+                            <InputNumber style={{width: '100%'}}
+                                         min={0}
+                                         formatter={(value) =>
+                                             `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                         }
+                                         parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
+                        </Form.Item>
+                        <Flex className={'mt-6'}>
+                            <Button className={'mr-2'} type="primary" htmlType={'submit'} name={'save'}>
+                                {t('Сохранять')}
+                            </Button>
+                            <Button danger type={'primary'} onClick={() => {
+                                setEditRow(null)
                             }}>
                                 {t('Отмена')}
                             </Button>
