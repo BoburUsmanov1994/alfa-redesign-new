@@ -100,7 +100,6 @@ const FileForm = ({
 
                 <div className={'h-60'}>
                     <Dragger
-
                         name={'file'}
                         multiple={false}
                         onChange={handleChange}

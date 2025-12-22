@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import {Col, Descriptions, Divider, Form, Input, Radio, Row, Select, Table, Typography} from "antd";
+import {Col, Descriptions, Divider, Form, Input, notification, Radio, Row, Select, Table, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
-import {get, isEmpty} from "lodash";
+import {get, isEmpty, isNil} from "lodash";
 import {URLS} from "../../../constants/url";
 import dayjs from "dayjs";
 import numeral from "numeral";
@@ -13,8 +13,8 @@ const PoliceForm = ({
                         polisSeria,
                         polisNumber,
                     }) => {
-
-    let {data} = useGetAllQuery({
+    const [notFound, setNotFound] = React.useState(false);
+    let {data,error,isError} = useGetAllQuery({
         key: [KEYS.claimPolicyDetails, polisSeria, polisNumber],
         url: URLS.claimPolicyDetails,
         params: {
@@ -25,13 +25,24 @@ const PoliceForm = ({
         },
         enabled: !!(polisSeria, polisNumber)
     })
+    console.log('isError',isError)
     const {t} = useTranslation();
+
 
     useEffect(() => {
         if (get(data, 'data.policy.uuid')) {
+            setNotFound(false)
             form.setFieldValue('polisUuid', get(data, 'data.policy.uuid'))
         }
-    }, [data]);
+        if(isError){
+            if(!isNil(get(error,'response.data.message'))){
+                notification['error']({
+                    message:get(error,'response.data.message')
+                })
+                setNotFound(true)
+            }
+        }
+    }, [data,error,isError]);
     return (
         <>
             <Row gutter={16}>

@@ -79,6 +79,9 @@ const formatDatesDeep = (
     data,
     keyPath = []
 ) => {
+    if (typeof FormData !== 'undefined' && data instanceof FormData) {
+        return data;
+    }
     if (dayjs.isDayjs(data)) {
         const fieldName = keyPath[keyPath.length - 1];
 
