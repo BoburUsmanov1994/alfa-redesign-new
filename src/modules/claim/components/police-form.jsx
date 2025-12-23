@@ -57,7 +57,7 @@ const PoliceForm = ({
             }
         }
     }, [data,error,isError]);
-    console.log('insurantType',insurantType)
+
     return (
         <>
             <Row gutter={16}>
