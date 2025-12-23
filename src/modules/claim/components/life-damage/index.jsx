@@ -342,14 +342,11 @@ const Index = ({
                         <Form.Item
                             label={t("Заявленный размер вреда")}
                             name={'claimedDamage'}
-                            rules={[{required: true, message: t('Обязательное поле')}]}
+                            rules={[{required: true, message: t('Обязательное поле')},{ type: 'number', min: 0 }]}
                         >
                             <InputNumber style={{width: '100%'}}
                                          min={0}
-                                         formatter={(value) =>
-                                             `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                         }
-                                         parser={(value) => value.replace(/\$\s?|(,*)/g, '')}/>
+                                         step={0.01}/>
                         </Form.Item>
                         <Flex className={'mt-6'}>
                             <Button className={'mr-2'} type="primary" htmlType={'submit'} name={'save'}>
