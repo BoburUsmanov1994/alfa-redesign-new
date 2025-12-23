@@ -1,9 +1,22 @@
 import React, {useEffect} from 'react';
-import {Col, Descriptions, Divider, Form, Input, notification, Radio, Row, Select, Table, Typography} from "antd";
+import {
+    Col,
+    DatePicker,
+    Descriptions,
+    Divider,
+    Form,
+    Input,
+    notification,
+    Radio,
+    Row,
+    Select,
+    Table,
+    Typography
+} from "antd";
 import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
-import {get, isEmpty, isNil} from "lodash";
+import {get, isEmpty, isEqual, isNil} from "lodash";
 import {URLS} from "../../../constants/url";
 import dayjs from "dayjs";
 import numeral from "numeral";
@@ -14,6 +27,8 @@ const PoliceForm = ({
                         polisNumber,
                     }) => {
     const [notFound, setNotFound] = React.useState(false);
+    const insurantType = Form.useWatch(['policyDetails','insurant','type'], form)
+    const beneficiaryType = Form.useWatch(['policyDetails','beneficiary','type'], form)
     let {data,error,isError} = useGetAllQuery({
         key: [KEYS.claimPolicyDetails, polisSeria, polisNumber],
         url: URLS.claimPolicyDetails,
@@ -23,9 +38,8 @@ const PoliceForm = ({
                 number: polisNumber
             }
         },
-        enabled: !!(polisSeria, polisNumber)
+        enabled: !!(polisSeria && polisNumber)
     })
-    console.log('isError',isError)
     const {t} = useTranslation();
 
 
@@ -43,6 +57,7 @@ const PoliceForm = ({
             }
         }
     }, [data,error,isError]);
+    console.log('insurantType',insurantType)
     return (
         <>
             <Row gutter={16}>
@@ -87,8 +102,8 @@ const PoliceForm = ({
 
                     </Row>
                     <Row gutter={16}>
-                        <Col xs={24}>
-                            {data && <Descriptions className={'mb-4'} title={''} bordered>
+                        {!notFound ?<Col xs={24}>
+                            {data &&  <Descriptions className={'mb-4'} title={''} bordered>
                                 <Descriptions.Item
                                     label={t('Группа продуктов')}>{get(data, 'data.product.group.name')}</Descriptions.Item>
                                 <Descriptions.Item
@@ -198,7 +213,159 @@ const PoliceForm = ({
                                     />
                                 </Descriptions.Item>
                             </Descriptions>}
-                        </Col>
+                        </Col>:<>
+                            <Col xs={24}>
+                                <Form.Item name={['policyDetails','product','name']} label={t('Название продукта')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item
+                                    rules={[{required: true, message: t('Обязательное поле')}]}
+                                    labelAlign={'left'}
+                                    label={t("Тип страхователя")}
+                                    name={['policyDetails','insurant','type']}
+                                >
+                                    <Radio.Group options={[{value: 'PERSON', label: t('физ.лицо')}, {
+                                        value: 'ORGANIZATION',
+                                        label: t('юр.лицо')
+                                    }]}/>
+                                </Form.Item>
+                            </Col>
+                            {
+                                isEqual(insurantType,'PERSON') && <>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','insurant','person','fullName','firstname']} label={t('Имя')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','insurant','person','fullName','lastname']} label={t('Фамилия')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','insurant','person','fullName','middlename']} label={t('Отчество')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                </>
+                            }
+                            {
+                                isEqual(insurantType,'ORGANIZATION') && <>
+                                    <Col xs={18}>
+                                        <Form.Item name={['policyDetails','insurant','organization','name']} label={t('Наименование')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                </>
+                            }
+                            <Col xs={6}>
+                                <Form.Item
+                                    rules={[{required: true, message: t('Обязательное поле')}]}
+                                    labelAlign={'left'}
+                                    label={t("Тип выгодоприобретатель")}
+                                    name={['policyDetails','beneficiary','type']}
+                                >
+                                    <Radio.Group options={[{value: 'PERSON', label: t('физ.лицо')}, {
+                                        value: 'ORGANIZATION',
+                                        label: t('юр.лицо')
+                                    }]}/>
+                                </Form.Item>
+                            </Col>
+                            {
+                                isEqual(beneficiaryType,'PERSON') && <>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','beneficiary','person','fullName','firstname']} label={t('Имя')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','beneficiary','person','fullName','lastname']} label={t('Фамилия')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Form.Item name={['policyDetails','beneficiary','person','fullName','middlename']} label={t('Отчество')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                </>
+                            }
+                            {
+                                isEqual(beneficiaryType,'ORGANIZATION') && <>
+                                    <Col xs={18}>
+                                        <Form.Item name={['policyDetails','beneficiary','organization','name']} label={t('Наименование')}
+                                                   rules={[{required: true, message: t('Обязательное поле')}]}>
+                                            <Input/>
+                                        </Form.Item>
+                                    </Col>
+                                </>
+                            }
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','seria']} label={t('Серия  полиса')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','number']} label={t('Номер полиса')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','startDate']} label={t('Дата начала')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','endDate']} label={t('Дата окончания')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','issueDate']} label={t('Дата выдачи полиса')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','insurancePremium']} label={t('Страховая премия')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                  <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','insurancePremiumPaid']} label={t('Оплаченная страховая премия')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','paymentDate']} label={t('Дата выплаты')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={6}>
+                                <Form.Item name={['policyDetails','policy','uuid']} label={t('UUID')}
+                                           rules={[{required: true, message: t('Обязательное поле')}]}>
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                        </>}
                     </Row>
                 </Col>
 
