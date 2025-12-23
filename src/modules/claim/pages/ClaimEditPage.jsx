@@ -302,6 +302,16 @@ const ClaimEditPage = () => {
                                     ...get(data, 'data.eventCircumstances.courtDecision', {}),
                                     courtDecisionDate: dayjs(get(data, 'data.eventCircumstances.courtDecision.courtDecisionDate'))
                                 }
+                            },
+                            policyDetails:{
+                                ...get(data, 'policyDetails', {}),
+                                policy: {
+                                    ...get(data, 'policyDetails.policy', {}),
+                                    endDate:get(data, 'policyDetails.policy.endDate') ? dayjs(get(data, 'policyDetails.policy.endDate')) : null,
+                                    issueDate:get(data, 'policyDetails.policy.issueDate') ? dayjs(get(data, 'policyDetails.policy.issueDate')) : null,
+                                    paymentDate:get(data, 'policyDetails.policy.paymentDate') ? dayjs(get(data, 'policyDetails.policy.paymentDate')) : null,
+                                    startDate:get(data, 'policyDetails.policy.startDate') ? dayjs(get(data, 'policyDetails.policy.startDate')) : null,
+                                }
                             }
                         }}
                         onFinish={onFinish}
