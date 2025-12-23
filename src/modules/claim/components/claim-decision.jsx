@@ -13,7 +13,7 @@ import {
     Row,
     Select,
     Space,
-    Spin,
+    Spin, Switch,
     Table
 } from "antd";
 import {useTranslation} from "react-i18next";
@@ -32,7 +32,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
     const [drawerForm] = Form.useForm();
-    const {decision} = Form.useWatch([], form) || {}
+    const {decision,preSave} = Form.useWatch([], form) || {}
     const {details: bankDetails} = Form.useWatch([], drawerForm) || {}
     const [open, setOpen] = useState(false)
     const [paymentList, setPaymentList] = useState([])
@@ -77,6 +77,8 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
     if (isLoading) {
         return <Spin spinning/>
     }
+
+    console.log('preSave',preSave)
 
     return (
         <>
@@ -198,6 +200,9 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         </Row>
                     </Card>
                     <Card className={'mb-4'} title={t('Выплата страхового возмещения:')}>
+                            <Form.Item name={'preSave'} label={t('Предварительное сохранение')} valuePropName={'checked'}>
+                                <Switch/>
+                            </Form.Item>
                         {isEqual(get(decision, 'decisionId'), 1) && <> <Table
                             dataSource={get(payments, 'data.data.damage', get(payments, 'data.damage', []))}
                             title={() => 'Перечень ущерба по претензионному делу:'}
@@ -310,10 +315,10 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                         </Row>
                     </Card>
                     <Col span={24} className={'mt-8'}>
-                        <Button onClick={() => (submitType.current = true)} type="default" className={'mr-4'}
-                                htmlType="submit">
-                            {t('Предварительно сохранить')}
-                        </Button>
+                        {/*<Button onClick={() => (submitType.current = true)} type="default" className={'mr-4'}*/}
+                        {/*        htmlType="submit">*/}
+                        {/*    {t('Предварительно сохранить')}*/}
+                        {/*</Button>*/}
                         <Button onClick={() => (submitType.current = false)} type="primary" className={'mr-4'}
                                 htmlType="submit">
                             {t('Сохранить')}
@@ -347,25 +352,25 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item rules={[{required: !preSave, message: t('Обязательное поле')}]}
                                        name={['details', 'mfo']} label={t('МФО банка')}>
                                 <Input/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item rules={[{required: !preSave, message: t('Обязательное поле')}]}
                                        name={['details', 'name']} label={t('Наименование банка')}>
                                 <Input/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item rules={[{required: !preSave, message: t('Обязательное поле')}]}
                                        name={['details', 'inn']} label={t('ИНН банка')}>
                                 <Input/>
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                            <Form.Item rules={[{required: !preSave, message: t('Обязательное поле')}]}
                                        name={['details', 'checkingAccount']} label={t('Расчетный счет')}>
                                 <Input/>
                             </Form.Item>
