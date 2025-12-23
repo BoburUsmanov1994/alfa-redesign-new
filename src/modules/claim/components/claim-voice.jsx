@@ -53,7 +53,6 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
           form.setFieldValue('sentDate',get(data, 'sekVoteDetails.sentDate') ? dayjs(get(data, 'sekVoteDetails.sentDate')):null)
       }
     }, [data])
-
     return (
         <>
             <Card className={'mb-4'} bordered title={t('Статус дела в СЭК')}>
@@ -79,7 +78,19 @@ const ClaimVoice = ({data, claimNumber, refresh}) => {
                                        valuePropName="checked"
                                        initialValue={get(data, 'sekVoteDetails.decisionWithoutSek', false)}
                                        name={'decisionWithoutSek'} label={t('Решение принято без СЭК')}>
-                                <Switch />
+                                <Switch onChange={(val)=>{
+                                    mutate({
+                                        url: URLS.claimSekSend,
+                                        attributes: {
+                                            decisionWithoutSek:val,
+                                            claimNumber: parseInt(claimNumber),
+                                        }
+                                    }, {
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
+                                    })
+                                }} />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
