@@ -94,7 +94,7 @@ const PoliceForm = ({
                         </Col>
 
                         <Col xs={6}>
-                            <Form.Item name={'polisUuid'} label={t('UUID полиса')}
+                            <Form.Item rules={[{required: true, message: t('Обязательное поле')}]} name={'polisUuid'} label={t('UUID полиса')}
                             >
                                 <Input/>
                             </Form.Item>
@@ -310,18 +310,6 @@ const PoliceForm = ({
                                     </Col>
                                 </>
                             }
-                            <Col xs={6}>
-                                <Form.Item name={['policyDetails','policy','seria']} label={t('Серия  полиса')}
-                                           rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <Input/>
-                                </Form.Item>
-                            </Col>
-                            <Col xs={6}>
-                                <Form.Item name={['policyDetails','policy','number']} label={t('Номер полиса')}
-                                           rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <Input/>
-                                </Form.Item>
-                            </Col>
 
                             <Col xs={6}>
                                 <Form.Item name={['policyDetails','policy','startDate']} label={t('Дата начала')}
@@ -357,12 +345,6 @@ const PoliceForm = ({
                                 <Form.Item name={['policyDetails','policy','paymentDate']} label={t('Дата выплаты')}
                                            rules={[{required: true, message: t('Обязательное поле')}]}>
                                     <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
-                                </Form.Item>
-                            </Col>
-                            <Col xs={6}>
-                                <Form.Item name={['policyDetails','policy','uuid']} label={t('UUID')}
-                                           rules={[{required: true, message: t('Обязательное поле')}]}>
-                                    <Input />
                                 </Form.Item>
                             </Col>
                         </>}

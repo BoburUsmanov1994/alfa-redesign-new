@@ -168,6 +168,7 @@ const ClaimCreatePage = () => {
                           hasVehicleDamage,
                           hasPropertyDamage,
                           hasResponsibleDamage,
+                          policyDetails,
                           ...rest
                       }) => {
         if (submitType.current) {
@@ -175,6 +176,15 @@ const ClaimCreatePage = () => {
                 url: URLS.claimCreate,
                 attributes: {
                     ...rest,
+                    policyDetails:policyDetails ? {
+                        ...policyDetails,
+                        policy:{
+                            ...get(policyDetails,'policy',{}),
+                            uuid:get(rest,'polisUuid'),
+                            seria:get(rest,'polisSeria'),
+                            number:get(rest,'polisNumber'),
+                        }
+                    }:undefined,
                     photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
                     lifeDamage,
                     healthDamage,
@@ -192,6 +202,15 @@ const ClaimCreatePage = () => {
                 url: URLS.claimDraft,
                 attributes: {
                     ...rest,
+                    policyDetails:policyDetails ? {
+                        ...policyDetails,
+                        policy:{
+                            ...get(policyDetails,'policy',{}),
+                            uuid:get(rest,'polisUuid'),
+                            seria:get(rest,'polisSeria'),
+                            number:get(rest,'polisNumber'),
+                        }
+                    }:undefined,
                     photoVideoMaterials: files?.map(({id, url}) => ({file: id, url})),
                     lifeDamage,
                     healthDamage,

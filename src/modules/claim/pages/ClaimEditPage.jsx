@@ -173,6 +173,7 @@ const ClaimEditPage = () => {
                           hasHealthDamage,
                           hasVehicleDamage,
                           hasPropertyDamage,
+                          policyDetails,
                           ...rest
                       }) => {
         if(submitType?.current) {
@@ -180,6 +181,15 @@ const ClaimEditPage = () => {
                 url: URLS.claimCreate,
                 attributes: {
                     ...rest,
+                    policyDetails:policyDetails ? {
+                        ...policyDetails,
+                        policy:{
+                            ...get(policyDetails,'policy',{}),
+                            uuid:get(rest,'polisUuid'),
+                            seria:get(rest,'polisSeria'),
+                            number:get(rest,'polisNumber'),
+                        }
+                    }:undefined,
                     claimNumber: parseInt(claimNumber),
                     lifeDamage,
                     healthDamage,
@@ -198,6 +208,15 @@ const ClaimEditPage = () => {
                 url: URLS.claimEdit,
                 attributes: {
                     ...rest,
+                    policyDetails:policyDetails ? {
+                        ...policyDetails,
+                        policy:{
+                            ...get(policyDetails,'policy',{}),
+                            uuid:get(rest,'polisUuid'),
+                            seria:get(rest,'polisSeria'),
+                            number:get(rest,'polisNumber'),
+                        }
+                    }:undefined,
                     claimNumber: parseInt(claimNumber),
                     lifeDamage,
                     healthDamage,
@@ -304,13 +323,13 @@ const ClaimEditPage = () => {
                                 }
                             },
                             policyDetails:{
-                                ...get(data, 'policyDetails', {}),
+                                ...get(data, 'data.policyDetails', {}),
                                 policy: {
-                                    ...get(data, 'policyDetails.policy', {}),
-                                    endDate:get(data, 'policyDetails.policy.endDate') ? dayjs(get(data, 'policyDetails.policy.endDate')) : null,
-                                    issueDate:get(data, 'policyDetails.policy.issueDate') ? dayjs(get(data, 'policyDetails.policy.issueDate')) : null,
-                                    paymentDate:get(data, 'policyDetails.policy.paymentDate') ? dayjs(get(data, 'policyDetails.policy.paymentDate')) : null,
-                                    startDate:get(data, 'policyDetails.policy.startDate') ? dayjs(get(data, 'policyDetails.policy.startDate')) : null,
+                                    ...get(data, 'data.policyDetails.policy', {}),
+                                    endDate:get(data, 'data.policyDetails.policy.endDate') ? dayjs(get(data, 'data.policyDetails.policy.endDate')) : null,
+                                    issueDate:get(data, 'data.policyDetails.policy.issueDate') ? dayjs(get(data, 'data.policyDetails.policy.issueDate')) : null,
+                                    paymentDate:get(data, 'data.policyDetails.policy.paymentDate') ? dayjs(get(data, 'data.policyDetails.policy.paymentDate')) : null,
+                                    startDate:get(data, 'data.policyDetails.policy.startDate') ? dayjs(get(data, 'data.policyDetails.policy.startDate')) : null,
                                 }
                             }
                         }}
@@ -319,7 +338,7 @@ const ClaimEditPage = () => {
                         <ApplicantForm data={get(data, 'data')} applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
-                        <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
+                        <PoliceForm  form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>
                         <EventForm areaTypes={areaTypes} eventCircumstances={eventCircumstances} regions={regions}
                                    claimType={claimType}/>
                         <ResponsibleForm data={get(data, 'data')} isPending={isPending}

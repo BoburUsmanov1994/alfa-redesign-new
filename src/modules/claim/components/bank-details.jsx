@@ -41,7 +41,8 @@ const BankDetails = ({
                 <Col span={6}>
                     <Form.Item initialValue={'PERSON'} name={['bankDetails', 'receiver', 'type']}
                                label={t('Получатель')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                               // rules={[{required: true, message: t('Обязательное поле')}]}
+                    >
                         <Radio.Group disabled options={[{value: 'PERSON', label: t('физ.лицо')}, {
                             value: 'ORGANIZATION',
                             label: t('юр.лицо')
@@ -52,7 +53,7 @@ const BankDetails = ({
                 {isEqual(get(bankDetails, 'receiver.type'), 'PERSON') ? <>
                     <Col span={6}>
                         <Form.Item
-                            rules={[{required: true, message: t('Обязательное поле')}]}
+                            // rules={[{required: true, message: t('Обязательное поле')}]}
                             name={['bankDetails', 'receiver', 'person', 'fullName', 'lastname']}
                             label={t('Фамилия')}>
                             <Input disabled/>
@@ -60,7 +61,7 @@ const BankDetails = ({
                     </Col>
                     <Col span={6}>
                         <Form.Item
-                            rules={[{required: true, message: t('Обязательное поле')}]}
+                            // rules={[{required: true, message: t('Обязательное поле')}]}
                             name={['bankDetails', 'receiver', 'person', 'fullName', 'firstname']}
                             label={t('Имя')}>
                             <Input disabled/>
@@ -68,21 +69,23 @@ const BankDetails = ({
                     </Col>
                     <Col span={6}>
                         <Form.Item
-                            rules={[{required: true, message: t('Обязательное поле')}]}
+                            // rules={[{required: true, message: t('Обязательное поле')}]}
                             name={['bankDetails', 'receiver', 'person', 'fullName', 'middlename']}
                             label={t('Отчество')}>
                             <Input disabled/>
                         </Form.Item>
                     </Col>
                     <Col span={6}>
-                        <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                        <Form.Item
+                            // rules={[{required: true, message: t('Обязательное поле')}]}
                                    name={['bankDetails', 'receiver', 'person', 'cardNumber']}
                                    label={t('Номер пласт. карты')}>
                             <Input disabled/>
                         </Form.Item>
                     </Col>
                 </> : <Col span={6}>
-                    <Form.Item rules={[{required: true, message: t('Обязательное поле')}]}
+                    <Form.Item
+                        // rules={[{required: true, message: t('Обязательное поле')}]}
                                name={['bankDetails', 'receiver', 'organization', 'name']}
                                label={t('Наименование')}>
                         <Input disabled/>
