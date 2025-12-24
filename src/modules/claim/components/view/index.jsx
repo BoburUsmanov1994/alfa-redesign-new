@@ -171,12 +171,22 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                           hasHealthDamage,
                           hasVehicleDamage,
                           hasPropertyDamage,
+                          policyDetails,
                           ...rest
                       }) => {
         editRequest({
             url: URLS.claimEdit,
             attributes: {
                 ...rest,
+                policyDetails:policyDetails ? {
+                    ...policyDetails,
+                    policy:{
+                        ...get(policyDetails,'policy',{}),
+                        uuid:get(rest,'polisUuid'),
+                        seria:get(rest,'polisSeria'),
+                        number:get(rest,'polisNumber'),
+                    }
+                }:undefined,
                 claimNumber: parseInt(claimNumber),
                 photoVideoMaterials: files,
                 lifeDamage,
