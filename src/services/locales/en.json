@@ -855,5 +855,9 @@
   "paid": "Оплачено",
   "denied": "Отказано",
   "waiting_details": "Ожидaние реквизитов",
-  "waiting_payment": "Ожидание платежа"
+  "waiting_payment": "Ожидание платежа",
+  "decision_added": "Добавлено решение",
+  "decision_pre_added": "Решение предварительно сохранено",
+  "payment_added": "Добавлена выплата",
+  "payment_pre_added": "Выплата предварительно сохранена"
 }
