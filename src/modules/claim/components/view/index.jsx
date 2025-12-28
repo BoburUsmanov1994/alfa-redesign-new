@@ -203,6 +203,73 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
     };
 
     useEffect(() => {
+        if(data){
+            form.setFieldsValue({
+                ...data,
+                applicant: {
+                    ...get(data, 'applicant', {}),
+                    person: {
+                        ...get(data, 'applicant.person', {}),
+                        birthDate: dayjs(get(data, 'applicant.person.birthDate')),
+                        passportData: {
+                            ...get(data, 'applicant.person.passportData'),
+                            issueDate: dayjs(get(data, 'applicant.person.passportData.issueDate')),
+                        }
+                    },
+                },
+                responsibleForDamage: {
+                    ...get(data, 'responsibleForDamage'),
+                    person: {
+                        ...get(data, 'responsibleForDamage.person'),
+                        birthDate: dayjs(get(data, 'responsibleForDamage.person.birthDate')),
+                        passportData: {
+                            ...get(data, 'responsibleForDamage.person.passportData'),
+                            issueDate: dayjs(get(data, 'responsibleForDamage.person.passportData.issueDate'))
+                        }
+                    },
+                    supervisoryAuthorityConclusion: {
+                        ...get(data, 'responsibleForDamage.supervisoryAuthorityConclusion'),
+                        date: dayjs(get(data, 'responsibleForDamage.supervisoryAuthorityConclusion.date'))
+                    }
+                },
+                responsibleVehicleInfo: {
+                    ...get(data, 'responsibleVehicleInfo'),
+                    ownerPerson: {
+                        ...get(data, 'responsibleVehicleInfo.ownerPerson'),
+                        birthDate: dayjs(get(data, 'responsibleVehicleInfo.ownerPerson.birthDate')),
+                        passportData: {
+                            ...get(data, 'responsibleVehicleInfo.ownerPerson.passportData'),
+                            issueDate: dayjs(get(data, 'responsibleVehicleInfo.ownerPerson.passportData.issueDate'))
+                        }
+                    },
+                },
+
+
+                eventCircumstances: {
+                    ...get(data, 'eventCircumstances', {}),
+                    eventDateTime: dayjs(get(data, 'eventCircumstances.eventDateTime')),
+                    courtDecision: {
+                        ...get(data, 'eventCircumstances.courtDecision', {}),
+                        courtDecisionDate: dayjs(get(data, 'eventCircumstances.courtDecision.courtDecisionDate'))
+                    }
+                },
+                employee: get(data, 'employee._id'),
+                conclusionDUSP: {
+                    ...get(data, 'conclusionDUSP', {}),
+                    date: get(data, 'conclusionDUSP.date') ? dayjs(get(data, 'conclusionDUSP.date')) : null,
+                },
+                policyDetails:{
+                    ...get(data, 'policyDetails', {}),
+                    policy: {
+                        ...get(data, 'policyDetails.policy', {}),
+                        endDate:get(data, 'policyDetails.policy.endDate') ? dayjs(get(data, 'policyDetails.policy.endDate')) : null,
+                        issueDate:get(data, 'policyDetails.policy.issueDate') ? dayjs(get(data, 'policyDetails.policy.issueDate')) : null,
+                        paymentDate:get(data, 'policyDetails.policy.paymentDate') ? dayjs(get(data, 'policyDetails.policy.paymentDate')) : null,
+                        startDate:get(data, 'policyDetails.policy.startDate') ? dayjs(get(data, 'policyDetails.policy.startDate')) : null,
+                    }
+                }
+            })
+        }
         if (!isEmpty(get(data, 'photoVideoMaterials', []))) {
             setFiles(get(data, 'photoVideoMaterials', []))
         }

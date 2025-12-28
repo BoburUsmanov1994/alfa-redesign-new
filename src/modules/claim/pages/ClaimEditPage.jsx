@@ -235,6 +235,66 @@ const ClaimEditPage = () => {
 
 
     useEffect(() => {
+        if(get(data, 'data', {})){
+            form.setFieldsValue({
+                ...get(data, 'data', {}),
+                applicant: {
+                    ...get(data, 'data.applicant', {}),
+                    person: {
+                        ...get(data, 'data.applicant.person', {}),
+                        birthDate: dayjs(get(data, 'data.applicant.person.birthDate')),
+                        passportData: {
+                            ...get(data, 'data.applicant.person.passportData'),
+                            issueDate: dayjs(get(data, 'data.applicant.person.passportData.issueDate')),
+                        }
+                    },
+                },
+                responsibleForDamage: {
+                    ...get(data, 'data.responsibleForDamage'),
+                    person: {
+                        ...get(data, 'data.responsibleForDamage.person'),
+                        birthDate: dayjs(get(data, 'data.responsibleForDamage.person.birthDate')),
+                        passportData: {
+                            ...get(data, 'data.responsibleForDamage.person.passportData'),
+                            issueDate: dayjs(get(data, 'data.responsibleForDamage.person.passportData.issueDate'))
+                        }
+                    },
+                    supervisoryAuthorityConclusion: {
+                        ...get(data, 'data.responsibleForDamage.supervisoryAuthorityConclusion'),
+                        date: dayjs(get(data, 'data.responsibleForDamage.supervisoryAuthorityConclusion.date'))
+                    }
+                },
+                responsibleVehicleInfo: {
+                    ...get(data, 'data.responsibleVehicleInfo'),
+                    ownerPerson: {
+                        ...get(data, 'data.responsibleVehicleInfo.ownerPerson'),
+                        birthDate: dayjs(get(data, 'data.responsibleVehicleInfo.ownerPerson.birthDate')),
+                        passportData: {
+                            ...get(data, 'data.responsibleVehicleInfo.ownerPerson.passportData'),
+                            issueDate: dayjs(get(data, 'data.responsibleVehicleInfo.ownerPerson.passportData.issueDate'))
+                        }
+                    },
+                },
+                eventCircumstances: {
+                    ...get(data, 'data.eventCircumstances', {}),
+                    eventDateTime: dayjs(get(data, 'data.eventCircumstances.eventDateTime')),
+                    courtDecision: {
+                        ...get(data, 'data.eventCircumstances.courtDecision', {}),
+                        courtDecisionDate: dayjs(get(data, 'data.eventCircumstances.courtDecision.courtDecisionDate'))
+                    }
+                },
+                policyDetails:{
+                    ...get(data, 'data.policyDetails', {}),
+                    policy: {
+                        ...get(data, 'data.policyDetails.policy', {}),
+                        endDate:get(data, 'data.policyDetails.policy.endDate') ? dayjs(get(data, 'data.policyDetails.policy.endDate')) : null,
+                        issueDate:get(data, 'data.policyDetails.policy.issueDate') ? dayjs(get(data, 'data.policyDetails.policy.issueDate')) : null,
+                        paymentDate:get(data, 'data.policyDetails.policy.paymentDate') ? dayjs(get(data, 'data.policyDetails.policy.paymentDate')) : null,
+                        startDate:get(data, 'data.policyDetails.policy.startDate') ? dayjs(get(data, 'data.policyDetails.policy.startDate')) : null,
+                    }
+                }
+            })
+        }
         if (!isEmpty(get(data, 'data.photoVideoMaterials', []))) {
             if (isArray(get(data, 'data.photoVideoMaterials'))) {
                 setFiles(get(data, 'data.photoVideoMaterials', []))
@@ -258,6 +318,7 @@ const ClaimEditPage = () => {
             setOtherPropertyDamage(get(data, 'data.otherPropertyDamage', []))
             form.setFieldValue('hasPropertyDamage', true)
         }
+
     }, [data])
 
 
@@ -272,7 +333,7 @@ const ClaimEditPage = () => {
             >
                 <Spin spinning={isPending || isPendingPatch}>
                     <Form
-                        name="create"
+                        name="edit"
                         form={form}
                         layout="vertical"
                         initialValues={{
