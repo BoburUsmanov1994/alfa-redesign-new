@@ -150,7 +150,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                     </Col>
                                     <Col span={6}>
                                         <Form.Item label={t('Дата отправки в НАПП')}>
-                                            <DatePicker value={get(data, 'sentDate') ? dayjs(get(data, 'sentDate')) : null}
+                                            <DatePicker value={get(data, 'decisionDate') ? dayjs(get(data, 'decisionDate')) : null}
                                                         format="DD.MM.YYYY" disabled className={'w-full'}/>
                                         </Form.Item>
                                     </Col>
@@ -288,7 +288,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                             </Col>
                             <Col span={6}>
                                 <Form.Item label={t('Дата отправки в НАПП')}>
-                                    <DatePicker value={get(data, 'sentDate') ? dayjs(get(data, 'sentDate')) : null}
+                                    <DatePicker value={get(data, 'paymentDate') ? dayjs(get(data, 'paymentDate')) : null}
                                                 format="DD.MM.YYYY" disabled className={'w-full'}/>
                                 </Form.Item>
                             </Col>

@@ -9,7 +9,6 @@ import {
     notification,
     Radio,
     Row,
-    Select,
     Table,
     Typography
 } from "antd";
@@ -25,6 +24,7 @@ const PoliceForm = ({
                         form,
                         polisSeria,
                         polisNumber,
+                        initialData
                     }) => {
     const [notFound, setNotFound] = React.useState(false);
     const insurantType = Form.useWatch(['policyDetails','insurant','type'], form)
@@ -38,7 +38,7 @@ const PoliceForm = ({
                 number: polisNumber
             }
         },
-        enabled: !!(polisSeria && polisNumber)
+        enabled: !!(polisSeria && polisNumber && !get(initialData,'policyDetails'))
     })
     const {t} = useTranslation();
 
@@ -57,6 +57,7 @@ const PoliceForm = ({
             }
         }
     }, [data,error,isError]);
+    console.log('initialData',initialData)
 
     return (
         <>
