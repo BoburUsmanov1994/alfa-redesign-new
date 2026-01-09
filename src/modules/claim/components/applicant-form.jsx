@@ -8,7 +8,6 @@ import {useTranslation} from "react-i18next";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {URLS} from "../../../constants/url";
-import dayjs from "dayjs";
 
 const ApplicantForm = ({
                            client,

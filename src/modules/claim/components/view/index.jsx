@@ -104,7 +104,8 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
             attributes: {
                 passportSeries: toUpper(_form.getFieldValue([...type, 'passportData', 'seria'])),
                 passportNumber: _form.getFieldValue([...type, 'passportData', 'number']),
-                pinfl: _form.getFieldValue([...type, 'passportData', 'pinfl']),
+                birthDate:dayjs( _form.getFieldValue([...type, 'birthDate'])).format('YYYY-MM-DD'),
+
             }
         }, {
             onSuccess: ({data: result}) => {
