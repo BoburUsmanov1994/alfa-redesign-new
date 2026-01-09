@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Card, Col, DatePicker, Form, Input, Popconfirm, Row, Select, Space} from "antd";
 import {useTranslation} from "react-i18next";
-import {get, isEqual} from "lodash"
+import {get, isEqual, isNil} from "lodash"
 import {URLS} from "../../../constants/url";
 import {useGetAllQuery, usePostQuery, usePutQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
@@ -119,8 +119,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>}
 
                 <Col span={6}>
-                    <Form.Item name={'regNumber'} label={t('Регистрационный номер')}>
-                        <Input value={get(data, 'regNumber') ?? claimNumber} disabled={!(!disabled && isEqual(get(data, 'status'), 'submitted'))} />
+                    <Form.Item initialValue={!(!disabled && isEqual(get(data, 'status'), 'submitted')) ? (isNil(get(data, 'regNumber')) ? claimNumber : get(data, 'regNumber')):''} name={'regNumber'} label={t('Регистрационный номер')}>
+                        <Input  disabled={!(!disabled && isEqual(get(data, 'status'), 'submitted'))} />
                     </Form.Item>
                 </Col>
                 <Col span={6}>
