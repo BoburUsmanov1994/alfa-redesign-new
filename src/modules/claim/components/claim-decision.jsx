@@ -141,8 +141,8 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                     <Input className={'w-full'}/>
                                 </Form.Item>
                             </Col>
-                            {
-                                isEqual(get(decision, 'decisionId'), 1) && <>
+                            {/*{*/}
+                            {/*    isEqual(get(decision, 'decisionId'), 1) && <>*/}
                                     <Col span={6}>
                                         <Form.Item label={t('Статус отправки в НАПП')}>
                                             <Input value={t(get(data, 'nappStatus'))} disabled className={'w-full'}/>
@@ -195,8 +195,8 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
                                         </Button>
                                         </Popconfirm>
                                     </Col>
-                                </>
-                            }
+                            {/*    </>*/}
+                            {/*}*/}
                         </Row>
                     </Card>
                     <Card className={'mb-4'} title={t('Выплата страхового возмещения:')}>

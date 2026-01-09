@@ -14,7 +14,9 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
     const {mutate: postRequest, isPending: isPendingPost} = usePostQuery({})
     let {data: employees, isLoading} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
     employees = getSelectOptionsListFromData(get(employees, 'data.data', []), '_id', 'name')
+    const regNumber =  Form.useWatch('regNumber', form)
 
+    console.log('regNumber',regNumber)
     return (
         <Card className={'mb-4'} bordered title={t('Статус заявления')}>
             <Row gutter={16} align="middle">
@@ -95,7 +97,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                                     url: URLS.claimAction,
                                     attributes: {
                                         claimNumber: parseInt(claimNumber),
-                                        action: 'register'
+                                        action: 'register',
+                                        regNumber: regNumber
                                     },
                                     method: 'put',
                                 }, {
@@ -116,8 +119,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>}
 
                 <Col span={6}>
-                    <Form.Item label={t('Регистрационный номер')}>
-                        <Input value={get(data, 'claimNumber')} disabled/>
+                    <Form.Item name={'regNumber'} label={t('Регистрационный номер')}>
+                        <Input value={get(data, 'regNumber') ?? claimNumber} disabled={!(!disabled && isEqual(get(data, 'status'), 'submitted'))} />
                     </Form.Item>
                 </Col>
                 <Col span={6}>

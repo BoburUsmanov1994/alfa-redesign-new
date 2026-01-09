@@ -260,8 +260,8 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                 }/>
                             </Form.Item>
                         </Col>
-                        {!disabled && <Col span={6}>
-                            <Form.Item>
+                      <Col span={12} className={'flex'}>
+                          {!disabled && <><Form.Item className={'mr-6'}>
                                 <Popconfirm
                                     title="Сформировать?"
                                     onConfirm={() => {
@@ -284,7 +284,27 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                     </Button>
                                 </Popconfirm>
                             </Form.Item>
-                        </Col>}
+                            <CustomUpload setFile={(_file) => {
+                                mutate({
+                                    url: `${URLS.claimGenConclusionDusp}?claimNumber=${claimNumber}`,
+                                    attributes: {
+                                        file: {
+                                            file: get(_file, 'id'),
+                                            url: get(_file, 'url')
+                                        }
+                                    },
+                                    method: 'put'
+                                }, {
+                                    onSuccess: () => {
+                                        refresh()
+                                    }
+                                })
+                            }}/>
+                          </>
+                          }
+                        </Col>
+
+
                         {!disabled && <>
                             <Col span={12}>
                                 <Form.Item layout={'horizontal'}
@@ -296,8 +316,8 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                     }/>
                                 </Form.Item>
                             </Col>
-                            <Col span={6}>
-                                <Form.Item>
+                            <Col span={12} className={'flex'}>
+                                <Form.Item  className={'mr-6'}>
                                     <Popconfirm
                                         title="Сформировать?"
                                         onConfirm={() => {
@@ -320,6 +340,22 @@ const ClaimDocs = ({data, claimNumber, refresh, disabled = false}) => {
                                     </Button>
                                     </Popconfirm>
                                 </Form.Item>
+                                <CustomUpload setFile={(_file) => {
+                                    mutate({
+                                        url: `${URLS.claimGenDecisionDusp}?claimNumber=${claimNumber}`,
+                                        attributes: {
+                                            file: {
+                                                file: get(_file, 'id'),
+                                                url: get(_file, 'url')
+                                            }
+                                        },
+                                        method: 'put'
+                                    }, {
+                                        onSuccess: () => {
+                                            refresh()
+                                        }
+                                    })
+                                }}/>
                             </Col>
 
                             <Col span={12}>
