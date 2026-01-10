@@ -156,7 +156,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item label={t('Дата отправки в НАПП')}>
-                        <Input value={dayjs(get(data, 'sentDate')).format("YYYY-MM-DD")} disabled/>
+                        <Input value={get(data, 'sentDate') ? dayjs(get(data, 'sentDate')).format("YYYY-MM-DD"):null} disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
