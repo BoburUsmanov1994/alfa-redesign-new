@@ -36,6 +36,7 @@ const ResponsibleForm = ({
         enabled: !!(get(applicant, 'person.regionId') || get(applicant, 'organization.regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
+    const residentType =  Form.useWatch(['responsibleForDamage', 'person', 'residentType'], _form)
     return (
         <>
             <Row gutter={16}>
@@ -102,7 +103,7 @@ const ResponsibleForm = ({
                                     <Form.Item
                                         label={t("Серия паспорта")}
                                         name={['responsibleForDamage', 'person', 'passportData', 'seria']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
+                                        rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                                     >
                                         <Input className={'uppercase'}/>
                                     </Form.Item>
@@ -111,7 +112,7 @@ const ResponsibleForm = ({
                                     <Form.Item
                                         label={t("Номер паспорта")}
                                         name={['responsibleForDamage', 'person', 'passportData', 'number']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
+                                        rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                                     >
                                         <Input/>
                                     </Form.Item>
@@ -119,7 +120,7 @@ const ResponsibleForm = ({
                                 <Col xs={6}>
                                     <Form.Item name={['responsibleForDamage', 'person', 'birthDate']}
                                                label={t('Дата рождения')}
-                                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                                               rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}>
                                         <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
@@ -193,7 +194,7 @@ const ResponsibleForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={8}>
-                            <Form.Item name={['responsibleForDamage', 'person', 'residentType']} label={t('Резидент')}
+                            <Form.Item initialValue={1} name={['responsibleForDamage', 'person', 'residentType']} label={t('Резидент')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Select options={residentTypes}/>
                             </Form.Item>
@@ -209,14 +210,16 @@ const ResponsibleForm = ({
                         <Col xs={8}>
                             <Form.Item initialValue={210} name={['responsibleForDamage', 'person', 'countryId']}
                                        label={t('Страна')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <Select options={countryList}/>
+                                       rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}>
+                                <Select filterOption={(input, option) =>
+                                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                                } showSearch options={countryList}/>
                             </Form.Item>
                         </Col>
 
                         <Col xs={8}>
                             <Form.Item name={['responsibleForDamage', 'person', 'regionId']} label={t('Область')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
+                                       rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}>
                                 <Select options={regions}/>
                             </Form.Item>
                         </Col>

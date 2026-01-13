@@ -243,7 +243,7 @@ const ClaimCreatePage = () => {
                         initialValues={{}}
                         onFinish={onFinish}
                     >
-                        <ApplicantForm applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
+                        <ApplicantForm form={form} applicant={applicant} getPersonInfo={getPersonInfo} getOrgInfo={getOrgInfo}
                                        client={client} countryList={countryList} regions={regions}
                                        residentTypes={residentTypes} ownershipForms={ownershipForms}/>
                         <PoliceForm form={form} polisSeria={polisSeria} polisNumber={polisNumber}/>

@@ -39,6 +39,7 @@ const VehicleForm = ({
         enabled: !!(get(applicant, 'ownerPerson.regionId') || get(applicant, 'ownerOrganization.regionId') || get(applicant, 'regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
+    const residentType =  Form.useWatch(['responsibleVehicleInfo', 'ownerPerson', 'residentType'], form)
     return (
         <>
             <Row gutter={16}>
@@ -213,7 +214,7 @@ const VehicleForm = ({
                                     <Form.Item
                                         label={t("Серия паспорта")}
                                         name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'seria']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
+                                        rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                                     >
                                         <Input className={'uppercase'}/>
                                     </Form.Item>
@@ -222,7 +223,7 @@ const VehicleForm = ({
                                     <Form.Item
                                         label={t("Номер паспорта")}
                                         name={['responsibleVehicleInfo', 'ownerPerson', 'passportData', 'number']}
-                                        rules={[{required: true, message: t('Обязательное поле')}]}
+                                        rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                                     >
                                         <Input/>
                                     </Form.Item>
@@ -230,7 +231,7 @@ const VehicleForm = ({
                                 <Col xs={8}>
                                     <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'birthDate']}
                                                label={t('Дата рождения')}
-                                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                                               rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}>
                                         <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
                                     </Form.Item>
                                 </Col>
@@ -312,7 +313,7 @@ const VehicleForm = ({
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
-                            <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'residentType']}
+                            <Form.Item initialValue={1} name={['responsibleVehicleInfo', 'ownerPerson', 'residentType']}
                                        label={t('Резидент')}
                                        rules={[{required: true, message: t('Обязательное поле')}]}>
                                 <Select options={residentTypes}/>
@@ -321,8 +322,10 @@ const VehicleForm = ({
                         <Col xs={6}>
                             <Form.Item initialValue={210} name={['responsibleVehicleInfo', 'ownerPerson', 'countryId']}
                                        label={t('Страна')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
-                                <Select options={countryList}/>
+                                       >
+                                <Select filterOption={(input, option) =>
+                                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                                } showSearch options={countryList}/>
                             </Form.Item>
                         </Col>
                         <Col xs={6}>
@@ -342,7 +345,7 @@ const VehicleForm = ({
                         </Col>
                         <Col xs={6}>
                             <Form.Item name={['responsibleVehicleInfo', 'ownerPerson', 'regionId']} label={t('Область')}
-                                       rules={[{required: true, message: t('Обязательное поле')}]}>
+                                       rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}>
                                 <Select options={regions}/>
                             </Form.Item>
                         </Col>

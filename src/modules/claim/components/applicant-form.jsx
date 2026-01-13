@@ -19,7 +19,8 @@ const ApplicantForm = ({
                            countryList = [],
                            regions = [],
                            ownershipForms = [],
-                           data
+                           data,
+                           form
                        }) => {
     const {t} = useTranslation();
     let {data: districts} = useGetAllQuery({
@@ -33,6 +34,7 @@ const ApplicantForm = ({
         enabled: !!(get(applicant, 'person.regionId') || get(applicant, 'organization.regionId'))
     })
     districts = getSelectOptionsListFromData(get(districts, `data.data`, []), '_id', 'name')
+    const residentType =  Form.useWatch(['applicant', 'person', 'residentType'], form)
     return (
         <>
             <Row gutter={16}>
@@ -58,7 +60,7 @@ const ApplicantForm = ({
                             <Form.Item
                                 label={t("Серия паспорта")}
                                 name={['applicant', 'person', 'passportData', 'seria']}
-                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                             >
                                 <Input className={'uppercase'}/>
                             </Form.Item>
@@ -67,7 +69,7 @@ const ApplicantForm = ({
                             <Form.Item
                                 label={t("Номер паспорта")}
                                 name={['applicant', 'person', 'passportData', 'number']}
-                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
                             >
                                 <Input/>
                             </Form.Item>
@@ -76,7 +78,7 @@ const ApplicantForm = ({
                             <Form.Item
                                 label={t("Дата рождения")}
                                 name={['applicant', 'person', 'birthDate']}
-                                rules={[{required: true, message: t('Обязательное поле')}]}
+                                rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}
 
                             >
                                 <DatePicker format={"DD.MM.YYYY"} className={'w-full'}/>
@@ -148,7 +150,7 @@ const ApplicantForm = ({
                     </Form.Item>
                 </Col>
                 <Col xs={8}>
-                    <Form.Item name={['applicant', 'person', 'residentType']} label={t('Резидент')}
+                    <Form.Item initialValue={1} name={['applicant', 'person', 'residentType']} label={t('Резидент')}
                                rules={[{required: true, message: t('Обязательное поле')}]}>
                         <Select options={residentTypes}/>
                     </Form.Item>
@@ -171,7 +173,7 @@ const ApplicantForm = ({
 
                 <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'regionId']} label={t('Область')}
-                              >
+                               rules={[{required: isEqual(residentType,1), message: t('Обязательное поле')}]}   >
                         <Select options={regions}/>
                     </Form.Item>
                 </Col>
