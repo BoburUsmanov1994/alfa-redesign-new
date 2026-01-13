@@ -163,7 +163,9 @@ const ApplicantForm = ({
                     <Form.Item initialValue={210} name={['applicant', 'person', 'countryId']}
                                label={t('Страна')}
                     >
-                        <Select showSearch options={countryList}/>
+                        <Select filterOption={(input, option) =>
+                            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                        } showSearch options={countryList}/>
                     </Form.Item>
                 </Col>
 
@@ -280,7 +282,9 @@ const ApplicantForm = ({
                     <Form.Item initialValue={210} name={['applicant', 'organization', 'countryId']}
                                label={t('Страна')}
                                >
-                        <Select showSearch options={countryList}/>
+                        <Select   filterOption={(input, option) =>
+                            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                        } showSearch options={countryList}/>
                     </Form.Item>
                 </Col>
                 <Col xs={8}>
