@@ -163,13 +163,13 @@ const ApplicantForm = ({
                     <Form.Item initialValue={210} name={['applicant', 'person', 'countryId']}
                                label={t('Страна')}
                     >
-                        <Select options={countryList}/>
+                        <Select showSearch options={countryList}/>
                     </Form.Item>
                 </Col>
 
                 <Col xs={8}>
                     <Form.Item name={['applicant', 'person', 'regionId']} label={t('Область')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                              >
                         <Select options={regions}/>
                     </Form.Item>
                 </Col>
@@ -279,13 +279,13 @@ const ApplicantForm = ({
                 <Col xs={8}>
                     <Form.Item initialValue={210} name={['applicant', 'organization', 'countryId']}
                                label={t('Страна')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
-                        <Select options={countryList}/>
+                               >
+                        <Select showSearch options={countryList}/>
                     </Form.Item>
                 </Col>
                 <Col xs={8}>
                     <Form.Item name={['applicant', 'organization', 'regionId']} label={t('Область')}
-                               rules={[{required: true, message: t('Обязательное поле')}]}>
+                               >
                         <Select options={regions}/>
                     </Form.Item>
                 </Col>
