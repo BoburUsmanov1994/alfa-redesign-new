@@ -207,6 +207,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
         if(data){
             form.setFieldsValue({
                 ...data,
+                claimDate:get(data, 'claimDate') ? dayjs(get(data, 'claimDate')) : null,
                 applicant: {
                     ...get(data, 'applicant', {}),
                     person: {
@@ -309,6 +310,7 @@ const ClaimView = ({data, claimNumber, refresh, disabled = false}) => {
                         onFinish={onFinish}
                         initialValues={{
                             ...data,
+                            claimDate:get(data, 'claimDate') ? dayjs(get(data, 'claimDate')) : null,
                             applicant: {
                                 ...get(data, 'applicant', {}),
                                 person: {

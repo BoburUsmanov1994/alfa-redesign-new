@@ -15,8 +15,9 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
     let {data: employees, isLoading} = useGetAllQuery({key: KEYS.claimUsers, url: URLS.claimUsers})
     employees = getSelectOptionsListFromData(get(employees, 'data.data', []), '_id', 'name')
     const regNumber =  Form.useWatch('regNumber', form)
+    const claimDate =  Form.useWatch('claimDate', form)
 
-    console.log('regNumber',regNumber)
+
     return (
         <Card className={'mb-4'} bordered title={t('Статус заявления')}>
             <Row gutter={16} align="middle">
@@ -98,7 +99,8 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                                     attributes: {
                                         claimNumber: parseInt(claimNumber),
                                         action: 'register',
-                                        regNumber: regNumber
+                                        regNumber: regNumber,
+                                        claimDate:dayjs(claimDate).format('YYYY-MM-DD'),
                                     },
                                     method: 'put',
                                 }, {
@@ -124,11 +126,10 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item label={t('Дата и время регистрации')}>
+                    <Form.Item name={'claimDate'} label={t('Дата и время регистрации')}>
                         <DatePicker format={'DD.MM.YYYY'}
-                                    value={get(data, 'claimDate') ? dayjs(get(data, 'claimDate')) : null}
                                     className={'w-full'}
-                                    disabled/>
+                                    />
                     </Form.Item>
                 </Col>
                 <Col span={6}>
