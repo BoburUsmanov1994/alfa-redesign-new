@@ -1,11 +1,12 @@
 import React, {useEffect} from 'react';
 import {Button, Card, Col, DatePicker, Form, Input, Radio, Row, Space, Spin, Switch, Table, Typography} from "antd";
 import {useTranslation} from "react-i18next";
-import {get} from "lodash"
+import {get, isEqual} from "lodash"
 import {usePutQuery} from "../../../hooks/api";
 import dayjs from "dayjs";
 import {useStore} from "../../../store";
 import {URLS} from "../../../constants/url";
+import {useNavigate} from "react-router-dom";
 
 const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
     const {t} = useTranslation();
@@ -13,6 +14,7 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
     const {user} = useStore()
     const {mutate, isPending} = usePutQuery({})
     const decision = Form.useWatch('decision', form)
+    const navigate = useNavigate();
 
     const onFinish = (_attrs) => {
         mutate({
@@ -123,15 +125,15 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
                                         value: 'disagree',
                                         label: t('против')
                                     },
-                                    {
-                                        value: 'abstain',
-                                        label: t('воздержусь')
-                                    }
+                                    // {
+                                    //     value: 'abstain',
+                                    //     label: t('воздержусь')
+                                    // }
                                 ]}/>
                             </Form.Item>
                         </Col>
                         {decision && <Col span={24}>
-                            <Form.Item name={'comment'} layout={'horizontal'} label={t('Примечание')}>
+                            <Form.Item rules={[{required: isEqual(decision,'disagree'), message: t('Обязательное поле')}]} name={'comment'} layout={'horizontal'} label={t('Примечание')}>
                                 <Input.TextArea/>
                             </Form.Item>
                         </Col>}
@@ -141,7 +143,9 @@ const ClaimJurnalVoice = ({data, claimNumber, refresh}) => {
                                         name={'save'}>
                                     {t('Проголосовать')}
                                 </Button>
-                                <Button danger type={'primary'}>
+                                <Button onClick={()=>{
+                                    navigate(`/claims/jurnal`)
+                                }} danger type={'primary'}>
                                     {t('Отмена')}
                                 </Button>
                             </Space>
