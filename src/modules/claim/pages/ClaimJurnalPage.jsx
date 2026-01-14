@@ -3,21 +3,24 @@ import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button, Space} from "antd";
+import {Button, Space, Tooltip} from "antd";
 import {EyeOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {PERSON_TYPE} from "../../../constants";
-import {get, values} from "lodash";
+import {get, isEqual, values} from "lodash";
 import {useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
+import {useStore} from "../../../store";
+import {find} from "lodash/collection";
 
 
 const ClaimJurnalPage = () => {
     const {t} = useTranslation();
     const actionRef = useRef();
+    const {user} = useStore()
     const navigate = useNavigate();
     let {data: branches} = useGetAllQuery({
         key: KEYS.branches, url: `${URLS.branches}/list`, params: {
@@ -28,6 +31,9 @@ const ClaimJurnalPage = () => {
     })
     branches = getSelectOptionsListFromData(get(branches, `data.data`, []), '_id', 'branchName')
 
+    const getVoteDetail = (votes=[]) => {
+        return find(votes,(_vote)=>isEqual(get(_vote,'member.employee.id'),get(user,'employee.id')))
+    }
 
     return (
         <>
@@ -82,7 +88,7 @@ const ClaimJurnalPage = () => {
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
-                        render: (text) => t(get(text, 'votes[0].decision'))
+                        render: (text) =>  <Tooltip title={get(getVoteDetail(get(text,'votes',[])), 'comment','-')}>{t(get(getVoteDetail(get(text,'votes',[])), 'decision','-'))}</Tooltip>
                     },
                     {
                         title: t('Решение'),
@@ -110,7 +116,7 @@ const ClaimJurnalPage = () => {
                         width: 100,
                         hideInSearch: true,
                         align: 'center',
-                        render: (text) => get(text, 'votes[0].decision') ? 'Да' : 'Нет'
+                        render: (text) => get(getVoteDetail(get(text,'votes',[])), 'decision') ? 'Да' : 'Нет'
                     },
                     {
                         title: t('Проголосовано'),
