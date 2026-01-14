@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
@@ -13,9 +13,12 @@ import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
+import {useStore} from "../../../store";
+import router from "../../../router";
 const { confirm } = Modal;
 
 const ClaimListPage = () => {
+    const {user} = useStore()
     const {t} = useTranslation();
     const actionRef = useRef();
     const navigate = useNavigate();
@@ -62,7 +65,12 @@ const ClaimListPage = () => {
             },
         });
     };
-
+    useEffect(() => {
+        if(isEqual(get(user,'role.name'),'sek-member')){
+            navigate(`/claims/jurnal`)
+        }
+    }, [user]);
+    console.log('user',user)
     return (
         <>
             <PageHeader
