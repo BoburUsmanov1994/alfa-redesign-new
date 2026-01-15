@@ -14,7 +14,6 @@ import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
 import {useStore} from "../../../store";
-import router from "../../../router";
 const { confirm } = Modal;
 
 const ClaimListPage = () => {
@@ -70,7 +69,7 @@ const ClaimListPage = () => {
             navigate(`/claims/jurnal`)
         }
     }, [user]);
-    console.log('user',user)
+
     return (
         <>
             <PageHeader
@@ -94,6 +93,13 @@ const ClaimListPage = () => {
                         width: 100,
                         align: 'center',
                         render:(_,record)=>get(record,'regNumber',get(record,'claimNumber'))
+                    },
+                    {
+                        title: 'Моё заявление',
+                        dataIndex: 'isUserClaim',
+                        initialValue:true,
+                        valueType: 'switch',
+                        hideInTable: true,
                     },
                     {
                         title: t('Дата заявления'),
@@ -341,16 +347,22 @@ const ClaimListPage = () => {
                         hideInSearch: true,
                         render: (_id, record) => <Space>
                             {!isEqual(get(record, 'status'), 'draft') &&
-                                <Button onClick={() => navigate(`/claims/view/${get(record, 'claimNumber')}`)}
+                                <Button onClick={() => {
+                                    if(get(record, 'isUserClaim')){
+                                        navigate(`/claims/view/${get(record, 'claimNumber')}`)
+                                    }else{
+                                        navigate(`/claims/public/view/${get(record, 'claimNumber')}`)
+                                    }
+                                }}
                                         className={'cursor-pointer'}
                                         icon={<EyeOutlined/>}/>}
-                            {isEqual(get(record, 'status'), 'draft') &&
+                            {get(record, 'isUserClaim') && isEqual(get(record, 'status'), 'draft') &&
                                 <Button onClick={() => navigate(`/claims/edit/${get(record, 'claimNumber')}`)}
                                         className={'cursor-pointer'}
                                         icon={<EditOutlined/>}/>}
-                            <Button onClick={()=>showDeleteConfirm(get(record, 'claimNumber'))} danger
+                            {get(record, 'isUserClaim')  && <Button onClick={()=>showDeleteConfirm(get(record, 'claimNumber'))} danger
                                     className={'cursor-pointer'}
-                                    icon={<DeleteOutlined/>}/>
+                                    icon={<DeleteOutlined/>}/>}
 
                         </Space>
                     }

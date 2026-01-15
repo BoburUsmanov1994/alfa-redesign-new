@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import {
     Card,
     Spin, Tabs,
 } from "antd";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {useGetAllQuery} from "../../../hooks/api";
 import {URLS} from "../../../constants/url";
-import {get, includes, isEqual} from "lodash";
+import {get, includes} from "lodash";
 import {KEYS} from "../../../constants/key";
 import Datagrid from "../../../containers/datagrid";
 import View from "../components/view";
@@ -19,9 +19,8 @@ import ClaimDecision from "../components/claim-decision";
 import {useStore} from "../../../store";
 
 
-const ClaimViewPage = () => {
+const ClaimViewPublicPage = () => {
     const {claimNumber} = useParams();
-    const navigate = useNavigate();
     const {user} = useStore()
     const [searchParams, setSearchParams] = useSearchParams()
     const {t} = useTranslation();
@@ -30,15 +29,12 @@ const ClaimViewPage = () => {
         url: `${URLS.claimShow}?claimNumber=${claimNumber}`,
         enabled: !!(claimNumber)
     });
-    useEffect(() => {
-        if(data && !get(data,'data.isUserClaim') && claimNumber && isEqual(get(user,'role.name'),'claim-user')){
-            navigate(`/claims/public/view/${claimNumber}`)
-        }
-    },[data,claimNumber,user])
+
 
     if (isLoading) {
         return <Spin spinning fullscreen/>
     }
+
 
     return (
         <>
@@ -54,12 +50,12 @@ const ClaimViewPage = () => {
                         {
                             key: 'view',
                             label: t('Претензионный портфель'),
-                            children: <View refresh={refresh} claimNumber={claimNumber} data={get(data, 'data')}/>
+                            children: <View disabled refresh={refresh} claimNumber={claimNumber} data={get(data, 'data')}/>
                         },
                         {
                             key: 'docs',
                             label: t('Документы по заявлению'),
-                            children: <ClaimDocs refresh={refresh} data={get(data, 'data')} claimNumber={claimNumber}/>,
+                            children: <ClaimDocs disabled refresh={refresh} data={get(data, 'data')} claimNumber={claimNumber}/>,
                         },
                         {
                             key: 'history',
@@ -87,15 +83,10 @@ const ClaimViewPage = () => {
                                 ]} url={`${URLS.claimHistory}?claimNumber=${claimNumber}`}/>
                             </Card>
                         },
-                        includes(['claim-admin'], get(user, 'role.name')) && {
-                            key: 'voice',
-                            label: t('СЭК'),
-                            children: <ClaimVoice refresh={refresh} claimNumber={claimNumber} data={get(data, 'data')}/>
-                        },
                         {
                             key: 'payment',
                             label: t('Решение и выплата'),
-                            children: <ClaimDecision claimNumber={claimNumber} data={get(data, 'data')}
+                            children: <ClaimDecision disabled claimNumber={claimNumber} data={get(data, 'data')}
                                                      refresh={refresh}/>
                         },
                     ]?.filter(Boolean)}
@@ -107,4 +98,4 @@ const ClaimViewPage = () => {
     );
 };
 
-export default ClaimViewPage;
+export default ClaimViewPublicPage;

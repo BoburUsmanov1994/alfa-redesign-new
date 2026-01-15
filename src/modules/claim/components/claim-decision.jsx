@@ -28,7 +28,7 @@ import numeral from "numeral";
 import {filter, find} from "lodash/collection";
 import {DeleteOutlined} from "@ant-design/icons";
 
-const ClaimDecision = ({data, claimNumber, refresh}) => {
+const ClaimDecision = ({data, claimNumber, refresh,disabled=false}) => {
     const {t} = useTranslation();
     const [form] = Form.useForm();
     const [drawerForm] = Form.useForm();
@@ -83,6 +83,7 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
         <>
             <Spin spinning={isPending}>
                 <Form
+                    disabled={disabled}
                     name="decision"
                     form={form}
                     layout="vertical"
