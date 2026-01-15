@@ -78,7 +78,6 @@ const ClaimDecision = ({data, claimNumber, refresh}) => {
         return <Spin spinning/>
     }
 
-    console.log('preSave',preSave)
 
     return (
         <>

@@ -127,7 +127,7 @@ const ClaimStatus = ({data, claimNumber, refresh, form, disabled = false}) => {
                 </Col>
                 <Col span={6}>
                     <Form.Item name={'claimDate'} label={t('Дата и время регистрации')}>
-                        <DatePicker format={'DD.MM.YYYY'}
+                        <DatePicker disabled={!(!disabled && isEqual(get(data, 'status'), 'submitted'))} format={'DD.MM.YYYY'}
                                     className={'w-full'}
                                     />
                     </Form.Item>
