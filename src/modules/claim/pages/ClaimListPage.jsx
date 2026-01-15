@@ -93,6 +93,7 @@ const ClaimListPage = () => {
                         dataIndex: 'claimNumber',
                         width: 100,
                         align: 'center',
+                        render:(_,record)=>get(record,'regNumber',get(record,'claimNumber'))
                     },
                     {
                         title: t('Дата заявления'),
