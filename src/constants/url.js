@@ -258,4 +258,5 @@ export const URLS = {
     claimDocsDetach: 'api/claim/docs-detach',
     claimVote: 'api/claim/vote',
     claimEditDamage: 'api/claim/edit/damage',
+    claimReport: 'api/claim/report',
 }

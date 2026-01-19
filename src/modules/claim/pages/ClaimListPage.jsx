@@ -1,27 +1,30 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {PageHeader} from "@ant-design/pro-components";
 import Datagrid from "../../../containers/datagrid";
 import {URLS} from "../../../constants/url";
 import {useTranslation} from "react-i18next";
-import {Button, Modal, Space, Tag} from "antd";
+import {Button, Modal, notification, Space, Tag} from "antd";
 import {DownloadOutlined, EditOutlined, PlusOutlined, EyeOutlined, DeleteOutlined,ExclamationCircleFilled} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {CLAIM_STATUS_LIST, PERSON_TYPE} from "../../../constants";
-import {get, isEqual, values} from "lodash";
+import {get, head, isEqual, last, values} from "lodash";
 import {useDeleteQuery, useGetAllQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import {getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
 import {useStore} from "../../../store";
+import {request} from "../../../services/api";
 const { confirm } = Modal;
 
 const ClaimListPage = () => {
     const {user} = useStore()
     const {t} = useTranslation();
     const actionRef = useRef();
+    const formRef = useRef();
     const navigate = useNavigate();
-    const {mutate, isPending} = useDeleteQuery({})
+    const [loading,setLoading] = useState(false);
+    const {mutate} = useDeleteQuery({})
     let {data: branches} = useGetAllQuery({
         key: KEYS.branches, url: `${URLS.branches}/list`, params: {
             params: {
@@ -82,6 +85,7 @@ const ClaimListPage = () => {
                 ]}
             />
             <Datagrid
+                formRef={formRef}
                 span={4}
                 rowKey={'_id'}
                 responseListKeyName={'docs'}
@@ -370,7 +374,37 @@ const ClaimListPage = () => {
                 ]}
                 url={`${URLS.claims}`}>
                 {() => <Space>
-                    <Button type={'dashed'} icon={<DownloadOutlined/>}>
+                    <Button loading={loading}  type={'dashed'}   icon={<DownloadOutlined />} onClick={() =>{
+                        const {claimDate,eventCircumstances,settlementDate,paymentDate,...rest} = formRef?.current?.getFieldsValue?.()
+                        setLoading(true)
+                        request.get(URLS.claimReport,{
+                            params: {
+                                startDate:head(claimDate) ? head(claimDate).format('YYYY-MM-DD') : undefined,
+                                endDate:last(claimDate) ? last(claimDate).format('YYYY-MM-DD') : undefined,
+                                eventStart:head(eventCircumstances) ? head(eventCircumstances).format('YYYY-MM-DD') : undefined,
+                                eventEnd:last(eventCircumstances) ? last(eventCircumstances).format('YYYY-MM-DD') : undefined,
+                                settlementStart:head(settlementDate) ? head(settlementDate).format('YYYY-MM-DD') : undefined,
+                                settlementEnd:last(settlementDate) ? last(settlementDate).format('YYYY-MM-DD') : undefined,
+                                paymentStart:head(paymentDate) ? head(paymentDate).format('YYYY-MM-DD') : undefined,
+                                paymentEnd:last(paymentDate) ? last(paymentDate).format('YYYY-MM-DD') : undefined,
+                                ...rest
+                            },
+                            responseType: 'blob',
+                        }).then(res => {
+                            const blob = new Blob([res.data], { type: res.data.type });
+                            const blobUrl = URL.createObjectURL(blob);
+                            window.open(blobUrl,'_self')
+                            notification['success']({
+                                message: 'Успешно'
+                            })
+                        }).catch((err)=>{
+                            notification['error']({
+                                message: err?.response?.data?.message || 'Ошибка'
+                            })
+                        }).finally(()=>{
+                            setLoading(false)
+                        })
+                    }}>
                         {t('Отчет')}
                     </Button>
                 </Space>}
