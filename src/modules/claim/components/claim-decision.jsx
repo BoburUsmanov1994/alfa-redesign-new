@@ -23,7 +23,7 @@ import {useGetAllQuery, usePostQuery} from "../../../hooks/api";
 import {KEYS} from "../../../constants/key";
 import dayjs from "dayjs";
 import {entries} from "lodash/object";
-import {getSelectOptionsListFromData} from "../../../utils";
+import {disablePastDates, getSelectOptionsListFromData} from "../../../utils";
 import numeral from "numeral";
 import {filter, find} from "lodash/collection";
 import {DeleteOutlined} from "@ant-design/icons";
@@ -105,7 +105,11 @@ const ClaimDecision = ({data, claimNumber, refresh,disabled=false}) => {
                                 <Form.Item initialValue={dayjs(get(data, 'decision.decision.decisionDate'))}
                                            rules={[{required: true, message: t('Обязательное поле')}]}
                                            name={['decision', 'decisionDate']} label={t('Дата решения')}>
-                                    <DatePicker format="DD.MM.YYYY" className={'w-full'}/>
+                                    <DatePicker
+                                        disabledDate={(current) =>
+                                            current && current.isBefore(get(data,'claimDate'), 'day')
+                                        }
+                                         format="DD.MM.YYYY" className={'w-full'}/>
                                 </Form.Item>
                             </Col>
                             {

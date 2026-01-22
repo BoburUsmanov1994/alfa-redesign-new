@@ -69,6 +69,7 @@ const saveFile = (file, name = dayjs(), extension = 'xlsx') => {
 const stripNonDigits = (value) => value?.replace(/\D/g, '');
 
 const disablePastDates = (current) => {
+    console.log('current', current);
     return current && current < dayjs().startOf('day');
 };
 const DATE_TIME_FIELDS = new Set([
